@@ -4,32 +4,41 @@ from pybricks.pupdevices import ColorSensor
 from pybricks.robotics import DriveBase
 from pybricks.tools import wait
 
+
+# Error
+TURN_ERROR = 0.1
+
+# Param config
+WHEEL_DIAMETER = 56
+AXLE_TRACK = 80
+TURN_RATE = 45
+TURN_ACCELERATION = 20
+RIGHT_MOTOR = Motor(Port.A)
+LEFT_MOTOR = Motor(Port.B, Direction.COUNTERCLOCKWISE)
+COLOR_SENSOR = ColorSensor(Port.C)
+
 # Initialize the sensor.
-sensor = ColorSensor(Port.C)
-sensor.lights.off()
-
-# Initialize a motor on port A.
-# Wheel diamater = 5.5 cm
-# Wheel circumfrance = ca. 17,27
-right_motor = Motor(Port.A)
-left_motor = Motor(Port.B, Direction.COUNTERCLOCKWISE)
-
-# Initialize the drive base. In this example, the wheel diameter is 56mm.
-# The distance between the two wheel-ground contact points is 112mm.
-drive_base = DriveBase(left_motor, right_motor,
-                       wheel_diameter=56, axle_track=80)
-drive_base.settings(turn_rate=20)
-
-drive_base.turn(20)
+COLOR_SENSOR.lights.off()
+DRIVE_BASE = DriveBase(LEFT_MOTOR, RIGHT_MOTOR,
+                       wheel_diameter=WHEEL_DIAMETER, axle_track=AXLE_TRACK)
+DRIVE_BASE.settings(turn_rate=TURN_RATE)
 
 
-# drive_base.straight(900)
+# POINT A
+# DRIVE_BASE.straight(975)
+# DRIVE_BASE.turn(90+(TURN_ERROR*90))
+# DRIVE_BASE.straight(185)
+# DRIVE_BASE.turn(120+(TURN_ERROR*120))
+# DRIVE_BASE.straight(-75)
 
-# turn left testing
 
-# drive_base.straight(450)
+# POINT B
+DRIVE_BASE.straight(1500)
+DRIVE_BASE.turn(-85+(TURN_ERROR*-85))
+DRIVE_BASE.straight(10)
 
-# The robot starts on the floor and
-# can be commanded to move forward 90cm and
-# left 45cm and point at an angle relatively
-# to the starting direction of 30 degrees
+# POINT C
+# DRIVE_BASE.straight(1300)
+# DRIVE_BASE.turn(-85+(TURN_ERROR*-85))
+# DRIVE_BASE.straight(270)
+# DRIVE_BASE.turn(40+(TURN_ERROR*40))
