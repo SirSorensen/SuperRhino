@@ -1,121 +1,136 @@
 from pybricks.hubs import PrimeHub
 from pybricks.pupdevices import Motor
-from pybricks.parameters import Port, Direction, Axis
+from pybricks.parameters import Port, Direction, Axis, Stop
 from pybricks.pupdevices import ColorSensor
 from pybricks.robotics import DriveBase
 from pybricks.tools import wait
 
+def avg_measure(measurement_func, parameters=None, measure_num=100):
+    measurements = []
+    for _ in range(measure_num):
+        if parameters is None:
+            measurements.append(measurement_func())
+        else:
+            measurements.append(measurement_func(parameters))
+    avg_measurement = sum(measurements)/len(measurements)
+    return avg_measurement
 
-# Error
-TURN_ERROR = 0.1
-
-# Param config
+# Initialize DriveBase
+    # Param config
 WHEEL_DIAMETER = 56
 AXLE_TRACK = 80
 TURN_RATE = 45
-TURN_ACCELERATION = 20
 RIGHT_MOTOR = Motor(Port.A)
 LEFT_MOTOR = Motor(Port.B, Direction.COUNTERCLOCKWISE)
-COLOR_SENSOR = ColorSensor(Port.C)
 
+drive_base = DriveBase(LEFT_MOTOR, RIGHT_MOTOR,
+                       wheel_diameter=WHEEL_DIAMETER, axle_track=AXLE_TRACK)
+drive_base.settings(turn_rate=TURN_RATE)
 
 
 # Initialize the sensor.
-COLOR_SENSOR.lights.off()
-
-# Initialize DriveBase
-DRIVE_BASE = DriveBase(LEFT_MOTOR, RIGHT_MOTOR,
-                       wheel_diameter=WHEEL_DIAMETER, axle_track=AXLE_TRACK)
-DRIVE_BASE.settings(turn_rate=TURN_RATE)
+color_sensor = ColorSensor(Port.C)
+color_sensor.lights.off()
 
 
 # Initialise Hub
-hub = PrimeHub()
-print(f"ready = {hub.imu.ready()}")
-print(f"stationary = {hub.imu.stationary()}")
-print(f"up = {hub.imu.up()}")
-print(f"tilt: pitch = {hub.imu.tilt()[0]}, roll = {hub.imu.tilt()[1]}")
+prime_hub = PrimeHub()
+print(f"ready = {prime_hub.imu.ready()}")
+print(f"stationary = {prime_hub.imu.stationary()}")
+print(f"up = {prime_hub.imu.up()}")
+print(f"tilt: pitch = {prime_hub.imu.tilt()[0]}, roll = {prime_hub.imu.tilt()[1]}")
 
 print()
-avg_acc_x_stationary = sum([hub.imu.acceleration(Axis.X) for _ in range(100)]) / 100
-print(f"acceleration(X) = {avg_acc_x_stationary} mm/s²")
-print(f"error(X) = {avg_acc_x_stationary} mm/s²")
-print(f"true acceleration(X) = {0.0} mm/s²")
-print(f"true(er) acceleration(X) = {hub.imu.acceleration(Axis.X) - avg_acc_x_stationary} mm/s²")
-print()
+avg_acc_x_stationary = avg_measure(prime_hub.imu.acceleration, parameters=Axis.X)
+print(f"acc_error(X) = {avg_acc_x_stationary} mm/s²")
 
 acc_y_tests = []
-avg_acc_y_stationary = sum([hub.imu.acceleration(Axis.Y) for _ in range(100)]) / 100
-print(f"acceleration(Y) = {avg_acc_y_stationary} mm/s²")
-print(f"error(Y) = {avg_acc_y_stationary} mm/s²")
-print(f"true acceleration(Y) = {0.0} mm/s²")
-print(f"true(er) acceleration(Y) = {hub.imu.acceleration(Axis.Y) - avg_acc_y_stationary} mm/s²")
+avg_acc_y_stationary = avg_measure(prime_hub.imu.acceleration, parameters=Axis.Y)
+print(f"acc_error(Y) = {avg_acc_y_stationary} mm/s²")
 
-print()
-
-avg_acc_z_stationary = sum([hub.imu.acceleration(Axis.Z) for _ in range(100)]) / 100
-print(f"acceleration(Z) = {avg_acc_z_stationary} mm/s²")
+avg_acc_z_stationary = avg_measure(prime_hub.imu.acceleration, parameters=Axis.Z)
 acceleration_error_z = 9815 - avg_acc_z_stationary
-print(f"error(Z) = {acceleration_error_z} mm/s²")
-print(f"true acceleration(Z) = {avg_acc_z_stationary - acceleration_error_z} mm/s²")
-print(f"true(er) acceleration(Z) = {hub.imu.acceleration(Axis.Z) - acceleration_error_z} mm/s²")
+print(f"acc_error(Z) = {acceleration_error_z} mm/s²")
 print()
-print(f"angular_velocity(X) = {hub.imu.angular_velocity(Axis.X)} deg/s")
-print(f"angular_velocity(Y) = {hub.imu.angular_velocity(Axis.Y)} deg/s")
-print(f"angular_velocity(Z) = {hub.imu.angular_velocity(Axis.Z)} deg/s")
+
 
 
 
 acc_error = {"X":avg_acc_x_stationary, "Y":avg_acc_y_stationary, "Z":acceleration_error_z}
 
 
-print()
-print(" ### Calibrating heading:")
+print("\n ### Calibrating heading:")
+
+headings = []
+
+def turn_and_measure(deg):
+    drive_base.turn(deg)
+    
+    if len(headings) == 0:
+        last_true = 0
+    else:
+        last_true = headings[-1][0]
+    
+    measure = avg_measure(prime_hub.imu.heading)
+    cur_deg = deg + last_true
+
+    while abs(cur_deg) > 360:
+        if cur_deg <= 0:
+            cur_deg += 360
+        else:
+            cur_deg -= 360
+
+    if (cur_deg == 0 and measure > 180) or (cur_deg < 0 and measure > 0):
+        measure -= 360
+    
 
 
-headings = [(0.00000000001, hub.imu.heading())]
+    return (cur_deg, measure)
 
-DRIVE_BASE.turn(90)
-headings.append((90, hub.imu.heading()))
+headings.append(turn_and_measure(0))
+headings.append(turn_and_measure(20))
+headings.append(turn_and_measure(45))
+headings.append(turn_and_measure(-65))
+headings.append(turn_and_measure(-20))
+headings.append(turn_and_measure(-45))
+headings.append(turn_and_measure(65))
+    
+def print_headings():
+    for (turn, deg) in headings:
+        print("True degrees", turn)
+        print("Measured degrees", deg)
+        print("Error", abs(turn-deg))
+        if turn != 0:
+            print("Error-percentage ", ((turn-deg)/(turn))*100, "%", sep="")
+        print()
 
-DRIVE_BASE.turn(90)
-headings.append((180, hub.imu.heading()))
-
-DRIVE_BASE.turn(90)
-headings.append((270, hub.imu.heading()))
-
-DRIVE_BASE.turn(90)
-headings.append((360, hub.imu.heading()))
-
-printable_result = [(turn, deg, turn-deg, str(((turn-deg)/(turn))*100) + " %") for (turn, deg) in headings]
-
-for r in printable_result:
-    print("True degrees " + str(r[0]))
-    print("Measured degrees " + str(r[1]))
-    print("Error " + str(r[2]))
-    print("Error-percentage " + str(r[3]))
-    print()
-
-avg_heading_error = sum([abs(turn-deg) for (turn, deg) in headings])/len(headings)
+heading_errors = [abs(turn-deg) for (turn, deg) in headings]
+avg_heading_error = sum(heading_errors)/len(heading_errors)
+max_heading_error = max(heading_errors)
+threshold = (avg_heading_error + max_heading_error) / 2 #Midpoint between max and average error measured
+print(f"threshold = {threshold}")
 
 
 
-start_heading = hub.imu.heading()
+start_heading = prime_hub.imu.heading()
+cur_distance = drive_base.distance()
+drive_base.straight(1000, then=Stop.COAST_SMART, wait=False)
 
 for _ in range(10):
-    current_heading = hub.imu.heading()
+    current_heading = prime_hub.imu.heading()
     heading_dif = abs(current_heading - start_heading)
-    if heading_dif > avg_heading_error:
-        print(current_heading - start_heading)
+    if heading_dif > threshold:
+        print("Error!! I have turned!")
+        drive_base.brake()
         if current_heading > start_heading:
             print("Turning left")
-            DRIVE_BASE.turn(-heading_dif)
+            drive_base.turn(-heading_dif)
         else:
             print("Turning right")
-            DRIVE_BASE.turn(heading_dif)
-            
-    
-    DRIVE_BASE.straight(100)
+            drive_base.turn(heading_dif)
+        drive_base.straight(1000 + cur_distance - drive_base.distance(), then=Stop.COAST_SMART, wait=False)
+    else:
+        print("Yay! Everything is fine!")
 
-
-
+drive_base.brake()
+print("Done!", drive_base.done())
