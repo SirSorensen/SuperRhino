@@ -104,11 +104,16 @@ start_heading = hub.imu.heading()
 
 for _ in range(10):
     current_heading = hub.imu.heading()
-    if abs(current_heading - start_heading) > avg_heading_error:
-        if start_heading > current_heading:
-            DRIVE_BASE.turn(start_heading - current_heading)
+    heading_dif = abs(current_heading - start_heading)
+    if heading_dif > avg_heading_error:
+        print(current_heading - start_heading)
+        if current_heading > start_heading:
+            print("Turning left")
+            DRIVE_BASE.turn(-heading_dif)
         else:
-            DRIVE_BASE.turn(current_heading - start_heading)
+            print("Turning right")
+            DRIVE_BASE.turn(heading_dif)
+            
     
     DRIVE_BASE.straight(100)
 
