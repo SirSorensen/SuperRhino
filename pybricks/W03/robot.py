@@ -3,7 +3,7 @@ from pybricks.pupdevices import Motor
 from pybricks.parameters import Port, Direction, Axis, Stop
 from pybricks.pupdevices import ColorSensor
 from pybricks.robotics import DriveBase
-from pybricks.tools import wait
+from pybricks.tools import wait, StopWatch
 from statistic_util import *
 
 
@@ -22,6 +22,8 @@ class Robot:
 
         # Initialise Hub
         self.prime_hub : PrimeHub = PrimeHub()
+        self.prime_hub.speaker.volume(50)
+        self.color_sensor.lights.off()
 
         
 
@@ -109,10 +111,42 @@ class Robot:
         print("Done!", self.drive_base.done())
 
     def measure_color_reflections(self):
-        result = self.color_sensor.reflection()
+        self.table_reflection = self.color_sensor.reflection()
         self.color_sensor.lights.on()
-        wait(1500) # Wait 3 seconds
-        print("Result (lights on) =", result)
-        self.color_sensor.lights.off()
-        wait(1500) # Wait 3 seconds
-        print("Result (lights off) =", result)
+        wait(1500) # Wait 1.5 seconds
+        print("self.table_reflection (lights on) =", self.table_reflection)
+
+
+    def drive_straight_stop_at_edge(self):
+        stop_watch = StopWatch()
+        last_seen_was_light = True
+
+        print("Let's go!")
+        while True:
+            self.left_motor.dc(30)
+            self.right_motor.dc(30)
+            cur_reflection = self.color_sensor.reflection()
+            
+            if cur_reflection < (self.table_reflection * 0.2):
+                stop_watch.resume() # now we start timer
+                print(f"I have seen darkness in {stop_watch.time()} ms (Current reflection = {cur_reflection} and that is < ({self.table_reflection} * 0.9))")
+
+                if (stop_watch.time() >= 250):
+                    print("Enough darkness!")
+                    self.prime_hub.speaker.beep()
+                    self.left_motor.brake()
+                    self.right_motor.brake()
+                    self.left_motor.dc(-30)
+                    self.right_motor.dc(-30)
+                    while cur_reflection < (self.table_reflection * 0.9):
+                        cur_reflection = self.color_sensor.reflection()
+                    self.left_motor.brake()
+                    self.right_motor.brake()
+                    # Turn
+                    self.drive_base.turn(90)
+            else:
+                stop_watch.pause()
+                stop_watch.reset()
+    
+
+                
