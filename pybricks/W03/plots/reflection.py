@@ -36,6 +36,7 @@ reflections = [
 ]
 
 plt.plot(distances, reflections)
-plt.xlabel('distances')
-plt.ylabel('reflections')
+plt.title("sensor value vs. distance")
+plt.xlabel('distances (cm)')
+plt.ylabel('sensor value')
 plt.show()
