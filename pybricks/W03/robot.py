@@ -77,12 +77,15 @@ class Robot:
 
         return (cur_deg, measure)
         
-    def run(self):
+    def drive_forward(self, distance : int):
+        if distance < 20:
+            raise Exception("Distance has to be at least 20!")
+
         start_heading = self.prime_hub.imu.heading()
         cur_distance = self.drive_base.distance()
         self.drive_base.straight(1000, then=Stop.COAST_SMART, wait=False)
 
-        for _ in range(10):
+        for _ in range(distance//10):
             current_heading = self.prime_hub.imu.heading()
             heading_dif = abs(current_heading - start_heading)
             if heading_dif > self.heading_threshold:
@@ -94,9 +97,11 @@ class Robot:
                 else:
                     print("Turning right")
                     self.drive_base.turn(heading_dif)
-                self.drive_base.straight(1000 + cur_distance - self.drive_base.distance(), then=Stop.COAST_SMART, wait=False)
+                self.drive_base.straight(((distance%10)*100) + cur_distance - self.drive_base.distance(), then=Stop.COAST_SMART, wait=False)
             else:
                 print("Yay! Everything is fine!")
+        
+        self.drive_base.straight(1000, then=Stop.COAST_SMART, wait=False)
 
         self.drive_base.brake()
         print("Done!", self.drive_base.done())
