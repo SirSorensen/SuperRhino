@@ -3,6 +3,7 @@ from pybricks.pupdevices import Motor
 from pybricks.parameters import Port, Direction, Axis, Stop
 from pybricks.pupdevices import ColorSensor
 from pybricks.robotics import DriveBase
+from pybricks.tools import wait
 from statistic_util import *
 
 
@@ -17,11 +18,12 @@ class Robot:
         
         # Initialize the sensor.
         self.color_sensor : ColorSensor = ColorSensor(Port.C)
+        self.measure_color_reflections()
 
         # Initialise Hub
         self.prime_hub : PrimeHub = PrimeHub()
-        self.calibrate_acceleration()
-        self.calibrate_heading()
+
+        
 
     def calibrate_acceleration(self):
         print(f"ready = {self.prime_hub.imu.ready()}")
@@ -105,3 +107,12 @@ class Robot:
 
         self.drive_base.brake()
         print("Done!", self.drive_base.done())
+
+    def measure_color_reflections(self):
+        result = self.color_sensor.reflection()
+        self.color_sensor.lights.on()
+        wait(1500) # Wait 3 seconds
+        print("Result (lights on) =", result)
+        self.color_sensor.lights.off()
+        wait(1500) # Wait 3 seconds
+        print("Result (lights off) =", result)
