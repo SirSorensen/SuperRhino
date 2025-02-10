@@ -17,13 +17,18 @@ class Robot:
         self.drive_base.settings(turn_rate=turn_rate)
         
         # Initialize the sensor.
-        self.color_sensor : ColorSensor = ColorSensor(Port.C)
-        self.measure_color_reflections()
+        self.horizontal_sensor : ColorSensor = ColorSensor(Port.C)
+        self.horizontal_threshold = self.calibrate_light_sensor(self.horizontal_sensor)
+        
+        self.vertical_sensor : ColorSensor = ColorSensor(Port.D)
+        self.vertical_threshold = self.calibrate_light_sensor(self.vertical_sensor)
+
+        
 
         # Initialise Hub
         self.prime_hub : PrimeHub = PrimeHub()
         self.prime_hub.speaker.volume(50)
-        self.color_sensor.lights.off()
+        self.horizontal_sensor.lights.off()
 
         
 
@@ -110,43 +115,58 @@ class Robot:
         self.drive_base.brake()
         print("Done!", self.drive_base.done())
 
-    def measure_color_reflections(self):
-        self.table_reflection = self.color_sensor.reflection()
-        self.color_sensor.lights.on()
-        wait(1500) # Wait 1.5 seconds
-        print("self.table_reflection (lights on) =", self.table_reflection)
+    def calibrate_light_sensor(self, sensor : ColorSensor):
+        threshold = sensor.reflection()
+        self.horizontal_sensor.lights.on()
+        wait(500) # Wait 1.5 seconds
+        print("threshold (lights on) =", threshold)
+        return threshold
 
 
     def drive_straight_stop_at_edge(self):
         stop_watch = StopWatch()
-        last_seen_was_light = True
 
         print("Let's go!")
         while True:
             self.left_motor.dc(30)
             self.right_motor.dc(30)
-            cur_reflection = self.color_sensor.reflection()
-            
-            if cur_reflection < (self.table_reflection * 0.2):
-                stop_watch.resume() # now we start timer
-                print(f"I have seen darkness in {stop_watch.time()} ms (Current reflection = {cur_reflection} and that is < ({self.table_reflection} * 0.9))")
 
+            # Fall-avoidance
+            cur_horizontal_reflection = self.horizontal_sensor.reflection()
+            if cur_horizontal_reflection < (self.horizontal_threshold * 0.2):
+                stop_watch.resume() # now we start timer
+                print(f"I have seen darkness in {stop_watch.time()} ms (Current reflection = {cur_horizontal_reflection} and that is < ({self.horizontal_threshold} * 0.9))")
                 if (stop_watch.time() >= 250):
                     print("Enough darkness!")
-                    self.prime_hub.speaker.beep()
-                    self.left_motor.brake()
-                    self.right_motor.brake()
-                    self.left_motor.dc(-30)
-                    self.right_motor.dc(-30)
-                    while cur_reflection < (self.table_reflection * 0.9):
-                        cur_reflection = self.color_sensor.reflection()
-                    self.left_motor.brake()
-                    self.right_motor.brake()
-                    # Turn
-                    self.drive_base.turn(90)
+                    self.back()
+                    while cur_horizontal_reflection < (self.horizontal_threshold * 0.9):
+                        cur_horizontal_reflection = self.horizontal_sensor.reflection()
+                    self.turn_left()
             else:
                 stop_watch.pause()
                 stop_watch.reset()
+
+            # Obstacle-avoidance
+            cur_vertical_reflection = self.vertical_sensor.reflection()
+            if cur_vertical_reflection > (self.vertical_threshold+1):
+                print(f"Detecting obstacle! cur_vertical_reflection = {cur_vertical_reflection}")
+            if cur_vertical_reflection > (self.vertical_threshold+1)*5:
+                print("Avoiding obstacle!")
+                self.back()
+                while cur_vertical_reflection > (self.vertical_threshold+1)*5:
+                    cur_vertical_reflection = self.vertical_sensor.reflection()
+                self.turn_left()
     
 
-                
+    def back(self):
+        self.prime_hub.speaker.beep()
+        self.left_motor.brake()
+        self.right_motor.brake()
+        self.left_motor.dc(-30)
+        self.right_motor.dc(-30)
+
+    def turn_left(self):
+        self.left_motor.brake()
+        self.right_motor.brake()
+        # Turn
+        self.drive_base.turn(90)
