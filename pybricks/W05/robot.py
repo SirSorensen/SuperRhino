@@ -1,10 +1,9 @@
 from pybricks.hubs import PrimeHub
 from pybricks.pupdevices import Motor
-from pybricks.parameters import Port, Direction, Axis, Stop
+from pybricks.parameters import Port, Direction, Axis
 from pybricks.pupdevices import ColorSensor
 from pybricks.robotics import DriveBase
-from pybricks.tools import wait, StopWatch
-from statistic_util import *
+from pybricks.tools import wait
 
 
 class Robot:
@@ -73,7 +72,12 @@ class Robot:
         self.heading_threshold = (avg_heading_error + max_heading_error) / 2
         print(f"Heading-threshold = {self.heading_threshold}")
 
-    
+    def calibrate_light_sensor(self, sensor: ColorSensor):
+        threshold = sensor.reflection()
+        self.horizontal_sensor.lights.on()
+        wait(500)  # Wait 1.5 seconds
+        print("threshold (lights on) =", threshold)
+        return threshold
 
     def tell_me_what_you_see(self):
         print("\nWhat I see:")
