@@ -1,9 +1,8 @@
 from pybricks.hubs import PrimeHub
-from pybricks.pupdevices import Motor
-from pybricks.parameters import Port, Direction, Axis, Stop
-from pybricks.pupdevices import ColorSensor
+from pybricks.parameters import Axis, Direction, Port, Stop
+from pybricks.pupdevices import ColorSensor, Motor
 from pybricks.robotics import DriveBase
-from pybricks.tools import wait
+
 
 def avg_measure(measurement_func, parameters=None, measure_num=100):
     measurements = []
@@ -12,19 +11,19 @@ def avg_measure(measurement_func, parameters=None, measure_num=100):
             measurements.append(measurement_func())
         else:
             measurements.append(measurement_func(parameters))
-    avg_measurement = sum(measurements)/len(measurements)
+    avg_measurement = sum(measurements) / len(measurements)
     return avg_measurement
 
+
 # Initialize DriveBase
-    # Param config
+# Param config
 WHEEL_DIAMETER = 56
 AXLE_TRACK = 80
 TURN_RATE = 45
 RIGHT_MOTOR = Motor(Port.A)
 LEFT_MOTOR = Motor(Port.B, Direction.COUNTERCLOCKWISE)
 
-drive_base = DriveBase(LEFT_MOTOR, RIGHT_MOTOR,
-                       wheel_diameter=WHEEL_DIAMETER, axle_track=AXLE_TRACK)
+drive_base = DriveBase(LEFT_MOTOR, RIGHT_MOTOR, wheel_diameter=WHEEL_DIAMETER, axle_track=AXLE_TRACK)
 drive_base.settings(turn_rate=TURN_RATE)
 
 
@@ -54,23 +53,22 @@ print(f"acc_error(Z) = {acceleration_error_z} mm/s²")
 print()
 
 
-
-
-acc_error = {"X":avg_acc_x_stationary, "Y":avg_acc_y_stationary, "Z":acceleration_error_z}
+acc_error = {"X": avg_acc_x_stationary, "Y": avg_acc_y_stationary, "Z": acceleration_error_z}
 
 
 print("\n ### Calibrating heading:")
 
 headings = []
 
+
 def turn_and_measure(deg):
     drive_base.turn(deg)
-    
+
     if len(headings) == 0:
         last_true = 0
     else:
         last_true = headings[-1][0]
-    
+
     measure = avg_measure(prime_hub.imu.heading)
     cur_deg = deg + last_true
 
@@ -82,10 +80,9 @@ def turn_and_measure(deg):
 
     if (cur_deg == 0 and measure > 180) or (cur_deg < 0 and measure > 0):
         measure -= 360
-    
-
 
     return (cur_deg, measure)
+
 
 headings.append(turn_and_measure(0))
 headings.append(turn_and_measure(20))
@@ -94,22 +91,23 @@ headings.append(turn_and_measure(-65))
 headings.append(turn_and_measure(-20))
 headings.append(turn_and_measure(-45))
 headings.append(turn_and_measure(65))
-    
+
+
 def print_headings():
-    for (turn, deg) in headings:
+    for turn, deg in headings:
         print("True degrees", turn)
         print("Measured degrees", deg)
-        print("Error", abs(turn-deg))
+        print("Error", abs(turn - deg))
         if turn != 0:
-            print("Error-percentage ", ((turn-deg)/(turn))*100, "%", sep="")
+            print("Error-percentage ", ((turn - deg) / turn) * 100, "%", sep="")
         print()
 
-heading_errors = [abs(turn-deg) for (turn, deg) in headings]
-avg_heading_error = sum(heading_errors)/len(heading_errors)
-max_heading_error = max(heading_errors)
-threshold = (avg_heading_error + max_heading_error) / 2 #Midpoint between max and average error measured
-print(f"threshold = {threshold}")
 
+heading_errors = [abs(turn - deg) for (turn, deg) in headings]
+avg_heading_error = sum(heading_errors) / len(heading_errors)
+max_heading_error = max(heading_errors)
+threshold = (avg_heading_error + max_heading_error) / 2  # Midpoint between max and average error measured
+print(f"threshold = {threshold}")
 
 
 start_heading = prime_hub.imu.heading()

@@ -1,9 +1,6 @@
-from pybricks.pupdevices import Motor
-from pybricks.parameters import Port, Direction
-from pybricks.pupdevices import ColorSensor
+from pybricks.parameters import Direction, Port
+from pybricks.pupdevices import ColorSensor, Motor
 from pybricks.robotics import DriveBase
-from pybricks.tools import wait
-
 
 # Error
 TURN_ERROR = 0.1
@@ -19,8 +16,7 @@ COLOR_SENSOR = ColorSensor(Port.C)
 
 # Initialize the sensor.
 COLOR_SENSOR.lights.off()
-DRIVE_BASE = DriveBase(LEFT_MOTOR, RIGHT_MOTOR,
-                       wheel_diameter=WHEEL_DIAMETER, axle_track=AXLE_TRACK)
+DRIVE_BASE = DriveBase(LEFT_MOTOR, RIGHT_MOTOR, wheel_diameter=WHEEL_DIAMETER, axle_track=AXLE_TRACK)
 DRIVE_BASE.settings(turn_rate=TURN_RATE)
 
 
@@ -34,7 +30,7 @@ DRIVE_BASE.settings(turn_rate=TURN_RATE)
 
 # POINT B
 DRIVE_BASE.straight(1500)
-DRIVE_BASE.turn(-85+(TURN_ERROR*-85))
+DRIVE_BASE.turn(-85 + (TURN_ERROR * -85))
 DRIVE_BASE.straight(10)
 
 # POINT C

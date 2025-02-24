@@ -1,11 +1,12 @@
-from pybricks.hubs import PrimeHub
-from pybricks.pupdevices import Motor
-from pybricks.parameters import Port, Direction
-from pybricks.pupdevices import ColorSensor
-from pybricks.robotics import DriveBase
-from pybricks.tools import wait, StopWatch
 import calibrations as cal
 import urandom
+
+from pybricks.hubs import PrimeHub
+from pybricks.parameters import Direction, Port
+from pybricks.pupdevices import ColorSensor, Motor
+from pybricks.robotics import DriveBase
+from pybricks.tools import StopWatch, wait
+
 
 class Robot:
     def __init__(self, wheel_diameter=56, axle_track=80, turn_rate=45):
@@ -14,9 +15,7 @@ class Robot:
         self.left_motor: Motor = Motor(Port.B, Direction.COUNTERCLOCKWISE)
 
         # Initialise DriveBase
-        self.drive_base: DriveBase = DriveBase(self.right_motor, self.left_motor,
-                                               wheel_diameter=wheel_diameter, axle_track=axle_track
-                                               )
+        self.drive_base: DriveBase = DriveBase(self.right_motor, self.left_motor, wheel_diameter=wheel_diameter, axle_track=axle_track)
         self.drive_base.settings(turn_rate=turn_rate)
 
         # Initialise PrimeHub
@@ -34,14 +33,13 @@ class Robot:
         self.acceleration_error = cal.calibrate_acceleration(self)
 
         # Calibrate heading (direction robot is pointing)
-        #self.heading_threshold = cal.calibrate_heading(self)
-    
+        # self.heading_threshold = cal.calibrate_heading(self)
 
     def navigate_maze(self):
         while True:
             print("Heading =", self.prime_hub.imu.heading())
             self.go_straight()
-            
+
             if self.is_tape_left() or self.is_tape_right():
                 path_left = False
                 path_right = False
@@ -57,7 +55,7 @@ class Robot:
                     choice = "l"
                 else:
                     choice = "r"
-                
+
                 if choice == "l":
                     self.turn(90)
                 else:
@@ -72,7 +70,6 @@ class Robot:
         print(f"Robot stopped at {stop_watch.time()}!")
         self.brake()
         stop_watch.pause()
-        
 
     def go_straight(self):
         self.left_motor.dc(30)
@@ -83,7 +80,7 @@ class Robot:
         self.right_motor.brake()
 
     # figure out which paths are valid
-    def turn_around_detect(self) -> tuple[bool, bool, bool, bool]: #(left, right, forward, backward)
+    def turn_around_detect(self) -> tuple[bool, bool, bool, bool]:  # (left, right, forward, backward)
         self.left_motor.dc(30)
         self.right_motor.dc(30)
         while self.is_tape_left() or self.is_tape_right():
@@ -92,9 +89,9 @@ class Robot:
         self.left_motor.brake()
         self.right_motor.brake()
         self.turn(90)
-    
+
     # turn in a (random) given valid direction
-    def turn_direction(self, valid_directions : tuple[bool, bool, bool, bool]):
+    def turn_direction(self, valid_directions: tuple[bool, bool, bool, bool]):
         pass
 
     def turn(self, angle):
@@ -117,18 +114,16 @@ class Robot:
 
         self.left_motor.brake()
         self.right_motor.brake()
-    
 
-    def is_tape_left(self): 
+    def is_tape_left(self):
         return self.does_sensor_see_tape(self.left_sensor, self.left_threshold)
-    
-    def is_tape_right(self): 
-        return  self.does_sensor_see_tape(self.right_sensor, self.right_threshold)
 
-    def does_sensor_see_tape(self, sensor : ColorSensor, sensor_thresshold):
+    def is_tape_right(self):
+        return self.does_sensor_see_tape(self.right_sensor, self.right_threshold)
+
+    def does_sensor_see_tape(self, sensor: ColorSensor, sensor_thresshold):
         return sensor.reflection() <= sensor_thresshold * 0.75
 
-    
     def tell_me_what_you_see(self):
         self.left_motor.dc(30)
         self.right_motor.dc(30)
@@ -137,4 +132,4 @@ class Robot:
             print("\nWhat I see:")
             print(f"Left sensor's Reflection = {self.left_sensor.reflection()}")
             print(f"Right sensor's Reflection = {self.right_sensor.reflection()}")
-            wait(100) # Wait 1 seconds
+            wait(100)  # Wait 1 seconds
