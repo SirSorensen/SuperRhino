@@ -81,9 +81,9 @@ class Robot:
 
     def tell_me_what_you_see(self):
         print("\nWhat I see:")
-        print(f"Vertical sensor's Reflection = {self.vertical_sensor.reflection}")
-        print(f"Vertical sensor's Ambient = {self.vertical_sensor.ambient}")
-        print(f"Vertical sensor's Color = {self.vertical_sensor.color}")
-        print(f"Vertical sensor's Detectable Colors = {self.vertical_sensor.detectable_colors}")
-        print(f"Vertical sensor's HSV = {self.vertical_sensor.hsv}")
+        print(f"Vertical sensor's Reflection = {self.vertical_sensor.reflection()}")
+        print(f"Vertical sensor's Ambient = {self.vertical_sensor.ambient()}")
+        print(f"Vertical sensor's Color = {self.vertical_sensor.color()}")
+        print(f"Vertical sensor's Detectable Colors = {self.vertical_sensor.detectable_colors()}")
+        print(f"Vertical sensor's HSV = {self.vertical_sensor.hsv()}")
         wait(500) # Wait 5 seconds
