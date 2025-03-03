@@ -23,12 +23,9 @@ class RobotLegs:
         self.left_motor.run(self.speed)
         self.right_motor.run(self.speed)
 
-
-
-
-
     def go_back(self):
-        pass  # TODO
+        self.left_motor.run(-self.speed)
+        self.right_motor.run(-self.speed)
 
     def hold(self):
         self.left_motor.hold()
