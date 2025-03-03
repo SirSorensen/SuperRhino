@@ -1,39 +1,27 @@
 import calibrations as cal
 from enums import SimpleDirection
 
+from robot_eyes import RobotEyes
+from robot_legs import RobotLegs
+
 from pybricks.hubs import PrimeHub
-from pybricks.parameters import Direction, Port
-from pybricks.pupdevices import ColorSensor, Motor
+from pybricks.parameters import Port
 
 
 class Robot:
     def __init__(self):
         # Initialise Motors (wheels)
-        self.left_motor: Motor = Motor(Port.A, Direction.COUNTERCLOCKWISE)
-        self.right_motor: Motor = Motor(Port.E)
+        self.legs : RobotLegs = RobotLegs(Port.A, Port.E)
+
+        # Initialize & calibrate the sensors
+        self.eyes : RobotEyes = RobotEyes(Port.B, Port.F)
 
         # Initialise PrimeHub
         self.prime_hub: PrimeHub = PrimeHub()
         self.prime_hub.speaker.volume(50)
 
-        # Initialize & calibrate the sensors.
-        self.left_sensor: ColorSensor = ColorSensor(Port.B)
-        self.left_threshold = cal.calibrate_light_sensor(self, self.left_sensor)
-
-        self.right_sensor: ColorSensor = ColorSensor(Port.F)
-        self.right_threshold = cal.calibrate_light_sensor(self, self.right_sensor)
-
         # Calibrate acceleration:
         self.acceleration_error = cal.calibrate_acceleration(self)
-
-    def go_forward(self):
-        pass  # TODO
-
-    def go_back(self):
-        pass  # TODO
-
-    def turn(self, angle):
-        pass  # TODO
 
 
     def turn_direction(self, direction: SimpleDirection):

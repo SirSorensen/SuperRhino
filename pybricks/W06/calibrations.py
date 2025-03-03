@@ -63,10 +63,10 @@ def calibrate_heading(robot) -> float:
     return heading_threshold
 
 
-def calibrate_light_sensor(robot, sensor: ColorSensor) -> float:
-    threshold = sensor.reflection()
+def calibrate_light_sensor(sensor: ColorSensor) -> float:
     sensor.lights.on()
-    wait(500)  # Wait 1.5 seconds
+    wait(500)  # Wait 0.5 seconds
+    threshold = avg_measure(sensor.reflection)
     print("threshold (lights on) =", threshold)
     return threshold * 0.9
 
