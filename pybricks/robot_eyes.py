@@ -11,11 +11,4 @@ class RobotEyes:
         self.right_sensor: ColorSensor = ColorSensor(right_port)
         self.right_threshold = cal.calibrate_light_sensor(self.right_sensor)
 
-    def go_forward(self):
-        pass  # TODO
-
-    def go_back(self):
-        pass  # TODO
-
-    def turn(self, angle):
-        pass  # TODO
+    

@@ -1,8 +1,5 @@
-import calibrations as cal
 from robot_eyes import RobotEyes
 from robot_legs import RobotLegs
-
-from pybricks.hubs import PrimeHub
 from pybricks.parameters import Port
 
 
@@ -14,9 +11,8 @@ class Robot:
         # Initialize & calibrate the sensors
         self.eyes : RobotEyes = RobotEyes(Port.B, Port.F)
 
-        # Initialise PrimeHub
-        self.prime_hub: PrimeHub = PrimeHub()
-        self.prime_hub.speaker.volume(50)
+    def test_turn(self):
+        self.legs.turn(360, self.prime_hub.imu)
 
-        # Calibrate acceleration:
-        self.acceleration_error = cal.calibrate_acceleration(self)
+    def test_forward(self):
+        self.legs.go_forward()
