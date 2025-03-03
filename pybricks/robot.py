@@ -33,7 +33,6 @@ class Robot:
 
         while True:
             self.legs.go_forward()
-            eyes_left, eyes_right = self.eyes.measure()
 
             if abs(start_heading - self.prime_hub.imu.heading()) > 10:
                 self.legs.hold()
