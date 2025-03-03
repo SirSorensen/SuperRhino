@@ -11,4 +11,5 @@ class RobotEyes:
         self.right_sensor: ColorSensor = ColorSensor(right_port)
         self.right_threshold = cal.calibrate_light_sensor(self.right_sensor)
 
-    
+    def what_do_you_see(self):
+        return (self.left_sensor.reflection(), self.right_sensor.reflection())

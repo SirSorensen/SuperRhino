@@ -3,7 +3,6 @@ import calibrations as cal
 from pybricks.parameters import Direction, Port
 from pybricks.pupdevices import Motor
 from pybricks.robotics import DriveBase
-from pybricks.hubs import PrimeHub
 
 
 class RobotLegs:
@@ -20,25 +19,11 @@ class RobotLegs:
         self.turn_degree = 40
         self.speed = 200
 
-        # Initialise PrimeHub
-        self.prime_hub: PrimeHub = PrimeHub()
-        self.prime_hub.speaker.volume(50)
-
-        # Calibrate acceleration:
-        self.acceleration_error = cal.calibrate_acceleration(self)
-
     def go_forward(self):
         self.left_motor.run(self.speed)
         self.right_motor.run(self.speed)
 
 
-        start_heading = self.prime_hub.imu.reset_heading(180)
-
-        while abs(start_heading - self.prime_hub.imu.heading()) > 10:
-            self.hold()
-            self.turn(start_heading - self.prime_hub.imu.heading())
-
-        self.go_forward()
 
 
 
