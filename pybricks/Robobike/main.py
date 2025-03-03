@@ -1,20 +1,25 @@
 from robot import Robot
 from pybricks.tools import wait
 
+speed = 500
 robot = Robot()
 
-robot.motor.run(300)
 
-wait(2000)
+robot.left_motor.run(speed)
+robot.right_motor.run(speed)
 
-robot.steering_wheel.run(100)
-wait(600)
-robot.steering_wheel.stop()
+wait(3000)
 
-wait(2000)
 
-robot.steering_wheel.run(-100)
-wait(600)
-robot.steering_wheel.stop()
+robot.left_motor.run(speed)
+robot.right_motor.run(speed*0.6)
 
-wait(1500)
+wait(3000)
+
+robot.left_motor.run(speed)
+robot.right_motor.run(speed)
+
+wait(3000)
+
+robot.left_motor.hold()
+robot.right_motor.hold()

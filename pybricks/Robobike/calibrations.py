@@ -28,7 +28,8 @@ def calibrate_acceleration(robot) -> dict[str, float]:
 
 def calibrate_heading(robot) -> float:
     def turn_and_measure(deg, last_true):
-        robot.drive_base.turn(deg)
+        print(f"Turning and measuring {deg}")
+        robot.turn(deg)
 
         measure = avg_measure(robot.prime_hub.imu.heading)
         cur_deg = deg + last_true
@@ -41,6 +42,8 @@ def calibrate_heading(robot) -> float:
 
         if (cur_deg == 0 and measure > 180) or (cur_deg < 0 and measure > 0):
             measure -= 360
+
+        return (cur_deg, measure)
 
     print("\n ### Calibrating heading:")
     headings = []
