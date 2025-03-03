@@ -7,6 +7,9 @@ from pybricks.tools import wait
 
 class Robot:
     def __init__(self):
+        ### Measurements ###
+        # About 8 cm from eye to leg
+
         # Initialise Motors (wheels)
         self.legs : RobotLegs = RobotLegs(Port.A, Port.E)
 
@@ -19,6 +22,10 @@ class Robot:
 
     def test_turn(self):
         self.legs.turn(360)
+
+    def test_eyes(self):
+        while True:
+            print(self.eyes.measure())
 
     def test_forward(self):
         self.prime_hub.imu.reset_heading(180)
@@ -38,3 +45,7 @@ class Robot:
                 wait(1000)
                 self.legs.turn(90)
                 self.prime_hub.imu.reset_heading(180)
+
+            if self.eyes.do_I_see_tape:
+                print("I see tape!")
+

@@ -12,18 +12,18 @@ class RobotEyes:
         self.right_threshold = cal.calibrate_light_sensor(self.right_sensor)
 
         self.cliff_acc = 0
-
+        self.do_I_see_a_tape = (False, False)
 
     def measure(self):
         left = self.left_sensor.reflection()
         right = self.right_sensor.reflection()
 
-        if left <= 15 or right <= 15:
+        if left <= 5 or right <= 5:
             self.cliff_acc += 1
-            print("I see a cliff", self.cliff_acc)
         elif self.cliff_acc > 0:
             self.cliff_acc -= 1
 
+        self.do_I_see_tape = ((10 <= left <= 15), (10 <= right <= 15))
 
         return (left, right)
 
