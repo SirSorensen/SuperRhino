@@ -1,6 +1,4 @@
 import calibrations as cal
-from enums import SimpleDirection
-
 from robot_eyes import RobotEyes
 from robot_legs import RobotLegs
 
@@ -22,17 +20,3 @@ class Robot:
 
         # Calibrate acceleration:
         self.acceleration_error = cal.calibrate_acceleration(self)
-
-
-    def turn_direction(self, direction: SimpleDirection):
-        match direction:
-            case SimpleDirection.FORWARD:
-                pass  # TODO
-            case SimpleDirection.BACK:
-                pass  # TODO
-            case SimpleDirection.LEFT:
-                pass  # TODO
-            case SimpleDirection.RIGHT:
-                pass  # TODO
-            case _:
-                raise ValueError(f"Robot cannot turn in given direction: '{direction}'")
