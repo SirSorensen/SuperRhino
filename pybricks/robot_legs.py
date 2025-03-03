@@ -33,3 +33,12 @@ class RobotLegs:
 
     def turn(self, angle):
         self.drive_base.turn(angle)
+
+    def reset_distance(self):
+        self.drive_base.reset()
+
+    def get_distance(self):
+        self.drive_base.distance()
+
+    def spin(self):
+        self.drive_base.turn(360)

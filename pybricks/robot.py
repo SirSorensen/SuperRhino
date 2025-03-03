@@ -30,6 +30,7 @@ class Robot:
     def test_forward(self):
         self.prime_hub.imu.reset_heading(180)
         start_heading = 180
+        self.legs.reset_distance()
 
         while True:
             self.legs.go_forward()
@@ -45,6 +46,20 @@ class Robot:
                 self.legs.turn(90)
                 self.prime_hub.imu.reset_heading(180)
 
-            if self.eyes.do_I_see_tape:
-                print("I see tape!")
+
+
+            stops = [57, 59, 63]
+            self.stop_at_stops([stops[0]])
+            self.stop_at_stops(stops[:2])
+            self.stop_at_stops(stops)
+
+    def stop_at_stops(self, stops):
+        stop_distance = (sum(stops) * 10)
+        if self.legs.get_distance() <= stop_distance + 5 and self.legs.get_distance() >= stop_distance - 5:
+                print("STOPPING")
+                print("Distance =", self.legs.get_distance())
+                self.legs.hold()
+                wait(1000)
+                self.legs.go_forward()
+                wait(1000)
 
