@@ -1,3 +1,5 @@
+from bfs import bfs
+
 class Labyrinth:
     def __init__(self, robot_coordinates : tuple[int, int]):
 
@@ -76,4 +78,9 @@ class Labyrinth:
             return "DOWN"
 
         return ""
+
+    def get_path(self, start : tuple[int, int], end : tuple[int, int]):
+        return bfs(4, 4, start, end)
+
+
 
