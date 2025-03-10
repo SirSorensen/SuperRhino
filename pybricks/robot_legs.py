@@ -12,7 +12,7 @@ class RobotLegs:
         self.right_motor: Motor = Motor(right_port)
 
         self.drive_base: DriveBase = DriveBase(self.left_motor, self.right_motor,
-                                               wheel_diameter=56, axle_track=160
+                                               wheel_diameter=56, axle_track=85
                                                )
 
         self.turn_rate = 50
