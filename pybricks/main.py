@@ -1,5 +1,6 @@
 from robot import Robot
+import robot_tests as tests
 
 robot = Robot()
 
-robot.test_forward()
+tests.test_forward(robot)
