@@ -1,10 +1,8 @@
-from bfs import sokuban_bfs, Queue
+from queue import Queue
 
 
 class Labyrinth:
-    def __init__(
-        self, map_str : str
-    ):
+    def __init__(self):
 
         temp_edge_lengths = {  # in cm
             # 0 on Y-axis
@@ -45,11 +43,7 @@ class Labyrinth:
 
         self.tape_distance = 4.7
 
-        # Grid init
-        self.grid = Labyrinth.parse_map_str(map_str)
-        self.walls = self.find_walls()
-
-    def parse_map_str(map_str : str):
+    def parse_map_str(map_str: str):
         grid = [list(row) for row in map_str.strip().split("\n")]
         return grid
 
@@ -61,102 +55,104 @@ class Labyrinth:
                     walls.add((x, y))
         return walls
 
-    def find_positions(self):
+    def parse_sokoban_map(self, map_str):
+        """Convert a Sokoban map string into a 2D grid representation."""
+        grid = [list(row) for row in map_str.strip().split("\n")]
+        return grid
+
+    def find_positions(self, grid):
+        """Find the player, boxes, and goal positions."""
         rhinotron = None
         cans = set()
         goals = set()
 
-        for y, row in enumerate(self.grid):
-            for x, point in enumerate(row):
-                if point == "@":
+        for y, row in enumerate(grid):
+            for x, cell in enumerate(row):
+                if cell == "@":  # Player
                     rhinotron = (x, y)
-                elif point == "$":
+                elif cell == "$":  # Box
                     cans.add((x, y))
-                elif point == ".":
+                elif cell == ".":  # Goal
                     goals.add((x, y))
-                elif point == "*":
+                elif cell == "*":  # Box on goal
                     cans.add((x, y))
+                    goals.add((x, y))
+                elif cell == "+":  # Player on goal
+                    rhinotron = (x, y)
                     goals.add((x, y))
 
         return rhinotron, cans, goals
 
+    def is_valid_move(self, grid, pos):
+        """Check if a move is valid (not a wall)."""
+        x, y = pos
+        return grid[y][x] not in ("#")
 
-    def is_valid_push(walls, cans, push_point):
-        if push_point in walls or push_point in cans:
+    def is_valid_push(self, grid, box_pos, direction):
+        """Check if pushing a box in a direction is possible."""
+        x, y = box_pos
+        dx, dy = direction
+        new_x, new_y = x + dx, y + dy
+
+        if grid[new_y][new_x] in ("#", "$"):  # Can't push into walls or another box
             return False
         return True
 
-    def is_valid_move(walls, moved_point):
-        if moved_point in walls:
-            return False
-        return True
+    def sokoban_solver(self, grid):
+        """Solve Sokoban using BFS."""
+        player, boxes, goals = self.find_positions(grid)
+        directions = {"U": (0, -1), "D": (0, 1), "L": (-1, 0), "R": (1, 0)}
 
-    def solve(self):
-        start_rhinotron, start_cans, self.goals = self.find_positions()
-        queue = Queue((start_rhinotron, frozenset(start_cans), []))
-        directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]
-        visited = set([])
+        queue = Queue()
+        queue.enqueue((player, frozenset(boxes), ""))  # Start BFS
+        visited = set()
 
-        while not queue.is_empty():
-            print()
-            print(queue.items_left())
-            rhinotron, cans, moves = queue.dequeue()
-            print(queue.items_left())
-            print()
+        while queue:
+            player, boxes, moves = queue.dequeue()
 
-            # All cans are in goals
-
-            if len([0 for c in cans if c not in self.goals]) == 0:
+            # If all boxes are on goals, return solution
+            if boxes == goals:
                 return moves
 
-            # If we have already checked this state, skip
-            if (rhinotron, cans) in visited:
+            if (player, boxes) in visited:
                 continue
+            visited.add((player, boxes))
+
+            # Try moving the player in each direction
+            for move, (dx, dy) in directions.items():
+                new_rhinotron = (player[0] + dx, player[1] + dy)
+
+                # If moving into a box, try pushing it
+                if new_rhinotron in boxes:
+                    new_can = (new_rhinotron[0] + dx, new_rhinotron[1] + dy)
+
+                    if new_can not in boxes and self.is_valid_push(
+                        grid, new_rhinotron, (dx, dy)
+                    ):
+                        new_boxes = frozenset(
+                            (new_can if b == new_rhinotron else b) for b in boxes
+                        )
+                        queue.enqueue((new_rhinotron, new_boxes, moves + move))
+                else:
+                    # Move player normally if the space is empty
+                    if self.is_valid_move(grid, new_rhinotron):
+                        queue.enqueue((new_rhinotron, boxes, moves + move))
+
+        return "No solution"
 
 
-            visited.add((rhinotron, cans))
-
-            # Try moving rhinotron in each direction
-            for (dx, dy) in directions:
-                # Define next point
-                nx = rhinotron[0] + dx
-                ny = rhinotron[1] + dy
-                new_rhinotron = (nx, ny)
-
-                # Add move to new_moves list
-                new_moves = moves + [(dx, dy)]
-
-                if (nx, ny) in cans:
-                    # Define new can points
-                    new_can_point = (nx + dx, ny + dy)
-
-                    if new_can_point not in cans and Labyrinth.is_valid_push(self.walls, cans, new_can_point):
-
-                        new_cans = frozenset(new_can_point if cur == new_rhinotron else cur for cur in cans)
-
-
-                        queue.append((new_rhinotron, new_cans, new_moves))
-
-                elif Labyrinth.is_valid_move(self.walls, new_rhinotron):
-                    queue.append((new_rhinotron, cans, new_moves))
-
-        return []
-
-
-
-
-
-map_string = """
-########
-#@$.   #
-#$*$  .#
-#.$ *#.#
-#  $ $ #
-# #$..##
-#.. $  #
-########
+if __name__ == "__main__":
+    sokoban_map = """
+#######
+#.@ # #
+#$* $ #
+#   $ #
+# ..  #
+#  *  #
+#######
 """
+    lab = Labyrinth()
+    grid = lab.parse_sokoban_map(sokoban_map)
+    solution = lab.sokoban_solver(grid)
 
-lab = Labyrinth(map_string)
-
-print(lab.solve())
+    print("Solution:", solution)
