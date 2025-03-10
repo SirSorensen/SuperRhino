@@ -14,6 +14,13 @@ class Queue:
         self.index += 1
         return result
 
+    def is_empty(self):
+        #print(f"{self.index} == {len(self.list)}")
+        return self.index >= len(self.list)
+
+    def items_left(self):
+        return len(self.list) - self.index
+
 
 def sokuban_bfs(grid_size_x, grid_size_y, start, end, blocks):
     # Possible moves: right, left, down, up

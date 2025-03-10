@@ -1,14 +1,12 @@
-from bfs import sokuban_bfs
+from bfs import sokuban_bfs, Queue
 
 
 class Labyrinth:
     def __init__(
-        self, robot_coordinates: tuple[int, int], cans: list[tuple[int, int]] = []
+        self, map_str : str
     ):
 
-        self.robot_coordinates = robot_coordinates
-
-        self.edge_lengths = {  # in cm
+        temp_edge_lengths = {  # in cm
             # 0 on Y-axis
             ((0, 0), (1, 0)): 51.5,
             ((0, 0), (0, 1)): 14.6,
@@ -40,48 +38,35 @@ class Labyrinth:
         }
 
         # For each (s,e) key create (e,s) key with same value
-        for (s, e), value in self.edge_lengths.items():
+        self.edge_lengths = {}
+        for (s, e), value in temp_edge_lengths.items():
+            self.edge_lengths[(s, e)] = value
             self.edge_lengths[(e, s)] = value
 
         self.tape_distance = 4.7
 
-        # Can coordinates
-        self.cans = cans
+        # Grid init
+        self.grid = Labyrinth.parse_map_str(map_str)
+        self.walls = self.find_walls()
 
-    def does_edge_exist(self, start: tuple[int, int], end: tuple[int, int]) -> bool:
-        return (start, end) in self.edge_lengths.keys()
-
-    def get_distance(self, start: tuple[int, int], end: tuple[int, int]) -> int:
-        if not self.does_edge_exist(start, end):
-            raise ValueError(f"There is no path from {start} to {end}.")
-
-        return self.edge_lengths[(start, end)] + self.tape_distance
-
-    def get_direction(self, start: tuple[int, int], end: tuple[int, int]) -> str:
-        (sx, sy) = start
-        (ex, ey) = end
-
-        if sx < ex and sy == ey:
-            return "RIGHT"
-        elif sx > ex and sy == ey:
-            return "LEFT"
-        elif sx == ex and sy < ey:
-            return "UP"
-        elif sx == ex and sy > ey:
-            return "DOWN"
-
-        return ""
-
-    def parse_sokoban_map(map_str):
+    def parse_map_str(map_str : str):
         grid = [list(row) for row in map_str.strip().split("\n")]
         return grid
 
-    def find_positions(grid):
+    def find_walls(self):
+        walls = set()
+        for y, row in enumerate(self.grid):
+            for x, point in enumerate(row):
+                if point == "#" or point == "X":
+                    walls.add((x, y))
+        return walls
+
+    def find_positions(self):
         rhinotron = None
         cans = set()
         goals = set()
 
-        for y, row in enumerate(grid):
+        for y, row in enumerate(self.grid):
             for x, point in enumerate(row):
                 if point == "@":
                     rhinotron = (x, y)
@@ -95,12 +80,83 @@ class Labyrinth:
 
         return rhinotron, cans, goals
 
-    def is_valid_can_move(point, new_point):
-        x, y = point
-        nx, ny = new_point
 
-        if abs(x - nx) <= 1 and abs(y - ny) <= 1:
-            return True
+    def is_valid_push(walls, cans, push_point):
+        if push_point in walls or push_point in cans:
+            return False
+        return True
 
-    def get_path(self, start: tuple[int, int], end: tuple[int, int]):
-        return sokuban_bfs(4, 4, start, end, self.cans)
+    def is_valid_move(walls, moved_point):
+        if moved_point in walls:
+            return False
+        return True
+
+    def solve(self):
+        start_rhinotron, start_cans, self.goals = self.find_positions()
+        queue = Queue((start_rhinotron, frozenset(start_cans), []))
+        directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]
+        visited = set([])
+
+        while not queue.is_empty():
+            print()
+            print(queue.items_left())
+            rhinotron, cans, moves = queue.dequeue()
+            print(queue.items_left())
+            print()
+
+            # All cans are in goals
+
+            if len([0 for c in cans if c not in self.goals]) == 0:
+                return moves
+
+            # If we have already checked this state, skip
+            if (rhinotron, cans) in visited:
+                continue
+
+
+            visited.add((rhinotron, cans))
+
+            # Try moving rhinotron in each direction
+            for (dx, dy) in directions:
+                # Define next point
+                nx = rhinotron[0] + dx
+                ny = rhinotron[1] + dy
+                new_rhinotron = (nx, ny)
+
+                # Add move to new_moves list
+                new_moves = moves + [(dx, dy)]
+
+                if (nx, ny) in cans:
+                    # Define new can points
+                    new_can_point = (nx + dx, ny + dy)
+
+                    if new_can_point not in cans and Labyrinth.is_valid_push(self.walls, cans, new_can_point):
+
+                        new_cans = frozenset(new_can_point if cur == new_rhinotron else cur for cur in cans)
+
+
+                        queue.append((new_rhinotron, new_cans, new_moves))
+
+                elif Labyrinth.is_valid_move(self.walls, new_rhinotron):
+                    queue.append((new_rhinotron, cans, new_moves))
+
+        return []
+
+
+
+
+
+map_string = """
+########
+#@$.   #
+#$*$  .#
+#.$ *#.#
+#  $ $ #
+# #$..##
+#.. $  #
+########
+"""
+
+lab = Labyrinth(map_string)
+
+print(lab.solve())
