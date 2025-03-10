@@ -108,7 +108,7 @@ class Labyrinth:
         visited = set()
 
         while queue:
-            rhinotron, cans, moves = queue.dequeue()
+            player, boxes, moves = queue.dequeue()
 
             # If all boxes are on goals, return solution
             if boxes == goals:
