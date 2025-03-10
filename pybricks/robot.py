@@ -11,10 +11,11 @@ class Robot:
         # About 8 cm from eye to leg
 
         # Initialise Motors (wheels)
-        self.legs : RobotLegs = RobotLegs(Port.A, Port.E)
+        self.legs : RobotLegs = RobotLegs(Port.B, Port.A)
 
         # Initialize & calibrate the sensors
-        self.eyes : RobotEyes = RobotEyes(Port.B, Port.F)
+        # We currently have no eyes
+        #self.eyes : RobotEyes = RobotEyes(Port.B, Port.F)
 
         # Initialise PrimeHub
         self.prime_hub: PrimeHub = PrimeHub()

@@ -19,13 +19,6 @@ def test_forward(robot : Robot):
         if abs(start_heading - robot.prime_hub.imu.heading()) > 10:
             robot.legs.hold()
             robot.legs.turn(start_heading - robot.prime_hub.imu.heading())
-        if robot.eyes.do_I_see_a_cliff():
-            print("I see a cliff!")
-            robot.legs.hold()
-            robot.legs.go_back()
-            wait(1000)
-            robot.legs.turn(90)
-            robot.prime_hub.imu.reset_heading(180)
 
         stops = [57, 59, 63]
         stop_at_stops(robot, [stops[0]])
