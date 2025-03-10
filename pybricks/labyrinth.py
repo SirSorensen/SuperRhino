@@ -5,7 +5,7 @@ class Labyrinth:
 
         self.robot_coordinates = robot_coordinates
 
-        self.distances = { # in cm
+        self.edge_lengths = { # in cm
             # 0 on Y-axis
             ((0,0) , (1,0)) : 51.5,
             ((0,0) , (0,1)) : 14.6,
@@ -50,19 +50,20 @@ class Labyrinth:
             ((2,3) , (3,3)) : 58.6,
         }
 
-        for (s, e), value in self.distances.items():
-            self.distances[(e,s)] = value
+        # For each (s,e) key create (e,s) key with same value
+        for (s, e), value in self.edge_lengths.items():
+            self.edge_lengths[(e,s)] = value
 
         self.tape_distance = 4.7
 
-    def does_path_exist(self, start : tuple[int, int], end : tuple[int, int]) -> bool:
-        return (start, end) in self.distances.keys()
+    def does_edge_exist(self, start : tuple[int, int], end : tuple[int, int]) -> bool:
+        return (start, end) in self.edge_lengths.keys()
 
     def get_distance(self, start : tuple[int, int], end : tuple[int, int]) -> int:
-        if not self.does_path_exist(start, end):
+        if not self.does_edge_exist(start, end):
             raise ValueError(f"There is no path from {start} to {end}.")
 
-        return self.distances[(start, end)] + self.tape_distance
+        return self.edge_lengths[(start, end)] + self.tape_distance
 
     def get_direction(self, start : tuple[int, int], end : tuple[int, int]) -> str:
         (sx, sy) = start
