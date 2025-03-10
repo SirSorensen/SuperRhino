@@ -98,11 +98,9 @@ class Labyrinth:
         visited = set([])
 
         while not queue.is_empty():
-            print()
-            print(queue.items_left())
+            print("Items before dequeue:", queue.count())
             rhinotron, cans, moves = queue.dequeue()
-            print(queue.items_left())
-            print()
+            print("Items after dequeue:", queue.count())
 
             # All cans are in goals
 
