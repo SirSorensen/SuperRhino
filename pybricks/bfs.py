@@ -1,25 +1,37 @@
+class Node:
+    def __init__(self, value):
+        self.next = None
+        self.value = value
+
 class Queue:
-    def __init__(self, start):
-        self.list = [start]
-        self.index = 0
+    def __init__(self, start_value):
+        self.front = Node(start_value)
+        self.back = self.front
 
     def append(self, value):
-        self.list.append(value)
+        if self.is_empty():
+            self.front = Node(value)
+            self.back = self.front
+        else:
+            self.back.next = Node(value)
+            self.back = self.back.next
+
 
     def dequeue(self):
-        if self.index >= len(self.list):
-            raise ValueError("Queue empty")
-
-        result = self.list[self.index]
-        self.index += 1
+        result = self.front.value
+        self.front = self.front.next
         return result
 
     def is_empty(self):
-        #print(f"{self.index} == {len(self.list)}")
-        return self.index >= len(self.list)
+        return self.front is None
 
-    def items_left(self):
-        return len(self.list) - self.index
+    def count(self):
+        cur = self.front
+        count = 0
+        while cur is not None:
+            count += 1
+            cur = cur.next
+        return count
 
 
 def sokuban_bfs(grid_size_x, grid_size_y, start, end, blocks):
