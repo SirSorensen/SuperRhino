@@ -1,14 +1,29 @@
-from collections import deque
+
+class Queue:
+    def __init__(self, start):
+        self.list = [start]
+        self.index = 0
+
+    def append(self, value):
+        self.list.append(value)
+
+    def dequeue(self):
+        if self.index >= len(self.list):
+            raise ValueError("Queue empty")
+
+        result = self.list[self.index]
+        self.index += 1
+        return result
 
 
-def bfs(grid_size, start, end):
+def bfs(grid_size_x, grid_size_y, start, end):
     # Possible moves: right, left, down, up
     directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
-    queue = deque([(start, [start])])  # (current position, path taken)
+    queue = Queue((start, [start]))
     visited = set()  # Track visited positions
 
     while queue:
-        (x, y), path = queue.popleft()
+        (x, y), path = queue.dequeue()
 
         # If we reached the target, return the path
         if (x, y) == end:
@@ -19,17 +34,9 @@ def bfs(grid_size, start, end):
             nx, ny = x + dx, y + dy  # New position
 
             # Check if the move is within bounds and not visited
-            if 0 <= nx < grid_size and 0 <= ny < grid_size and (nx, ny) not in visited:
+            if 0 <= nx < grid_size_x and 0 <= ny < grid_size_y and (nx, ny) not in visited:
                 visited.add((nx, ny))
-                queue.append(((nx, ny), path + [(nx, ny)]))  # Add new path
+                next = ((nx, ny), path + [(nx, ny)])
+                queue.append(next)  # Add new path
 
     return None  # No path found
-
-
-# Example usage
-grid_size = 4
-start = (0, 0)
-end = (3, 3)
-
-shortest_path = bfs(grid_size, start, end)
-print("Shortest Path:", shortest_path)
