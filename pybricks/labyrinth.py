@@ -1,7 +1,7 @@
 from bfs import bfs
 
 class Labyrinth:
-    def __init__(self, robot_coordinates : tuple[int, int]):
+    def __init__(self, robot_coordinates : tuple[int, int], cans : list[tuple[int,int]] = []):
 
         self.robot_coordinates = robot_coordinates
 
@@ -55,6 +55,9 @@ class Labyrinth:
             self.edge_lengths[(e,s)] = value
 
         self.tape_distance = 4.7
+
+        # Can coordinates
+        self.cans = cans
 
     def does_edge_exist(self, start : tuple[int, int], end : tuple[int, int]) -> bool:
         return (start, end) in self.edge_lengths.keys()

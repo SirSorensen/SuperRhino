@@ -16,7 +16,7 @@ class Queue:
         return result
 
 
-def bfs(grid_size_x, grid_size_y, start, end):
+def bfs(grid_size_x, grid_size_y, start, end, blocks):
     # Possible moves: right, left, down, up
     directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
     queue = Queue((start, [start]))
