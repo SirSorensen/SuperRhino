@@ -1,0 +1,11 @@
+
+• Deliberative: using an internal model to plan actions.
+    • Same thing many names: the symbol-based paradigm/hierarchical paradigm/deliberative
+                             architectures/GOFAI architecture
+
+• Reactive: making decisions based on immediate sensor readings, responding directly to changes in
+            the environment without internal planning or prediction.
+    • Behaviors in behavior-based and embodied paradigms
+
+• Hybrid: combines both reactive and deliberative control, allowing it to quickly respond to
+          immediate changes in the environment while also planning actions over the longer term to meet strategic objectives.
