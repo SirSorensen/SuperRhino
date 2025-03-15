@@ -1,4 +1,6 @@
 from robot import Robot
+import robot_tests as tests
 
-r = Robot()
-r.sokoban("UURRDRDDLRULULULDD", (0, 1))
+robot = Robot()
+
+tests.test_forward(robot)

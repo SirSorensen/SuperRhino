@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from pybricks.parameters import Port
 from pybricks.hubs import PrimeHub
 import robot_helper as helper
@@ -7,10 +8,17 @@ from senses.vision import Vision
 from senses.compass import Compass
 from communication.vocals import Vocals
 from physiology.movement import Movement
+=======
+from robot_eyes import RobotEyes
+from robot_legs import RobotLegs
+from pybricks.parameters import Port
+from pybricks.hubs import PrimeHub
+>>>>>>> c3be16a (Initialize Crobot-repository)
 
 
 class Robot:
     def __init__(self):
+<<<<<<< HEAD
         # Initialise PrimeHub
         self.prime_hub: PrimeHub = PrimeHub()
 
@@ -73,3 +81,16 @@ class Robot:
 
         ### Done ###
         self.compass.finish_calibrate_heading()
+=======
+        # Initialise Motors (wheels)
+        self.legs : RobotLegs = RobotLegs(Port.B, Port.F)
+
+        # Initialize & calibrate the sensors
+        self.eyes : RobotEyes = RobotEyes(Port.A, Port.E)
+
+        # Initialise PrimeHub
+        self.prime_hub: PrimeHub = PrimeHub()
+        self.prime_hub.speaker.volume(50)
+
+
+>>>>>>> c3be16a (Initialize Crobot-repository)
