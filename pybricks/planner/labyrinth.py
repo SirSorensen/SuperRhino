@@ -43,11 +43,11 @@ class Labyrinth:
 
         self.tape_distance = 4.7
 
-    def parse_map_str(map_str: str):
+    def parse_map_str(map_str: str) -> list[list[str]]:
         grid = [list(row) for row in map_str.strip().split("\n")]
         return grid
 
-    def find_walls(self):
+    def find_walls(self) -> set[tuple[int,int]]:
         walls = set()
         for y, row in enumerate(self.grid):
             for x, point in enumerate(row):
@@ -55,12 +55,12 @@ class Labyrinth:
                     walls.add((x, y))
         return walls
 
-    def parse_sokoban_map(self, map_str):
+    def parse_sokoban_map(self, map_str) -> list[list[str]]:
         """Convert a Sokoban map string into a 2D grid representation."""
         grid = [list(row) for row in map_str.strip().split("\n")]
         return grid
 
-    def find_positions(self, grid):
+    def find_positions(self, grid) -> tuple[None|tuple[int, int],set[tuple[int,int]],set[tuple[int,int]]]:
         """Find the player, boxes, and goal positions."""
         rhinotron = None
         cans = set()
@@ -83,12 +83,12 @@ class Labyrinth:
 
         return rhinotron, cans, goals
 
-    def is_valid_move(self, grid, pos):
+    def is_valid_move(self, grid, pos) -> bool:
         """Check if a move is valid (not a wall)."""
         x, y = pos
         return grid[y][x] not in ("#")
 
-    def is_valid_push(self, grid, box_pos, direction):
+    def is_valid_push(self, grid, box_pos, direction) -> bool:
         """Check if pushing a box in a direction is possible."""
         x, y = box_pos
         dx, dy = direction
@@ -98,7 +98,7 @@ class Labyrinth:
             return False
         return True
 
-    def sokoban_solver(self, grid):
+    def sokoban_solver(self, grid) -> str:
         """Solve Sokoban using BFS."""
         player, boxes, goals = self.find_positions(grid)
         directions = {"U": (0, -1), "D": (0, 1), "L": (-1, 0), "R": (1, 0)}
@@ -139,20 +139,3 @@ class Labyrinth:
                         queue.enqueue((new_rhinotron, boxes, moves + move))
 
         return "No solution"
-
-
-if __name__ == "__main__":
-    sokoban_map = """
-#######
-#.@ # #
-#$* $ #
-#   $ #
-# ..  #
-#  *  #
-#######
-"""
-    lab = Labyrinth()
-    grid = lab.parse_sokoban_map(sokoban_map)
-    solution = lab.sokoban_solver(grid)
-
-    print("Solution:", solution)
