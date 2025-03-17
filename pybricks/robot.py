@@ -1,5 +1,5 @@
 from robot_eyes import RobotEyes
-from robot_legs import RobotLegs
+from motor_coordination import MotorCoordination
 from pybricks.parameters import Port
 from pybricks.hubs import PrimeHub
 from pybricks.tools import wait
@@ -11,7 +11,7 @@ class Robot:
         # About 8 cm from eye to leg
 
         # Initialise Motors (wheels)
-        self.legs : RobotLegs = RobotLegs(Port.B, Port.A)
+        self.legs : MotorCoordination = MotorCoordination(Port.B, Port.A)
 
         # Initialize & calibrate the sensors
         # We currently have no eyes
