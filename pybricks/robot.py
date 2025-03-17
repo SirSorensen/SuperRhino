@@ -37,7 +37,7 @@ class Robot:
             print("\nNext move =", next_move)
             turn_degree, move_dist = self.consciousness.next(next_move)
             self.vocals.boop_beep()
-            Nervous_System.go(self.movement, self.direction, turn_degree, move_dist*10)
+            Nervous_System.go(self.movement, self.direction, turn_degree, move_dist)
             self.vocals.beep_boop()
 
         self.prime_hub.speaker.play_notes(['C4/4', 'C4/4', 'G4/4', 'G4/4'])

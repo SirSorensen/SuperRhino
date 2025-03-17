@@ -2,46 +2,38 @@
 
 class Consciousness:
     def __init__(self, start_direction : str, start_position : tuple[int, int]):
-        temp_edge_lengths = {  # in cm
-            # 0 on Y-axis
-            ((0, 0), (1, 0)): 51.5,
-            ((0, 0), (0, 1)): 14.6,
-            ((1, 0), (2, 0)): 54,
-            ((1, 0), (1, 1)): 16.4,
-            ((2, 0), (3, 0)): 60,
-            ((2, 0), (2, 1)): 16.5,
-            ((3, 0), (3, 1)): 16,
-            # 1 on Y-axis
-            ((0, 1), (1, 1)): 51.7,
-            ((0, 1), (0, 2)): 15.5,
-            ((1, 1), (2, 1)): 54.5,
-            ((1, 1), (1, 2)): 15.3,
-            ((2, 1), (3, 1)): 59.2,
-            ((2, 1), (2, 2)): 15.1,
-            ((3, 1), (3, 2)): 16,
-            # 2 on Y-axis
-            ((0, 2), (1, 2)): 51.5,
-            ((0, 2), (0, 3)): 15.4,
-            ((1, 2), (2, 2)): 54.5,
-            ((1, 2), (1, 3)): 14.5,
-            ((2, 2), (3, 2)): 59.1,
-            ((2, 2), (2, 3)): 14.6,
-            ((3, 2), (3, 3)): 15.1,
-            # 3 on Y-axis
-            ((0, 3), (1, 3)): 51.7,
-            ((1, 3), (2, 3)): 54.7,
-            ((2, 3), (3, 3)): 58.6,
+        temp_edge_lengths = {  # in mm
+            ((3, 3), (2, 3)): 515,
+            ((3, 3), (3, 2)): 146,
+            ((2, 3), (1, 3)): 540,
+            ((2, 3), (2, 2)): 164,
+            ((1, 3), (0, 3)): 600,
+            ((1, 3), (1, 2)): 165,
+            ((0, 3), (0, 2)): 160,
+            ((3, 2), (2, 2)): 517,
+            ((3, 2), (3, 1)): 155,
+            ((2, 2), (1, 2)): 545,
+            ((2, 2), (2, 1)): 153,
+            ((1, 2), (0, 2)): 592,
+            ((1, 2), (1, 1)): 151,
+            ((0, 2), (0, 1)): 160,
+            ((3, 1), (2, 1)): 515,
+            ((3, 1), (3, 0)): 154,
+            ((2, 1), (1, 1)): 545,
+            ((2, 1), (2, 0)): 145,
+            ((1, 1), (0, 1)): 591,
+            ((1, 1), (1, 0)): 146,
+            ((0, 1), (0, 0)): 151,
+            ((3, 0), (2, 0)): 517,
+            ((2, 0), (1, 0)): 547,
+            ((1, 0), (0, 0)): 586,
         }
 
         # For each (s,e) key create (e,s) key with same value
         self.edge_lengths = {}
         for (s, e), value in temp_edge_lengths.items():
-            sx, sy = s
-            transformed_s = (sy, 3 - sx)
-            ex, ey = e
-            transformed_e = (ey, 3 - ex)
-            self.edge_lengths[(transformed_s, transformed_e)] = value
-            self.edge_lengths[(transformed_e, transformed_s)] = value
+            self.edge_lengths[(s, e)] = value
+            self.edge_lengths[(e, s)] = value
 
         self.tape_distance = 4.7
 
@@ -97,44 +89,20 @@ class Consciousness:
     def turn_degree(self, move : str):
         cur_dir = self.cur_direction
         next_dir = self.next_direction(move)
-        if (cur_dir, next_dir) == ("N", "S"):
+        if (cur_dir, next_dir) == ("N", "S") or (cur_dir, next_dir) == ("E", "W") or (cur_dir, next_dir) == ("S", "N") or (cur_dir, next_dir) == ("W", "E"):
             return 180
-        if (cur_dir, next_dir) == ("E", "W"):
-            return 180
-        if (cur_dir, next_dir) == ("S", "N"):
-            return 180
-        if (cur_dir, next_dir) == ("W", "E"):
-            return 180
-        if (cur_dir, next_dir) == ("N", "E"):
+        if (cur_dir, next_dir) == ("N", "E") or (cur_dir, next_dir) == ("E", "S") or (cur_dir, next_dir) == ("S", "W") or (cur_dir, next_dir) == ("W", "N"):
             return 90
-        if (cur_dir, next_dir) == ("E", "S"):
-            return 90
-        if (cur_dir, next_dir) == ("S", "W"):
-            return 90
-        if (cur_dir, next_dir) == ("W", "N"):
-            return 90
-        if (cur_dir, next_dir) == ("N", "W"):
+        if (cur_dir, next_dir) == ("N", "W") or (cur_dir, next_dir) == ("E", "N") or (cur_dir, next_dir) == ("S", "E") or (cur_dir, next_dir) == ("W", "S"):
             return -90
-        if (cur_dir, next_dir) == ("E", "N"):
-            return -90
-        if (cur_dir, next_dir) == ("S", "E"):
-            return -90
-        if (cur_dir, next_dir) == ("W", "S"):
-            return -90
-        if (cur_dir, next_dir) == ("N", "N"):
-            return 0
-        if (cur_dir, next_dir) == ("E", "E"):
-            return 0
-        if (cur_dir, next_dir) == ("S", "S"):
-            return 0
-        if (cur_dir, next_dir) == ("W", "W"):
+        if (cur_dir, next_dir) == ("N", "N") or (cur_dir, next_dir) == ("E", "E") or (cur_dir, next_dir) == ("S", "S") or (cur_dir, next_dir) == ("W", "W"):
             return 0
 
         print("ERROR : Illegal move string!")
         return 0
 
-    def next(self, move : str):
-        result = (self.turn_degree(move), self.move_distance(move))
+    def next(self, move : str) -> tuple[float, float]:
+        result : tuple[float, float] = (self.turn_degree(move), self.move_distance(move))
         self.change_state(move)
 
         print("Next values:")
