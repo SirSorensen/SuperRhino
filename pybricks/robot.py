@@ -2,6 +2,7 @@ from pybricks.parameters import Port
 from pybricks.hubs import PrimeHub
 from mind.planner import Planner
 from mind.consciousness import Consciousness
+from coordination.nervous_system import Nervous_System
 from senses.vision import Vision
 from senses.directional import Sense_of_Direction
 from communication.vocals import Vocals
@@ -35,10 +36,8 @@ class Robot:
             next_move = self.planner.next_move()
             print("\nNext move =", next_move)
             turn_degree, move_dist = self.consciousness.next(next_move)
-            self.movement.turn(turn_degree)
             self.vocals.boop_beep()
-            self.prime_hub.speaker.beep(140, 50)
-            self.movement.go_distance(move_dist*10)
+            Nervous_System.go(self.movement, self.direction, turn_degree, move_dist*10)
             self.vocals.beep_boop()
 
         self.prime_hub.speaker.play_notes(['C4/4', 'C4/4', 'G4/4', 'G4/4'])
