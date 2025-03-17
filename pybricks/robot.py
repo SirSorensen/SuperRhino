@@ -27,11 +27,10 @@ class Robot:
         self.calibrate_direction()
 
 
-    def sokoban_prep(self, solution_str : str, rhinotron_coords):
+    def sokoban(self, solution_str : str, rhinotron_coords, rhinotron_direction = "E"):
         self.planner : Planner = Planner(solution_str)
-        self.consciousness : Consciousness = Consciousness("E", rhinotron_coords)
+        self.consciousness : Consciousness = Consciousness(rhinotron_direction, rhinotron_coords)
 
-    def sokoban_run(self):
         while not self.planner.is_done():
             next_move = self.planner.next_move()
             print("\nNext move =", next_move)
