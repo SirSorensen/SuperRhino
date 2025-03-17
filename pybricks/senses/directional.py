@@ -10,10 +10,15 @@ class Sense_of_Direction:
         while not self.imu.ready():
             pass
 
-        # For calibrations
-        self.acceleration_error = None
+        # Calibrations:
+        self.calibrate_acceleration()
         self.heading_errors = []
         self.heading_threshold = None
+
+
+    def heading(self) -> float:
+        return self.imu.heading()
+
 
     ########################## Calibrations: ##########################
 
@@ -26,7 +31,17 @@ class Sense_of_Direction:
 
     def add_heading_error(self, current_degree) -> float:
         measure_angle = Angle.to_angle(avg_measure(self.imu.heading))
-        error = current_degree - measure_angle
+        current_angle = Angle.to_angle(current_degree)
+        # If i.e. current_angle = 179 and measure_angle = -179
+        if (current_angle >= 0 > measure_angle or measure_angle >= 0 > current_angle) and (abs(current_angle) > 100 and abs(measure_angle) > 100):
+            print(f"({current_angle} >= 0 > {measure_angle} or {measure_angle} >= 0 > {current_angle}) = True" )
+            if current_angle >= 0 > measure_angle:
+                error = current_degree - (measure_angle + 360)
+            else:
+                error = current_degree - (measure_angle - 360)
+        else:
+            error = current_degree - measure_angle
+
         self.heading_errors.append(error)
 
     def finish_calibrate_heading(self):

@@ -4,19 +4,27 @@ from pybricks.parameters import Port
 from pybricks.hubs import PrimeHub
 from mind.planner import Planner
 from mind.consciousness import Consciousness
+from senses.vision import Vision
+from senses.directional import Sense_of_Direction
+from communication.vocals import Vocals
+from physiology.movement import Movement
 
 
 class Robot:
     def __init__(self):
+        # Initialise PrimeHub
+        self.prime_hub: PrimeHub = PrimeHub()
+
         # Initialise Motors (wheels)
         self.movement: Movement = Movement(Port.B, Port.A)
 
         # Initialize & calibrate the sensors
         self.vision : Vision = Vision(Port.F, Port.E)
+        self.direction : Sense_of_Direction = Sense_of_Direction(self.prime_hub.imu)
 
-        # Initialise PrimeHub
-        self.prime_hub: PrimeHub = PrimeHub()
-        self.prime_hub.speaker.volume(10)
+
+        # Calibrations
+        self.calibrate_direction()
 
 
     def sokoban_prep(self, solution_str : str, rhinotron_coords):
@@ -36,3 +44,37 @@ class Robot:
             self.prime_hub.speaker.beep(130, 50)
 
         self.prime_hub.speaker.play_notes(['C4/4', 'C4/4', 'G4/4', 'G4/4'])
+
+
+    ########################## Calibrations: ##########################
+
+    def calibrate_direction(self):
+        ###  0  ###
+        self.direction.add_heading_error(0)
+        ### -30 ###
+        self.movement.turn(-30)
+        self.direction.add_heading_error(-30)
+        ### -60 ###
+        self.movement.turn(-30)
+        self.direction.add_heading_error(-60)
+        ### -90 ###
+        self.movement.turn(-30)
+        self.direction.add_heading_error(-90)
+        ###  0 ###
+        self.movement.turn(90)
+        self.direction.add_heading_error(0)
+        ###  30 ###
+        self.movement.turn(30)
+        self.direction.add_heading_error(30)
+        ###  60 ###
+        self.movement.turn(30)
+        self.direction.add_heading_error(60)
+        ###  90 ###
+        self.movement.turn(30)
+        self.direction.add_heading_error(90)
+        ###  0  ###
+        self.movement.turn(-90)
+        self.direction.add_heading_error(0)
+
+        ### Done ###
+        self.direction.finish_calibrate_heading()
