@@ -1,4 +1,4 @@
-from sensors.vision import Vision
+from senses.vision import Vision
 from motor_coordination import MotorCoordination
 from pybricks.parameters import Port
 from pybricks.hubs import PrimeHub
