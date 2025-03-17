@@ -13,11 +13,12 @@ class Sense_of_Direction:
         # Calibrations:
         self.calibrate_acceleration()
         self.heading_errors = []
-        self.heading_threshold = None
+        self.heading_threshold = 0
 
 
-    def heading(self) -> float:
-        return self.imu.heading()
+    def direction(self) -> float:
+        """Return a float between -179 and 180 which is based on calibrated threshold."""
+        return Angle.to_angle(self.imu.heading() - self.heading_threshold)
 
 
     ########################## Calibrations: ##########################
