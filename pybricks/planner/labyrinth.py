@@ -3,45 +3,7 @@ from our_queue import Queue
 
 class Labyrinth:
     def __init__(self):
-
-        temp_edge_lengths = {  # in cm
-            # 0 on Y-axis
-            ((0, 0), (1, 0)): 51.5,
-            ((0, 0), (0, 1)): 14.6,
-            ((1, 0), (2, 0)): 54,
-            ((1, 0), (1, 1)): 16.4,
-            ((2, 0), (3, 0)): 60,
-            ((2, 0), (2, 1)): 16.5,
-            ((3, 0), (3, 1)): 16,
-            # 1 on Y-axis
-            ((0, 1), (1, 1)): 51.7,
-            ((0, 1), (0, 2)): 15.5,
-            ((1, 1), (2, 1)): 54.5,
-            ((1, 1), (1, 2)): 15.3,
-            ((2, 1), (3, 1)): 59.2,
-            ((2, 1), (2, 2)): 15.1,
-            ((3, 1), (3, 2)): 16,
-            # 2 on Y-axis
-            ((0, 2), (1, 2)): 51.5,
-            ((0, 2), (0, 3)): 15.4,
-            ((1, 2), (2, 2)): 54.5,
-            ((1, 2), (1, 3)): 14.5,
-            ((2, 2), (3, 2)): 59.1,
-            ((2, 2), (2, 3)): 14.6,
-            ((3, 2), (3, 3)): 15.1,
-            # 3 on Y-axis
-            ((0, 3), (1, 3)): 51.7,
-            ((1, 3), (2, 3)): 54.7,
-            ((2, 3), (3, 3)): 58.6,
-        }
-
-        # For each (s,e) key create (e,s) key with same value
-        self.edge_lengths = {}
-        for (s, e), value in temp_edge_lengths.items():
-            self.edge_lengths[(s, e)] = value
-            self.edge_lengths[(e, s)] = value
-
-        self.tape_distance = 4.7
+        pass
 
     def parse_map_str(map_str: str) -> list[list[str]]:
         grid = [list(row) for row in map_str.strip().split("\n")]
