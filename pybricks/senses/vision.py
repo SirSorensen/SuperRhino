@@ -15,23 +15,6 @@ class Vision:
         self.calibrate()
 
 
-    def measure(self):
-        left = self.left_sensor.reflection()
-        right = self.right_sensor.reflection()
-
-        if left <= 5 or right <= 5:
-            self.cliff_acc += 1
-        elif self.cliff_acc > 0:
-            self.cliff_acc -= 1
-
-        self.do_I_see_tape = ((10 <= left <= 15), (10 <= right <= 15))
-
-        return (left, right)
-
-    def do_I_see_a_cliff(self):
-        return self.cliff_acc > 150
-
-
 
     ########################## Calibrations: ##########################
 
