@@ -1,8 +1,8 @@
-
 from pybricks.pupdevices import ColorSensor
 import calibrations as cal
 
-class RobotEyes:
+
+class Vision:
     def __init__(self, left_port, right_port):
         # Initialize & calibrate the sensors.
         self.left_sensor: ColorSensor = ColorSensor(left_port)
@@ -27,6 +27,5 @@ class RobotEyes:
 
         return (left, right)
 
-
     def do_I_see_a_cliff(self):
-        return  self.cliff_acc > 150
+        return self.cliff_acc > 150

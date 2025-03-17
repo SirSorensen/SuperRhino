@@ -1,4 +1,4 @@
-from robot_eyes import RobotEyes
+from sensors.vision import Vision
 from motor_coordination import MotorCoordination
 from pybricks.parameters import Port
 from pybricks.hubs import PrimeHub
@@ -11,14 +11,12 @@ class Robot:
         # About 8 cm from eye to leg
 
         # Initialise Motors (wheels)
-        self.legs : MotorCoordination = MotorCoordination(Port.B, Port.A)
+        self.legs: MotorCoordination = MotorCoordination(Port.B, Port.A)
 
         # Initialize & calibrate the sensors
         # We currently have no eyes
-        #self.eyes : RobotEyes = RobotEyes(Port.B, Port.F)
+        # self.eyes : RobotEyes = RobotEyes(Port.B, Port.F)
 
         # Initialise PrimeHub
         self.prime_hub: PrimeHub = PrimeHub()
         self.prime_hub.speaker.volume(50)
-
-
