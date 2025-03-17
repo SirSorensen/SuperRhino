@@ -4,7 +4,7 @@ from pybricks.robotics import DriveBase
 
 
 class Movement:
-    def __init__(self, left_motor_port: Port, right_motor_port: Port, wheel_diameter=56, axle_track=85, turn_rate=50, turn_degree=40, speed=200):
+    def __init__(self, left_motor_port: Port, right_motor_port: Port, wheel_diameter=56, axle_track=85, turn_rate=50, turn_degree=40, speed=400):
         # Initialise Motors (wheels)
         self.left_motor: Motor = Motor(left_motor_port, Direction.COUNTERCLOCKWISE)
         self.right_motor: Motor = Motor(right_motor_port)
@@ -38,3 +38,10 @@ class Movement:
 
     def spin(self):
         self.drive_base.turn(360)
+
+    def go_distance(self, dist):
+        self.reset_distance()
+        self.go_forward()
+        while self.get_distance() < dist:
+            pass
+        self.hold()
