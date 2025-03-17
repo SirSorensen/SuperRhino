@@ -26,3 +26,4 @@ class Queue:
     def size(self):
         """Return the number of items in the queue."""
         return len(self.queue)
+

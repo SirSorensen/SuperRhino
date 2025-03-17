@@ -1,4 +1,4 @@
-from queue import Queue
+from our_queue import Queue
 
 
 class Labyrinth:
