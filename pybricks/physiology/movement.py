@@ -32,6 +32,16 @@ class Movement:
         angle = Angle.to_angle(degree)
         self.drive_base.turn(angle)
 
+    def slow_turn(self, dir : Direction):
+        if dir.name == Direction.CLOCKWISE:
+            self.left_motor.run(self._turn_rate)
+            self.right_motor.run(-self._turn_rate)
+        elif dir.name == Direction.COUNTERCLOCKWISE:
+            self.left_motor.run(-self._turn_rate)
+            self.right_motor.run(self._turn_rate)
+        else:
+            print("ERROR: Illegal Direction!")
+
     def reset_distance(self):
         self.drive_base.reset()
 

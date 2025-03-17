@@ -1,4 +1,4 @@
-
+import umath as math
 
 class Angle:
     def __init__(self, degree):
@@ -9,6 +9,10 @@ class Angle:
     def to_angle(degree) -> float:
         angle = Angle(degree)
         return angle.value
+
+    def to_angle_from_radians(radians) -> float:
+        degrees = math.degrees(radians)
+        return Angle.to_angle(degrees)
 
     def in_diff_domains(degree_1 : float, degree_2 : float):
         angle_1 = Angle.to_angle(degree_1)

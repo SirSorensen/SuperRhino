@@ -14,6 +14,26 @@ class Vision:
 
         self.calibrate()
 
+
+    def measure(self):
+        return (self.left_sensor.reflection(), self.right_sensor.reflection())
+
+    def _determine_object(self, reflection):
+        if self.table_range[0] <= reflection <= self.table_range[1]:
+            return "TABLE"
+        elif self.tape_range[0] <= reflection <= self.tape_range[1]:
+            return "TAPE"
+        elif self.edge_range[0] <= reflection <= self.edge_range[1]:
+            return "EDGE"
+        else:
+            return "UNKNOWN"
+
+    def what_is_seen(self):
+        left, right = self.measure()
+        left_result = self._determine_object(left)
+        right_result = self._determine_object(right)
+        return (left_result, right_result)
+
     ########################## Calibrations: ##########################
 
     def calibrate(self):
