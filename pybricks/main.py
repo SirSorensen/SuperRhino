@@ -1,3 +1,4 @@
-import robot_tests as tests
+from robot import Robot
 
-tests.sokoban_test()
+r = Robot()
+r.sokoban("UURRDRDDLRULULULDD", (0, 1))
