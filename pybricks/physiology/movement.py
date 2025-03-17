@@ -1,6 +1,7 @@
 from pybricks.parameters import Direction, Port
 from pybricks.pupdevices import Motor
 from pybricks.robotics import DriveBase
+from utils.angle import Angle
 
 
 class Movement:
@@ -27,7 +28,8 @@ class Movement:
         self.left_motor.hold()
         self.right_motor.hold()
 
-    def turn(self, angle):
+    def turn(self, degree):
+        angle = Angle.to_angle(degree)
         self.drive_base.turn(angle)
 
     def reset_distance(self):
