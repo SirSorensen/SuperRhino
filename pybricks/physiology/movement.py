@@ -12,17 +12,17 @@ class Movement:
 
         self.drive_base: DriveBase = DriveBase(self.left_motor, self.right_motor, wheel_diameter=wheel_diameter, axle_track=axle_track)
 
-        self.turn_rate = turn_rate
-        self.turn_degree = turn_degree
-        self.speed = speed
+        self._turn_rate = turn_rate
+        self._turn_degree = turn_degree
+        self._speed = speed
 
     def go_forward(self):
-        self.left_motor.run(self.speed)
-        self.right_motor.run(self.speed)
+        self.left_motor.run(self._speed)
+        self.right_motor.run(self._speed)
 
     def go_back(self):
-        self.left_motor.run(-self.speed)
-        self.right_motor.run(-self.speed)
+        self.left_motor.run(-self._speed)
+        self.right_motor.run(-self._speed)
 
     def hold(self):
         self.left_motor.hold()
