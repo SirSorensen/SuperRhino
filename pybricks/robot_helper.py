@@ -11,7 +11,9 @@ def go(movement : Movement, directional : Sense_of_Direction, turn_degree, move_
     directional.reset()
     while movement.get_distance() < move_dist:
         movement.go_forward()
-        fix_angle(movement, directional, 0)
+        movement, directional = fix_angle(movement, directional, 0)
+
+    return movement, directional
 
 
 def fix_angle(movement : Movement, directional : Sense_of_Direction, correct_angle):
@@ -22,3 +24,5 @@ def fix_angle(movement : Movement, directional : Sense_of_Direction, correct_ang
     while dir_error != 0:
         movement.turn(dir_error)
         dir_error = directional.calc_direction_error(correct_angle)
+
+    return movement, directional
