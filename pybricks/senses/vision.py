@@ -3,12 +3,12 @@ import calibrations as cal
 
 
 class Vision:
-    def __init__(self, left_port, right_port):
+    def __init__(self, left_eye_port, right_eye_port):
         # Initialize & calibrate the sensors.
-        self.left_sensor: ColorSensor = ColorSensor(left_port)
+        self.left_sensor: ColorSensor = ColorSensor(left_eye_port)
         self.left_threshold = cal.calibrate_light_sensor(self.left_sensor)
 
-        self.right_sensor: ColorSensor = ColorSensor(right_port)
+        self.right_sensor: ColorSensor = ColorSensor(right_eye_port)
         self.right_threshold = cal.calibrate_light_sensor(self.right_sensor)
 
         self.cliff_acc = 0

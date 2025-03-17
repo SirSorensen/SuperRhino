@@ -1,3 +1,4 @@
+from senses.vision import Vision
 from physiology.movement import Movement
 from pybricks.parameters import Port
 from pybricks.hubs import PrimeHub
@@ -7,9 +8,11 @@ from mind.consciousness import Consciousness
 
 class Robot:
     def __init__(self):
-
         # Initialise Motors (wheels)
         self.movement: Movement = Movement(Port.B, Port.A)
+
+        # Initialize & calibrate the sensors
+        self.vision : Vision = Vision(Port.F, Port.E)
 
         # Initialise PrimeHub
         self.prime_hub: PrimeHub = PrimeHub()
