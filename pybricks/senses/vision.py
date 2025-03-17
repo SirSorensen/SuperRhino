@@ -1,5 +1,5 @@
 from pybricks.pupdevices import ColorSensor
-import calibrations as cal
+import utils.calibrations as cal
 
 
 class Vision:
