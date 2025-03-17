@@ -27,3 +27,9 @@ class Queue:
         """Return the number of items in the queue."""
         return len(self.queue)
 
+def list_to_queue(xs : list) -> Queue:
+    queue = Queue()
+    for x in xs:
+        queue.enqueue(x)
+    return queue
+
