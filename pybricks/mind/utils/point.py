@@ -10,4 +10,4 @@ class Point(object):
     def to_vector(self, other) -> tuple[float, float]:
         if type(other) is not Point:
             raise KeyError("other has to be a Point")
-        (other.X - self.X, other.Y - self.Y)
+        return (other.X - self.X, other.Y - self.Y)
