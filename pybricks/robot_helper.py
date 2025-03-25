@@ -10,7 +10,7 @@ from senses.compass import Compass
 def go(movement: Movement, compass: Compass, turn_degree, move_dist):
     compass.reset()
 
-    movement.turn(turn_degree)
+    movement.turn_to(turn_degree)
     fix_angle(movement, compass, turn_degree)
 
     movement.reset_distance()
@@ -28,18 +28,18 @@ def fix_angle(movement: Movement, compass: Compass, correct_angle):
         movement.hold()
 
     while dir_error != 0:
-        movement.turn(dir_error)
+        movement.turn_to(dir_error)
         dir_error = compass.calc_direction_error(correct_angle)
 
     return movement, compass
 
 
-def measure_tape(movement: Movement, compass: Compass, vision : Vision, camera_dist : float, angle_to_camera : float):
-    def slow_and_measure(side : str):
+def measure_tape(movement: Movement, compass: Compass, vision: Vision, camera_dist: float, angle_to_camera: float):
+    def slow_and_measure(side: str):
         if side.upper() == "L":
             dir = Direction.COUNTERCLOCKWISE
             eye_index = 0
-            fix_angle = - angle_to_camera
+            fix_angle = -angle_to_camera
         else:
             dir = Direction.CLOCKWISE
             eye_index = 1
@@ -52,7 +52,7 @@ def measure_tape(movement: Movement, compass: Compass, vision : Vision, camera_d
         tape_edge_angle = compass.direction() + fix_angle
         return (math.cos(tape_edge_angle), math.sin(tape_edge_angle))
 
-    compass.reset() # Direction = 0 degrees
+    compass.reset()  # Direction = 0 degrees
 
     l1 = slow_and_measure("L")
     fix_angle(movement, compass, 0)
@@ -74,7 +74,7 @@ def measure_tape(movement: Movement, compass: Compass, vision : Vision, camera_d
         x2, y2 = point_2
         f = (y2 - y1) / (x2 - x1)
         line_length = math.sqrt(f**2 + 1**2)
-        normalized = f/line_length
+        normalized = f / line_length
         return Angle.to_angle_from_radians(math.asin(normalized))
 
     l_angle = calc_line_degree(l1, (l2_x, l2_y))
@@ -86,14 +86,12 @@ def measure_tape(movement: Movement, compass: Compass, vision : Vision, camera_d
 
     x_error = (r2_x + l2_x) / 2
     if x_error > 0:
-        movement.turn(90)
+        movement.turn_to(90)
         movement.go_distance(x_error)
-        movement.turn(-90)
+        movement.turn_to(-90)
     else:
-        movement.turn(-90)
+        movement.turn_to(-90)
         movement.go_distance(x_error)
-        movement.turn(90)
+        movement.turn_to(90)
 
     fix_angle(movement, compass, angle_error)
-
-

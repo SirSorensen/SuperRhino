@@ -47,28 +47,28 @@ class Robot:
         ###  0  ###
         self.compass.add_heading_error(0)
         ### -30 ###
-        self.movement.turn(-30)
+        self.movement.turn_to(-30)
         self.compass.add_heading_error(-30)
         ### -60 ###
-        self.movement.turn(-30)
+        self.movement.turn_to(-30)
         self.compass.add_heading_error(-60)
         ### -90 ###
-        self.movement.turn(-30)
+        self.movement.turn_to(-30)
         self.compass.add_heading_error(-90)
         ###  0 ###
-        self.movement.turn(90)
+        self.movement.turn_to(90)
         self.compass.add_heading_error(0)
         ###  30 ###
-        self.movement.turn(30)
+        self.movement.turn_to(30)
         self.compass.add_heading_error(30)
         ###  60 ###
-        self.movement.turn(30)
+        self.movement.turn_to(30)
         self.compass.add_heading_error(60)
         ###  90 ###
-        self.movement.turn(30)
+        self.movement.turn_to(30)
         self.compass.add_heading_error(90)
         ###  0  ###
-        self.movement.turn(-90)
+        self.movement.turn_to(-90)
         self.compass.add_heading_error(0)
 
         ### Done ###
