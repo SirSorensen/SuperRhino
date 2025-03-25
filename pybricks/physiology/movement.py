@@ -32,13 +32,16 @@ class Movement:
         angle = Angle.to_angle(degree)
         self.drive_base.turn(angle)
 
-    def slow_turn(self, dir : Direction):
+    def turn(self, dir: Direction, turn_rate: int = 0):
+        if turn_rate == 0:
+            turn_rate = self._turn_rate
+
         if dir.name == Direction.CLOCKWISE:
-            self.left_motor.run(self._turn_rate)
-            self.right_motor.run(-self._turn_rate)
+            self.left_motor.run(turn_rate)
+            self.right_motor.run(-turn_rate)
         elif dir.name == Direction.COUNTERCLOCKWISE:
-            self.left_motor.run(-self._turn_rate)
-            self.right_motor.run(self._turn_rate)
+            self.left_motor.run(-turn_rate)
+            self.right_motor.run(turn_rate)
         else:
             print("ERROR: Illegal Direction!")
 

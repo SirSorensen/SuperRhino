@@ -45,7 +45,7 @@ def measure_tape(movement: Movement, compass: Compass, vision: Vision, camera_di
             eye_index = 1
             fix_angle = angle_to_camera
 
-        movement.slow_turn(dir)
+        movement.turn(dir)
         while vision.what_is_seen()[eye_index] != "TAPE":
             pass
         movement.hold()
