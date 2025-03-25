@@ -12,7 +12,3 @@ class Trigonometry:
         r2 = d2 - d1 - 360
         r3 = d2 - d1 + 360
         return min(r1, r2, r3, key=lambda r: abs(r))
-
-
-if __name__ == "__main__":
-    print(Trigonometry.calc_diff(357, 3))

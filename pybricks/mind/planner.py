@@ -1,5 +1,5 @@
-from mind.utils.queue import list_to_queue, Queue
-from mind.utils.cardinal_direction import CardinalDirection
+from utils.queue import list_to_queue, Queue
+from utils.cardinal_direction import CardinalDirection
 
 
 class Planner:

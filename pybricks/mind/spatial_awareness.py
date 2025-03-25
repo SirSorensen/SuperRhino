@@ -1,6 +1,6 @@
-from mind.utils.cardinal_direction import CardinalDirection, diff
-from mind.utils.point import Point
-from mind.utils.trigonometry import Trigonometry
+from utils.cardinal_direction import CardinalDirection, diff
+from utils.point import Point
+from utils.trigonometry import Trigonometry
 
 
 class Spatial_Awareness:
@@ -14,12 +14,10 @@ class Spatial_Awareness:
 
         self.last_dist = 0
 
-
     def next_angle(self, next_dir: CardinalDirection) -> float:
         result = diff(self.cur_direction, next_dir)
         self.cur_direction = next_dir
         return result
-
 
     def update_pos(self, dist, cur_heading):
         # Calcs
@@ -28,7 +26,6 @@ class Spatial_Awareness:
         # Update properties
         self.cur_position.update(change_vector)
         self.last_dist = dist
-
 
     def get_eyes_posses(self) -> tuple[Point, Point]:
         left = self.cur_position.sum(self.dist_eye_left)

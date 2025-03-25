@@ -1,6 +1,7 @@
 from pybricks._common import IMU
-from mind.utils.trigonometry import Trigonometry
+from utils.trigonometry import Trigonometry
 from utils.calibrations import avg_measure
+
 
 class Compass:
     def __init__(self, imu: IMU):
@@ -16,8 +17,7 @@ class Compass:
 
     def direction(self) -> float:
         """Return a float between 0 and 360 which is based on calibrated threshold."""
-        return (self.imu.heading() - self.heading_threshold)
-
+        return self.imu.heading() - self.heading_threshold
 
     ########################## Calibrations: ##########################
 
