@@ -91,10 +91,9 @@ class Robot:
                 dir = Direction.CLOCKWISE
                 eye_index = 1
 
-            self.start_turn(dir)
             while self.vision.what_is_seen()[eye_index] != VisionObject.TAPE:
-                self.update_space()
-                pass
+                self.start_turn(dir)
+
             self.movement.hold()
             self.update_space()
 
