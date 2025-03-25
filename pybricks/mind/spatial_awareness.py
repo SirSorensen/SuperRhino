@@ -21,7 +21,7 @@ class Spatial_Awareness:
         self.cur_direction = next_dir
         return result
 
-    def update_pos(self, dist, cur_heading):
+    def update(self, dist, cur_heading):
         # Calcs
         change_in_dist = dist - self.last_dist
         change_vector = Trigonometry.to_vector(change_in_dist, cur_heading)
@@ -33,3 +33,10 @@ class Spatial_Awareness:
         left = self.cur_position.sum(self.dist_eye_left)
         right = self.cur_position.sum(self.dist_eye_right)
         return (left, right)
+
+    def print_status(self):
+        print()
+        print(f"Current position      = {self.cur_position}")
+        print(f"Current direction     = {self.cur_direction}")
+        print(f"Current eye positions = {self.get_eyes_posses()}")
+        print()

@@ -16,3 +16,6 @@ class Point(object):
         if type(other) is not Point:
             raise KeyError("other has to be a Point")
         return Point(other.X + self.X, other.Y + self.Y)
+
+    def __str__(self):
+        return f"({self.X}, {self.Y})"

@@ -22,3 +22,6 @@ class Movement:
     def turn_degrees(self, degrees):
         angle = degrees
         self.drive_base.turn(angle)
+
+    def distance(self):
+        return self.drive_base.distance()
