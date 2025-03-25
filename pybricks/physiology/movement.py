@@ -30,7 +30,7 @@ class Movement:
 
     def turn_to(self, degree):
         angle = Angle.to_angle(degree)
-        self.drive_base.turn_to(angle)
+        self.drive_base.turn(angle)
 
     def slow_turn(self, dir : Direction):
         if dir.name == Direction.CLOCKWISE:
@@ -49,7 +49,7 @@ class Movement:
         return self.drive_base.distance()
 
     def spin(self):
-        self.drive_base.turn_to(360)
+        self.drive_base.turn(360)
 
     def go_distance(self, dist):
         self.reset_distance()
