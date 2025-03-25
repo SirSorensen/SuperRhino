@@ -16,7 +16,7 @@ def go(movement: Movement, compass: Compass, turn_degree, move_dist):
     movement.reset_distance()
     compass.reset()
     while movement.get_distance() < move_dist:
-        movement.go_forward()
+        movement.start_forward()
         movement, compass = fix_angle(movement, compass, 0)
 
     return movement, compass
@@ -45,7 +45,7 @@ def measure_tape(movement: Movement, compass: Compass, vision: Vision, camera_di
             eye_index = 1
             fix_angle = angle_to_camera
 
-        movement.turn(dir)
+        movement.start_turn(dir)
         while vision.what_is_seen()[eye_index] != "TAPE":
             pass
         movement.hold()

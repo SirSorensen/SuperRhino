@@ -16,11 +16,11 @@ class Movement:
         self._turn_degree = turn_degree
         self._speed = speed
 
-    def go_forward(self):
+    def start_forward(self):
         self.left_motor.run(self._speed)
         self.right_motor.run(self._speed)
 
-    def go_back(self):
+    def start_backward(self):
         self.left_motor.run(-self._speed)
         self.right_motor.run(-self._speed)
 
@@ -32,7 +32,7 @@ class Movement:
         angle = Angle.to_angle(degree)
         self.drive_base.turn(angle)
 
-    def turn(self, dir: Direction, turn_rate: int = 0):
+    def start_turn(self, dir: Direction, turn_rate: int = 0):
         if turn_rate == 0:
             turn_rate = self._turn_rate
 
@@ -56,7 +56,7 @@ class Movement:
 
     def go_distance(self, dist):
         self.reset_distance()
-        self.go_forward()
+        self.start_forward()
         while self.get_distance() < dist:
             pass
         self.hold()
