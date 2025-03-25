@@ -69,7 +69,7 @@ class Robot:
 
                 # If it is NOT an intersection, then it is probably due to being hit
                 if not self.detect_intersection():
-                    self.fix_angle()
+                    pass
 
                 # If it is an intersection, then keep going until in the middle of intersection
                 else:
