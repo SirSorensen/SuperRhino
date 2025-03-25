@@ -22,12 +22,14 @@ class Robot:
         self.vision: Vision = Vision(Port.F, Port.E)
         self.compass: Compass = Compass(self.prime_hub.imu)
 
+        # Initialize & awareness
+        self.spatial_awareness: Spatial_Awareness = Spatial_Awareness((2,4)) #TODO: Measure dist to eyes
+
     def sokoban(self, solution_str: str):
         self.planner: Planner = Planner(solution_str)
-        self.consciousness: Spatial_Awareness = Spatial_Awareness()
 
         while not self.planner.is_done():
             next_move = self.planner.next_move()
             print("\nNext move =", next_move)
-            turn_degree = self.consciousness.next_angle(next_move)
+            turn_degree = self.spatial_awareness.next_angle(next_move)
             print(f"Gotta turn {turn_degree} degrees")
