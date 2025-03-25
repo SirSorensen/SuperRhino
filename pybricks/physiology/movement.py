@@ -5,7 +5,7 @@ from utils.angle import Angle
 
 
 class Movement:
-    def __init__(self, left_motor_port: Port, right_motor_port: Port, wheel_diameter=56, axle_track=85, turn_rate=50, turn_degree=40, speed=400):
+    def __init__(self, left_motor_port: Port, right_motor_port: Port, wheel_diameter=56, axle_track=160, turn_rate=50, turn_degree=40, speed=400):
         # Initialise Motors (wheels)
         self.left_motor: Motor = Motor(left_motor_port, Direction.COUNTERCLOCKWISE)
         self.right_motor: Motor = Motor(right_motor_port)
