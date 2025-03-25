@@ -6,7 +6,7 @@ class CardinalDirection:
     W: tuple[int, int] = (-1, 0)
     E: tuple[int, int] = (1, 0)
 
-    def to_orientation(s: str):
+    def to_cardinal_direction(s: str):
         if s.upper() == "U" or s.upper() == "N":
             return CardinalDirection.N
         if s.upper() == "D" or s.upper() == "S":
