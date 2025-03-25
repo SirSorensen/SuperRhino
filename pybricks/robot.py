@@ -4,6 +4,7 @@ from pybricks.hubs import PrimeHub
 from mind.spatial_awareness import Spatial_Awareness
 from mind.planner import Planner
 
+from utils.state import VisionObject
 from senses.vision import Vision
 from senses.compass import Compass
 
@@ -41,14 +42,44 @@ class Robot:
             self.movement.turn_degrees(turn_degrees)
 
             # Go forward
-            done = False
-            while not done:
+            self.goto_next_intersection()
+
+
+    def goto_next_intersection(self):
+        correct_angle = self.compass.direction()
+
+        while True:
+            self.movement.start_forward()
+
+            self.spatial_awareness.update(self.movement.distance(), self.compass.direction())
+            self.spatial_awareness.print_status()
+
+            if self.compass.angle_needs_correcting(correct_angle):
+                self.movement.hold()
+                angle_error = self.compass.calc_error(correct_angle)
+                self.movement.turn_degrees(angle_error)
                 self.movement.start_forward()
 
-                self.spatial_awareness.update(self.movement.distance(), self.compass.direction())
-                self.spatial_awareness.print_status()
+            # I see not table!
+            if self.vision.what_is_seen() != (VisionObject.TABLE, VisionObject.TABLE):
+                self.movement.hold()
 
-                
+                # If it is NOT an intersection, then it is probably due to being hit
+                if not self.detect_intersection():
+                    self.fix_angle()
+
+                # If it is an intersection, then keep going until in the middle of intersection
+                else:
+                    pass
+
+
+    def detect_intersection(self) -> bool:
+        pass
+
+
+    def fix_angle(self):
+        pass
+
 
     ########################## Calibrations: ##########################
 

@@ -19,6 +19,13 @@ class Compass:
         """Return a float between 0 and 360 which is based on calibrated threshold."""
         return self.imu.heading() - self.heading_threshold
 
+    def calc_error(self, correct_angle) -> float:
+        return Trigonometry.calc_diff(self.direction(), correct_angle)
+
+    def angle_needs_correcting(self, correct_angle):
+        error = self.calc_error(correct_angle)
+        return self.heading_threshold >= error
+
     ########################## Calibrations: ##########################
 
     def add_heading_error(self, current_degree) -> float:
