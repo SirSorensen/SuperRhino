@@ -11,6 +11,7 @@ class Spatial_Awareness:
         eye_x, eye_y = dist_to_eye
         self.dist_eye_right = Point((abs(eye_x), eye_y))
         self.dist_eye_left = Point((-abs(eye_x), eye_y))
+        self.eye_angle = Trigonometry.calc_angle(self.dist_eye_right.to_vector(self.cur_position))
 
         self.last_dist = 0
 

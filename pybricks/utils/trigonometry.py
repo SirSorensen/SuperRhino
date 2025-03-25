@@ -1,3 +1,4 @@
+from pybricks.parameters import Direction
 import umath as math
 
 class Trigonometry:
@@ -31,3 +32,9 @@ class Trigonometry:
             abs_degrees += 270
 
         return abs_degrees
+
+    def get_direction(degrees):
+        if degrees >= 0:
+            return Direction.CLOCKWISE
+        else:
+            return Direction.COUNTERCLOCKWISE

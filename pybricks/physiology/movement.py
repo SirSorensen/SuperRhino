@@ -32,8 +32,8 @@ class Movement:
         self.left_motor.hold()
         self.right_motor.hold()
 
-    def start_turn(self, dir: Direction, turn_rate: int = 0):
-        if turn_rate == 0:
+    def start_turn(self, dir: Direction, turn_rate: int = None):
+        if turn_rate is None:
             turn_rate = self._turn_rate
 
         if dir.name == Direction.CLOCKWISE:
@@ -50,6 +50,12 @@ class Movement:
         self.drive_base.turn(movement_degrees)
 
     def distance(self):
+        """
+            Gets the estimated driven distance.
+
+            Returns:
+                Driven distance since last reset (in mm).
+        """
         return self.drive_base.distance()
 
 
