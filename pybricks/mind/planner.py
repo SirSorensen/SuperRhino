@@ -1,4 +1,4 @@
-from mind.our_queue import list_to_queue, Queue
+from mind.utils.queue import list_to_queue, Queue
 
 
 class Planner:
