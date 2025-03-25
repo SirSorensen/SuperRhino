@@ -18,3 +18,7 @@ class Movement:
         self.turn_rate = _turn_rate
         self.turn_degree = _turn_degree
         self.speed = _speed
+
+    def turn_degrees(self, degrees):
+        angle = degrees
+        self.drive_base.turn(angle)
