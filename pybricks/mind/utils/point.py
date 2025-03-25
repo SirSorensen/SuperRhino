@@ -7,8 +7,7 @@ class Point(object):
         self.X = self.X + dx
         self.Y = self.Y + dy
 
-    def __add__(self, other):
-        return Point((self.X + other.X, self.Y + other.Y))
-
-    def __sub__(self, other):
-        return Point((self.X - other.X, self.Y - other.Y))
+    def to_vector(self, other) -> tuple[float, float]:
+        if type(other) is not Point:
+            raise KeyError("other has to be a Point")
+        (other.X - self.X, other.Y - self.Y)
