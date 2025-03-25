@@ -1,5 +1,5 @@
 from mind.utils.queue import list_to_queue, Queue
-from mind.utils.state import Orientation
+from mind.utils.orientation import Orientation
 
 
 class Planner:

@@ -1,4 +1,5 @@
-from mind.utils.state import Orientation, Point
+from mind.utils.orientation import Orientation
+from mind.utils.point import Point
 
 
 class Spatial_Awareness:
