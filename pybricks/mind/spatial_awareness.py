@@ -1,6 +1,6 @@
 from mind.utils.cardinal_direction import CardinalDirection, diff
 from mind.utils.point import Point
-from senses.utils.trigonometry import Trigonometry
+from mind.utils.trigonometry import Trigonometry
 
 
 class Spatial_Awareness:
