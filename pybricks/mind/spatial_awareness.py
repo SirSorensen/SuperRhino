@@ -8,17 +8,18 @@ class Spatial_Awareness:
         self.cur_direction: CardinalDirection = start_direction
         self.cur_position: Point = Point(start_position)
 
-
         eye_x, eye_y = dist_to_eye
         self.dist_eye_right = Point((abs(eye_x), eye_y))
         self.dist_eye_left = Point((-abs(eye_x), eye_y))
 
         self.last_dist = 0
 
+
     def next_angle(self, next_dir: CardinalDirection) -> float:
         result = diff(self.cur_direction, next_dir)
         self.cur_direction = next_dir
         return result
+
 
     def update_pos(self, dist, cur_heading):
         # Calcs
@@ -27,6 +28,7 @@ class Spatial_Awareness:
         # Update properties
         self.cur_position.update(change_vector)
         self.last_dist = dist
+
 
     def get_eyes_posses(self) -> tuple[Point, Point]:
         left = self.cur_position.sum(self.dist_eye_left)
