@@ -19,6 +19,32 @@ class Movement:
         self.turn_degree = _turn_degree
         self.speed = _speed
 
+
+    def start_forward(self):
+        self.left_motor.run(self.speed)
+        self.right_motor.run(self.speed)
+
+    def start_backward(self):
+        self.left_motor.run(-self.speed)
+        self.right_motor.run(-self.speed)
+
+    def hold(self):
+        self.left_motor.hold()
+        self.right_motor.hold()
+
+    def start_turn(self, dir: Direction, turn_rate: int = 0):
+        if turn_rate == 0:
+            turn_rate = self._turn_rate
+
+        if dir.name == Direction.CLOCKWISE:
+            self.left_motor.run(turn_rate)
+            self.right_motor.run(-turn_rate)
+        elif dir.name == Direction.COUNTERCLOCKWISE:
+            self.left_motor.run(-turn_rate)
+            self.right_motor.run(turn_rate)
+        else:
+            print("ERROR: Illegal Direction!")
+
     def turn_degrees(self, degrees):
         angle = degrees
         self.drive_base.turn(angle)
