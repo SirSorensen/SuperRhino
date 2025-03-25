@@ -2,7 +2,7 @@ from pybricks.parameters import Direction
 import umath as math
 
 from physiology.movement import Movement
-from utils.angle import Angle
+from senses.utils.angle import Angle
 from senses.vision import Vision
 from senses.compass import Compass
 

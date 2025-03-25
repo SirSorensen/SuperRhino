@@ -1,7 +1,7 @@
 from pybricks.parameters import Direction, Port
 from pybricks.pupdevices import Motor
 from pybricks.robotics import DriveBase
-from utils.angle import Angle
+from senses.utils.angle import Angle
 
 
 class Movement:

@@ -1,6 +1,6 @@
 from pybricks._common import IMU
 from utils.calibrations import avg_measure
-from utils.angle import Angle
+from senses.utils.angle import Angle
 
 class Compass:
     def __init__(self, imu: IMU):
