@@ -3,10 +3,10 @@ from labyrinth import Labyrinth
 
 sokoban_map = """
 ######
-#    #
-# $$ #
-#@.  #
-#..$ #
+#@  .#
+# $  #
+#.$  #
+# $ .#
 ######
 """
 lab = Labyrinth()
