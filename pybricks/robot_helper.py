@@ -80,7 +80,7 @@ def measure_tape(movement: Movement, compass: Compass, vision: Vision, camera_di
     l_angle = calc_line_degree(l1, (l2_x, l2_y))
     r_angle = calc_line_degree(r1, (r2_x, r2_y))
     avg_angle = (l_angle + r_angle) / 2
-    angle_error = Angle.calc_error(avg_angle, 0)
+    angle_error = Angle.calc_diff(avg_angle, 0)
 
     fix_angle(movement, compass, angle_error)
 

@@ -22,7 +22,7 @@ class Compass:
         self.imu.reset_heading(0)
 
     def is_direction_correct(self, correct_direction):
-        error = Angle.calc_error(correct_direction, self.imu.heading())
+        error = Angle.calc_diff(correct_direction, self.imu.heading())
 
         if Angle.in_diff_domains(self.heading_threshold, error):
             return False
@@ -33,7 +33,7 @@ class Compass:
         if self.is_direction_correct(correct_direction):
             return 0
         else:
-            return Angle.calc_error(correct_direction, self.direction())
+            return Angle.calc_diff(correct_direction, self.direction())
 
 
     ########################## Calibrations: ##########################
@@ -42,7 +42,7 @@ class Compass:
         measured_angle = Angle.to_angle(avg_measure(self.imu.heading))
         current_angle = Angle.to_angle(current_degree)
         # If i.e. current_angle = 179 and measure_angle = -179
-        error = Angle.calc_error(current_angle, measured_angle)
+        error = Angle.calc_diff(current_angle, measured_angle)
         self.heading_errors.append(error)
 
     def finish_calibrate_heading(self):
