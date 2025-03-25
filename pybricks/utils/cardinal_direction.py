@@ -18,15 +18,14 @@ class CardinalDirection:
 
         raise KeyError("ERROR : Illegal move string!")
 
-
-def diff(cur_dir: CardinalDirection, next_dir: CardinalDirection):
-    if cur_dir == next_dir:
+def to_angle(dir: CardinalDirection):
+    if dir == CardinalDirection.E:
         return 0
-    if (cur_dir, next_dir) == (CardinalDirection.N, CardinalDirection.S) or (cur_dir, next_dir) == (CardinalDirection.E, CardinalDirection.W) or (cur_dir, next_dir) == (CardinalDirection.S, CardinalDirection.N) or (cur_dir, next_dir) == (CardinalDirection.W, CardinalDirection.E):
-        return 180
-    if (cur_dir, next_dir) == (CardinalDirection.N, CardinalDirection.E) or (cur_dir, next_dir) == (CardinalDirection.E, CardinalDirection.S) or (cur_dir, next_dir) == (CardinalDirection.S, CardinalDirection.W) or (cur_dir, next_dir) == (CardinalDirection.W, CardinalDirection.N):
+    elif dir == CardinalDirection.N:
         return 90
-    if (cur_dir, next_dir) == (CardinalDirection.N, CardinalDirection.W) or (cur_dir, next_dir) == (CardinalDirection.E, CardinalDirection.N) or (cur_dir, next_dir) == (CardinalDirection.S, CardinalDirection.E) or (cur_dir, next_dir) == (CardinalDirection.W, CardinalDirection.S):
-        return -90
+    elif dir == CardinalDirection.W:
+        return 180
+    elif dir == CardinalDirection.S:
+        return 270
 
-    raise KeyError("ERROR : Illegal orientations!")
+    raise KeyError("ERROR : Illegal cardinal direction!")

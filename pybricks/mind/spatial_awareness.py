@@ -1,4 +1,4 @@
-from utils.cardinal_direction import CardinalDirection, diff
+from utils.cardinal_direction import CardinalDirection, to_angle
 from utils.point import Point
 from utils.trigonometry import Trigonometry
 
@@ -15,7 +15,9 @@ class Spatial_Awareness:
         self.last_dist = 0
 
     def next_angle(self, next_dir: CardinalDirection) -> float:
-        result = diff(self.cur_direction, next_dir)
+        cur_angle = to_angle(self.cur_direction)
+        next_angle = to_angle(next_dir)
+        result = Trigonometry.calc_diff(cur_angle, next_angle)
         self.cur_direction = next_dir
         return result
 
