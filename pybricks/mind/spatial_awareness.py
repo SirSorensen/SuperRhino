@@ -3,7 +3,7 @@ from mind.utils.point import Point
 
 
 class Spatial_Awareness:
-    def __init__(self, start_position : tuple[float, float], start_direction : Orientation = Orientation.E):
+    def __init__(self, start_position : tuple[float, float] = (0,0), start_direction : Orientation = Orientation.E):
         self.cur_direction : Orientation = start_direction
         self.cur_position : Point = Point(start_position)
         print("Starting values:")

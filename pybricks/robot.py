@@ -22,9 +22,9 @@ class Robot:
         self.vision: Vision = Vision(Port.F, Port.E)
         self.compass: Compass = Compass(self.prime_hub.imu)
 
-    def sokoban(self, solution_str: str, start_coords):
+    def sokoban(self, solution_str: str):
         self.planner: Planner = Planner(solution_str)
-        self.consciousness: Spatial_Awareness = Spatial_Awareness(start_coords)
+        self.consciousness: Spatial_Awareness = Spatial_Awareness()
 
         while not self.planner.is_done():
             next_move = self.planner.next_move()
