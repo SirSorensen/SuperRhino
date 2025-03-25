@@ -35,14 +35,20 @@ class Robot:
             next_move = self.planner.next_move()
             print("\nNext move =", next_move)
 
-            turn_degree = self.spatial_awareness.next_angle(next_move)
-            print(f"Gotta turn {turn_degree} degrees")
+            # Turn correct way
+            turn_degrees = self.spatial_awareness.next_angle(next_move)
+            print(f"Gotta turn {turn_degrees} degrees")
+            self.movement.turn_degrees(turn_degrees)
 
+            # Go forward
             done = False
             while not done:
+                self.movement.start_forward()
+
                 self.spatial_awareness.update(self.movement.distance(), self.compass.direction())
                 self.spatial_awareness.print_status()
-                pass
+
+                
 
     ########################## Calibrations: ##########################
 

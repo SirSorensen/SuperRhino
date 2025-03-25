@@ -46,8 +46,15 @@ class Movement:
             print("ERROR: Illegal Direction!")
 
     def turn_degrees(self, degrees):
-        angle = degrees
-        self.drive_base.turn(angle)
+        movement_degrees = to_movement_degrees(degrees)
+        self.drive_base.turn(movement_degrees)
 
     def distance(self):
         return self.drive_base.distance()
+
+
+def to_movement_degrees(degrees):
+    value = degrees % 360
+    if value > 180:
+        value -= 360
+    return value
