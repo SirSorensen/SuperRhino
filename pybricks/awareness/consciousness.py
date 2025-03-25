@@ -2,41 +2,6 @@
 
 class Consciousness:
     def __init__(self, start_direction : str, start_position : tuple[int, int]):
-        temp_edge_lengths = {  # in mm
-            ((3, 3), (2, 3)): 515,
-            ((3, 3), (3, 2)): 146,
-            ((2, 3), (1, 3)): 540,
-            ((2, 3), (2, 2)): 164,
-            ((1, 3), (0, 3)): 600,
-            ((1, 3), (1, 2)): 165,
-            ((0, 3), (0, 2)): 160,
-            ((3, 2), (2, 2)): 517,
-            ((3, 2), (3, 1)): 155,
-            ((2, 2), (1, 2)): 545,
-            ((2, 2), (2, 1)): 153,
-            ((1, 2), (0, 2)): 592,
-            ((1, 2), (1, 1)): 151,
-            ((0, 2), (0, 1)): 160,
-            ((3, 1), (2, 1)): 515,
-            ((3, 1), (3, 0)): 154,
-            ((2, 1), (1, 1)): 545,
-            ((2, 1), (2, 0)): 145,
-            ((1, 1), (0, 1)): 591,
-            ((1, 1), (1, 0)): 146,
-            ((0, 1), (0, 0)): 151,
-            ((3, 0), (2, 0)): 517,
-            ((2, 0), (1, 0)): 547,
-            ((1, 0), (0, 0)): 586,
-        }
-
-        # For each (s,e) key create (e,s) key with same value
-        self.edge_lengths = {}
-        for (s, e), value in temp_edge_lengths.items():
-            self.edge_lengths[(s, e)] = value
-            self.edge_lengths[(e, s)] = value
-
-        self.tape_distance = 4.7
-
         self.cur_direction : str = start_direction
         self.cur_position : tuple[int, int] = start_position
         print("Starting values:")
