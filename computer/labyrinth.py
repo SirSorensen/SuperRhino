@@ -94,7 +94,7 @@ class Labyrinth:
                         new_boxes = frozenset(
                             (new_can if b == new_rhinotron else b) for b in boxes
                         )
-                        queue.enqueue((new_rhinotron, new_boxes, moves + move))
+                        queue.enqueue((new_rhinotron, new_boxes, moves + "C" + move))
                 else:
                     # Move player normally if the space is empty
                     if self.is_valid_move(grid, new_rhinotron):
