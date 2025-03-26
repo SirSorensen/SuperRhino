@@ -1,4 +1,4 @@
-import umath as math
+from utils.vector import Vector
 
 class Point(object):
     def __init__(self, x : float, y : float):
@@ -8,23 +8,20 @@ class Point(object):
         x, y = vals
         return Point(x, y)
 
-    def add_vector(self, vector):
-        (dx, dy) = vector
-        x = self.X + dx
-        y = self.Y + dy
+    def add_vector(self, vector : Vector):
+        x = self.X + vector.X
+        y = self.Y + vector.Y
         return Point(x, y)
 
-    def to_vector(self, other) -> tuple[float, float]:
+    def to_vector(self, other) -> Vector:
         if type(other) is not Point:
             raise KeyError("other has to be a Point")
-        return (other.X - self.X, other.Y - self.Y)
+        return Vector(other.X - self.X, other.Y - self.Y)
 
     def dist(self, other):
         if type(other) is not Point:
             raise KeyError("other has to be a Point")
-        vx, vy = self.to_vector(other)
-        return math.sqrt(vx**2 + vy**2)
-
+        return self.to_vector(other).length()
 
     def __str__(self):
         return f"({self.X}, {self.Y})"
@@ -33,6 +30,5 @@ class Point(object):
         if type(other) is not Point:
             raise KeyError("other has to be a Point")
 
-        vx, vy = self.to_vector(other)
-
-        return Point(self.X + (vx/2), self.Y + (vy/2))
+        v = self.to_vector(other)
+        return Point(self.X + (v.X/2), self.Y + (v.Y/2))
