@@ -1,6 +1,0 @@
-
-
-• decompose control into a sequence of functional modules (e.g., sense-world, generate-plan, translate-plan-intoactions).
-• centralized representation and reasoning.
-• may require extensive reasoning computation.
-• encourage open loop execution of the generated plans.

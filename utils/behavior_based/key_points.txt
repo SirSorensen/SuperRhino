@@ -1,9 +1,0 @@
-
-Even simple designs can lead to surprisingly interesting kinds of behavior
-
-• Behavior is more than control:
-    • Morphology and interactions with the environment are important.
-
-• Behavior is emergent from interaction between robot and environment
-    • Deterministic control do result in non-deterministic behavior (no precise predictions)
-    • There must be a balance between body and brain complexity (small brain in simple robots)
