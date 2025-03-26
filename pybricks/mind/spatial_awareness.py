@@ -11,8 +11,8 @@ class Spatial_Awareness:
 
         eye_x, eye_y = dist_to_eye
 
-        self.right_eye_vector = (eye_x, -eye_y)
-        self.left_eye_vector = (eye_x, eye_y)
+        self.right_eye_vector = Vector(eye_x, -eye_y)
+        self.left_eye_vector = Vector(eye_x, eye_y)
 
         self.last_dist = 0
 

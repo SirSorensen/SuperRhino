@@ -15,9 +15,9 @@ class Road:
             pr2 : Right+front point
         """
 
-        self.left_border_angle = Trigonometry.degrees_from_points(pl1, pl2)
+        self.left_border_angle = pl1.to_vector(pl2).degrees()
         print(f"Left tape angle: {self.left_border_angle}")
-        self.right_border_angle = Trigonometry.degrees_from_points(pr1, pr2)
+        self.right_border_angle = pr1.to_vector(pr2).degrees()
         print(f"Right tape angle: {self.right_border_angle}")
         self.mid_angle = Trigonometry.calc_mid(self.left_border_angle, self.right_border_angle)
         print(f"Mid tape angle: \n{self.mid_angle}", end="\n\n")
@@ -25,6 +25,7 @@ class Road:
         mid_l = pl1.mid_point(pl2)
         mid_r = pr1.mid_point(pr2)
         self.center = mid_l.mid_point(mid_r)
+        self.front_center = pl2.mid_point(pr2)
 
     def diff(self, cur_position: Point):
         distance = self.center.dist(cur_position)

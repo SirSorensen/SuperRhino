@@ -28,3 +28,8 @@ class Vector(object):
         radians = math.acos(dot_product / (self.length() * other.length()))
         angle = math.degrees(radians)
         return Angle_Utils.convert_degrees(angle)
+
+    def degrees(self):
+        radians = math.atan2(self.Y, self.X)
+        angle = math.degrees(radians)
+        return Angle_Utils.convert_degrees(angle)
