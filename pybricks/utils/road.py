@@ -1,5 +1,6 @@
 from utils.point import Point
 from utils.trigonometry import Trigonometry
+from utils.vector import Vector
 
 
 class Road:
@@ -27,7 +28,7 @@ class Road:
 
     def diff(self, cur_position: Point):
         distance = self.center.dist(cur_position)
-        expected_vector = Trigonometry.to_vector(distance, self.mid_angle)
+        expected_vector = Vector.from_dist_degrees(distance, self.mid_angle)
         actual_vector = self.center.to_vector(cur_position)
-        error_degrees = Trigonometry.degrees_between_vectors(expected_vector, actual_vector)
+        error_degrees = expected_vector.degrees_to(actual_vector)
         return Trigonometry.calc_side_dist(distance, error_degrees)

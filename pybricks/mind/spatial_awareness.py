@@ -1,4 +1,5 @@
 from utils.cardinal_direction import CardinalDirection, to_angle
+from utils.vector import Vector
 from utils.point import Point
 from utils.trigonometry import Trigonometry
 
@@ -25,14 +26,14 @@ class Spatial_Awareness:
     def update(self, dist, cur_heading):
         # Calcs
         change_in_dist = dist - self.last_dist
-        change_vector = Trigonometry.to_vector(change_in_dist, cur_heading)
+        change_vector = Vector.from_dist_degrees(change_in_dist, cur_heading)
         # Update properties
         self.cur_position = self.cur_position.add_vector(change_vector)
         self.last_dist = dist
 
     def get_eyes_posses(self, cur_heading) -> tuple[Point, Point]:
-        trans_left = Trigonometry.transform_vector(self.left_eye_vector, cur_heading)
-        trans_right = Trigonometry.transform_vector(self.right_eye_vector, cur_heading)
+        trans_left = self.left_eye_vector.rotate(cur_heading)
+        trans_right = self.right_eye_vector.rotate(cur_heading)
         left = self.cur_position.add_vector(trans_left)
         right = self.cur_position.add_vector(trans_right)
         return (left, right)

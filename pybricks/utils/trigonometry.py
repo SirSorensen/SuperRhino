@@ -8,13 +8,6 @@ import umath as math
 
 
 class Trigonometry:
-    def to_vector(dist, degrees):
-        angle = Angle_Utils.convert_degrees(degrees)
-        radians = math.radians(angle)
-        x = dist * math.cos(radians)
-        y = dist * math.sin(radians)
-        return (x, y)
-
     # d1 = Direction 1
     def calc_diff(degrees1: float, degrees2: float):
         r1 = degrees2 - degrees1
@@ -34,28 +27,6 @@ class Trigonometry:
 
         print(f"degrees_from_points -> {angle} => {Angle_Utils.convert_degrees(angle)}")
 
-        return Angle_Utils.convert_degrees(angle)
-
-    def transform_vector(vector, degrees):
-        x, y = vector
-        angle = Angle_Utils.convert_degrees(degrees)
-        radians = math.radians(angle)
-        trans_x = math.cos(radians) * x + math.sin(radians) * y
-        trans_y = math.sin(radians) * x - math.cos(radians) * y
-        return (trans_x, trans_y)
-
-    def length_of_vector(vector):
-        return math.sqrt(sum([v**2 for v in vector]))
-
-    def degrees_between_vectors(v1, v2):
-        v1x, v1y = v1
-        v2x, v2y = v2
-        # angle = cos^-1((v1 dot v2) / (length of v1 * length of v2))
-        dot_product = v1x * v2x + v1y * v2y
-        v1_length = Trigonometry.length_of_vector(v1)
-        v2_length = Trigonometry.length_of_vector(v2)
-        radians = math.acos(dot_product / (v1_length * v2_length))
-        angle = math.degrees(radians)
         return Angle_Utils.convert_degrees(angle)
 
     def calc_side_dist(magnitude, degrees_between_vectors): # How far are we off course
