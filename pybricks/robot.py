@@ -6,6 +6,7 @@ from pybricks.tools import wait
 from mind.spatial_awareness import Spatial_Awareness
 from mind.planner import Planner
 
+from utils.point import Point
 from utils.cardinal_direction import CardinalDirection
 from utils.road import Road
 from utils.angle_utils import Angle_Utils
@@ -56,6 +57,9 @@ class Robot:
     def goto_next_intersection(self):
         self.tape_mid = self.follow_tape()
         print(f"Got mid_tape! correct_angle:{self.tape_mid.mid_angle} \n -> current_angle:{self.compass.direction()}")
+
+        self.go_to_point(self.tape_mid.front_center)
+        self.turn_to(self.tape_mid.mid_angle)
 
         while True:
             # PID
@@ -138,3 +142,9 @@ class Robot:
             self.start_forward()
             pass
         self.hold()
+
+    def go_to_point(self, point : Point):
+        dir_vector = self.spatial_awareness.cur_position.to_vector(point)
+        degrees = dir_vector.degrees()
+        self.turn_to(degrees)
+        self.go_distance(dir_vector.length())
