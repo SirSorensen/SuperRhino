@@ -105,7 +105,7 @@ class Robot:
 
 
     def get_max_tape_dist(self):
-        if self.tape_start == (None, None):
+        if self.tape_start == (None, None) or self.tape_start is None:
             return 0
 
         eye_poses = self.spatial_awareness.get_eyes_posses()
@@ -173,7 +173,7 @@ class Robot:
         self.turn_to(start_angle)
         wait(500)
 
-        self.go_distance(100)
+        self.go_distance(150)
         wait(500)
 
         l2 = slow_and_measure("L")
