@@ -33,12 +33,11 @@ class Robot:
         self.spatial_awareness: Spatial_Awareness = Spatial_Awareness((45, 50)) # x = front distance from center, y = side distance from center
 
     def sokoban(self, solution_str: str):
-        self.tape_mid = None
-
         self.planner: Planner = Planner(solution_str)
 
         while not self.planner.is_done():
             next_move = self.planner.next_move()
+            print(f"\n\n\n ################ NEW MOVE ({next_move}) ################")
             print("\nNext move =", next_move, end="\n\n")
 
             if next_move == CardinalDirection.CAN:
@@ -58,12 +57,97 @@ class Robot:
         self.tape_mid = self.follow_tape()
         print(f"Got mid_tape! correct_angle:{self.tape_mid.mid_angle} \n -> current_angle:{self.compass.direction()}")
 
-        self.go_to_point(self.tape_mid.front_center)
-        self.turn_to(self.tape_mid.mid_angle)
+        self.tape_counter = 0
+        self.tape_start = (None, None)
+        self.tape_end = (None, None)
 
         while True:
             # PID
             self.start_forward(self.tape_mid.mid_angle)
+            if self.detect_intersection():
+                return
+
+
+
+    def detect_intersection(self):
+        if self.do_i_see_tape():
+            self.set_tape_start()
+            self.tape_counter += 1 # For resetting tape_start
+        else:
+            if self.get_max_tape_dist() >= 47: # max seen = 50.05484
+                self.hold()
+                self.set_tape_end()
+                closest_point = self.set_intersection_mid()
+                self.go_to_point(closest_point)
+                return True
+
+
+            self.tape_counter = max(0, self.tape_counter - 5) # For resetting tape_start
+            if self.tape_counter == 0: # For resetting tape_start
+                self.tape_start = (None, None) # For resetting tape_start
+
+    def do_i_see_tape(self):
+        left_obj, right_obj = self.vision.what_is_seen()
+        return left_obj == VisionObject.TAPE or right_obj == VisionObject.TAPE
+
+    def set_tape_start(self):
+        left_start, right_start = self.tape_start
+        if left_start is None or right_start is None:
+            left_obj, right_obj = self.vision.what_is_seen()
+            left_eye_pos, right_eye_pos = self.cur_direction()
+
+            if left_start is None and left_obj == VisionObject.TAPE:
+                left_start = left_eye_pos
+            if right_start is None and right_obj == VisionObject.TAPE:
+                right_start = right_eye_pos
+        self.tape_start = (left_start, right_start)
+
+
+    def set_tape_end(self):
+        left_start, right_start = self.tape_start
+        left_end, right_end = (None, None)
+        left_obj, right_obj = self.vision.what_is_seen()
+        left_eye_pos, right_eye_pos = self.cur_direction()
+
+        if left_start is not None and left_obj == VisionObject.TABLE:
+            left_end = left_eye_pos
+        if right_start is not None and right_obj == VisionObject.TABLE:
+            right_end = right_eye_pos
+        self.tape_end = (left_end, right_end)
+
+
+    def set_intersection_mid(self):
+        left_start, right_start = self.tape_start
+        left_end, right_end = self.tape_end
+
+        if left_end is not None:
+            print(f"left_start:{left_start}, left_end:{left_end}")
+            left_mid = left_start.mid_point(left_end)
+            mid = left_mid
+        if right_end is not None:
+            print(f"right_start:{right_start}, right_end:{right_end}")
+            right_mid = right_start.mid_point(right_end)
+            mid = right_mid
+
+        if left_end is not None and right_end is not None:
+            mid = left_mid.mid_point(right_mid)
+
+
+        return self.tape_mid.closest_point(mid)
+
+
+    def get_max_tape_dist(self):
+        if self.tape_start is None or self.tape_start == (None, None):
+            return 0
+
+        eye_poses = self.cur_direction()
+
+        if self.tape_start[0] is not None and self.tape_start[1] is not None:
+            return max(self.tape_start[0].dist(eye_poses[0]), self.tape_start[1].dist(eye_poses[1]))
+        elif self.tape_start[0] is not None:
+            return self.tape_start[0].dist(eye_poses[0])
+        else:
+            return self.tape_start[1].dist(eye_poses[1])
 
 
 
@@ -140,10 +224,8 @@ class Robot:
         distance (int): Distance (in mm) that the robot should go forward in
         """
         start_distance = self.movement.distance()
-        correct_angle = self.compass.direction()
         while self.movement.distance() - start_distance < distance:
-            self.start_forward(correct_angle)
-            pass
+            self.movement.start_forward()
         self.hold()
 
     def go_to_point(self, point : Point):

@@ -22,3 +22,15 @@ class Road:
         print(f"Mid tape angle: \n{self.mid_angle}", end="\n\n")
 
         self.front_center = pl3.mid_point(pr3)
+
+    def closest_point(self, point : Point):
+        x0 = point.X
+        y0 = point.Y
+        a = Trigonometry.slope_from_degrees(self.mid_angle)
+        b = -1
+        c = self.front_center.Y - a * self.front_center.X
+
+        x = x0 - ((a*x0 + b*y0 + c) / (a**2 + b**2))
+        y = y0 + ((a*x0 + b*y0 + c) / (a**2 + b**2))
+
+        return Point(x, y)

@@ -21,5 +21,7 @@ class Compass:
 
     def angle_needs_correcting(self, correct_angle):
         error = self.calc_error(correct_angle)
-        return self.heading_threshold < error
+        if abs(error) > abs(self.heading_threshold) and abs(self.heading_threshold) + 1 > abs(error):
+            print(f"Oh no! Error too big => abs(error:{error}) > abs(heading_threshold:{self.heading_threshold})")
+        return abs(error) > abs(self.heading_threshold) * sensitivity
 

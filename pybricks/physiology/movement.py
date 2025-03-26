@@ -43,6 +43,8 @@ class Movement:
             print("ERROR: Illegal Direction!")
 
     def turn_degrees(self, degrees):
+        if degrees == 0:
+            return
         movement_degrees = Angle_Utils.to_movement_degrees(degrees)
         print(f"Turning {movement_degrees} degrees!")
         self.drive_base.turn(movement_degrees)

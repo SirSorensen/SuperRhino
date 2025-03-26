@@ -22,3 +22,8 @@ class Trigonometry:
         angle = Angle_Utils.convert_degrees(degrees_between_vectors)
         unit_distance = -math.sin(angle)
         return unit_distance * magnitude
+
+    def slope_from_degrees(degrees):
+        angle = Angle_Utils.convert_degrees(degrees)
+        radians = math.radians(angle)
+        return math.tan(radians)
