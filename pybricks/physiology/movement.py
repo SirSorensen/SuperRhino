@@ -31,7 +31,7 @@ class Movement:
                 self.left_motor.run(self.speed - mod)
                 self.right_motor.run(self.speed)
         else:
-            self.right_motor.run(self.speed)
+            self.left_motor.run(self.speed)
             self.right_motor.run(self.speed)
 
     def hold(self):
