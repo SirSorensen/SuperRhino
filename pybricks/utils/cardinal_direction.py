@@ -22,7 +22,7 @@ def to_angle(dir: CardinalDirection):
     if dir == CardinalDirection.E:
         return 0
     elif dir == CardinalDirection.N:
-        return 90
+        return 270
     elif dir == CardinalDirection.W:
         return 180
     elif dir == CardinalDirection.S:

@@ -163,19 +163,24 @@ class Robot:
 
         l1 = slow_and_measure("L")
         self.turn_to(start_angle)
+        wait(500)
 
         r1 = slow_and_measure("R")
         self.turn_to(start_angle)
+        wait(500)
 
         self.go_distance(100)
+        wait(500)
 
         l2 = slow_and_measure("L")
         l2.Y += 100
         self.turn_to(start_angle)
+        wait(500)
 
         r2 = slow_and_measure("R")
         r2.Y += 100
         self.turn_to(start_angle)
+        wait(500)
 
         tape = Road(l1, l2, r1, r2)
         closest_point = tape.mid_fun.closest_point(self.spatial_awareness.cur_position)

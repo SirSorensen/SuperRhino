@@ -23,11 +23,11 @@ class Vision:
         return (self.left_sensor.reflection(), self.right_sensor.reflection())
 
     def _determine_object(self, reflection) -> VisionObject:
-        if self.table_range[0] <= reflection <= self.table_range[1]:
+        if self.table_range[0] <= reflection and reflection <= self.table_range[1]:
             return VisionObject.TABLE
-        elif self.tape_range[0] <= reflection <= self.tape_range[1]:
+        elif self.tape_range[0] <= reflection and reflection <= self.tape_range[1]:
             return VisionObject.TAPE
-        elif self.edge_range[0] <= reflection <= self.edge_range[1]:
+        elif self.edge_range[0] <= reflection and reflection <= self.edge_range[1]:
             return VisionObject.EDGE
         else:
             return VisionObject.UNKNOWN
