@@ -231,25 +231,3 @@ class Robot:
             pass
         self.hold()
         self.update_space()
-
-    ########################## Calibrations: ##########################
-
-    def calibrate_vision(self):
-        mins = []
-        maxs = []
-        all = []
-        for _ in range(100):
-            self.movement.drive_base.straight(10)
-            mi, ma = self.vision.min_max()
-            mins.append(mi)
-            all.append(mi)
-            maxs.append(ma)
-            all.append(ma)
-        print("\nmins =", mins)
-        print("\nmaxs =", maxs)
-        print("Min of mins =", min(mins))
-        print("Max of maxs =", max(maxs))
-        print("Absolute of min =", min(all))
-        print("Absolute of max =", max(all))
-
-
