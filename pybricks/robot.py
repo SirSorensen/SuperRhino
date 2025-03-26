@@ -1,6 +1,7 @@
 from pybricks.parameters import Direction
 from pybricks.parameters import Port
 from pybricks.hubs import PrimeHub
+from pybricks.tools import wait
 
 from mind.spatial_awareness import Spatial_Awareness
 from mind.planner import Planner
