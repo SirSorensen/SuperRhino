@@ -2,7 +2,7 @@
   "editor.formatOnSave": true,
   "python.languageServer": "Pylance",
   "[python]": {
-    "diffEditor.ignoreTrimWhitespace": true,
+    "diffEditor.ignoreTrimWhitespace": false,
     "editor.defaultFormatter": "charliermarsh.ruff"
   },
   "ruff.lineLength": 320,

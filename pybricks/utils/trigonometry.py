@@ -22,7 +22,7 @@ class Trigonometry:
         r3 = degrees2 - degrees1 + 360
         return min(r1, r2, r3, key=lambda r: abs(r))
 
-def calc_mid(degrees1: float, degrees2: float):
+    def calc_mid(degrees1: float, degrees2: float):
         diff = Trigonometry.calc_diff(degrees1, degrees2)
         return (max(degrees1, degrees2) - (diff / 2)) % 360
 
