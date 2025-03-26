@@ -185,13 +185,14 @@ class Robot:
         self.go_distance(50)
         l3 = slow_and_measure("L")
         r3 = slow_and_measure("R")
+        self.go_distance(-100)
         return Road(l1, l2, l3, r1, r2, r3)
 
 
     ########################## utils ##########################
 
     def start_forward(self, correct_angle):
-        if self.compass.angle_needs_correcting(correct_angle):
+        if self.compass.angle_needs_correcting(correct_angle, 3):
             self.hold()
             self.turn_to(correct_angle)
         else:
@@ -213,7 +214,7 @@ class Robot:
         error = self.compass.calc_error(correct_angle)
         error_direction: Direction = Angle_Utils.get_direction(error)
 
-        while self.compass.angle_needs_correcting(correct_angle, 0.5):
+        while self.compass.angle_needs_correcting(correct_angle):
             self.start_turn(error_direction)
 
         self.hold()
@@ -226,8 +227,12 @@ class Robot:
         distance (int): Distance (in mm) that the robot should go forward in
         """
         start_distance = self.movement.distance()
-        while self.movement.distance() - start_distance < distance:
-            self.movement.start_forward()
+        if distance > 0:
+            while self.movement.distance() - start_distance < distance:
+                self.movement.start_forward()
+        elif distance < 0:
+            while self.movement.distance() - start_distance > distance:
+                self.movement.start_forward(-1)
         self.hold()
 
     def go_to_point(self, point : Point):

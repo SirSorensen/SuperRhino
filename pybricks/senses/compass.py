@@ -14,7 +14,7 @@ class Compass:
 
     def direction(self) -> float:
         """Return a float between 0 and 360 which is based on calibrated threshold."""
-        return self.imu.heading() - (self.heading_threshold/2)
+        return (self.imu.heading() - (self.heading_threshold/2)) % 360
 
     def calc_error(self, correct_angle) -> float:
         return Trigonometry.calc_diff(self.direction(), correct_angle)
