@@ -6,7 +6,7 @@ from utils.trigonometry import Trigonometry
 class Spatial_Awareness:
     def __init__(self, dist_to_eye: tuple[float, float], start_position: tuple[float, float] = (0, 0), start_direction: CardinalDirection = CardinalDirection.E):
         self.cur_direction: CardinalDirection = start_direction
-        self.cur_position: Point = Point(start_position)
+        self.cur_position: Point = Point.from_tuple(start_position)
 
         eye_x, eye_y = dist_to_eye
 

@@ -1,14 +1,18 @@
 import umath as math
 
 class Point(object):
-    def __init__(self, vals : tuple[float, float]):
-        self.X, self.Y = vals
+    def __init__(self, x : float, y : float):
+        self.X, self.Y = x, y
+
+    def from_tuple(vals : tuple[float, float]):
+        x, y = vals
+        return Point(x, y)
 
     def add_vector(self, vector):
         (dx, dy) = vector
         x = self.X + dx
         y = self.Y + dy
-        return Point((x, y))
+        return Point(x, y)
 
     def to_vector(self, other) -> tuple[float, float]:
         if type(other) is not Point:
@@ -31,4 +35,4 @@ class Point(object):
 
         vx, vy = self.to_vector(other)
 
-        return Point((self.X + (vx/2), self.Y + (vy/2)))
+        return Point(self.X + (vx/2), self.Y + (vy/2))
