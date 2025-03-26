@@ -13,6 +13,7 @@ class Angle_Utils:
         return value
 
     def get_direction(degrees):
+        degrees = Angle_Utils.to_movement_degrees(degrees)
         if degrees >= 0:
             return Direction.CLOCKWISE
         else:

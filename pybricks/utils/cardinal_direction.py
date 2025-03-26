@@ -21,6 +21,20 @@ class CardinalDirection:
 
         raise KeyError("ERROR : Illegal move string!")
 
+    def get_opposite(cd):
+        if cd == CardinalDirection.N:
+            return CardinalDirection.S
+
+        if cd == CardinalDirection.S:
+            return CardinalDirection.N
+
+        if cd == CardinalDirection.W:
+            return CardinalDirection.E
+
+        if cd == CardinalDirection.E:
+            return CardinalDirection.W
+
+
 def to_angle(dir: CardinalDirection):
     if dir == CardinalDirection.E:
         return 0

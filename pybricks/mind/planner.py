@@ -11,5 +11,8 @@ class Planner:
     def next_move(self) -> CardinalDirection | None:
         return self.solution.dequeue()
 
+    def peek(self) -> CardinalDirection | None:
+        return self.solution.peek()
+
     def is_done(self) -> bool:
         return self.solution.is_empty()

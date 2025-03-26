@@ -37,3 +37,14 @@ class Spatial_Awareness:
         left = self.cur_position.add_vector(trans_left)
         right = self.cur_position.add_vector(trans_right)
         return (left, right)
+
+    def set_start_pos(self, x, y):
+        self.pos = (x, y)
+
+    def get_next_pos(self, v):
+        dx, dy = v
+        x, y = self.pos
+        return (x + dx, y + dy)
+
+    def set_next_pos(self, v):
+        self.pos = self.get_next_pos(v)
