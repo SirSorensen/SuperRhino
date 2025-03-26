@@ -232,35 +232,3 @@ class Robot:
         self.hold()
         self.update_space()
 
-    ########################## Calibrations: ##########################
-
-    def calibrate_compass(self):
-        ###  0  ###
-        self.compass.add_heading_error(0)
-        ### -30 ###
-        self.movement.turn_degrees(-30)
-        self.compass.add_heading_error(-30)
-        ### -60 ###
-        self.movement.turn_degrees(-30)
-        self.compass.add_heading_error(-60)
-        ### -90 ###
-        self.movement.turn_degrees(-30)
-        self.compass.add_heading_error(-90)
-        ###  0 ###
-        self.movement.turn_degrees(90)
-        self.compass.add_heading_error(0)
-        ###  30 ###
-        self.movement.turn_degrees(30)
-        self.compass.add_heading_error(30)
-        ###  60 ###
-        self.movement.turn_degrees(30)
-        self.compass.add_heading_error(60)
-        ###  90 ###
-        self.movement.turn_degrees(30)
-        self.compass.add_heading_error(90)
-        ###  0  ###
-        self.movement.turn_degrees(-90)
-        self.compass.add_heading_error(0)
-
-        ### Done ###
-        self.compass.finish_calibrate_heading()

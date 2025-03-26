@@ -12,7 +12,12 @@ class Vision:
         self.left_sensor.lights.on()
         self.right_sensor.lights.on()
         wait(500)  # Wait 0.5 seconds for lights to turn on
-        self.calibrate()
+
+        self.table_range : tuple[float, float] = (13, 31)
+        self.tape_range : tuple[float, float] = (2, 12)
+        #self.table_tape_mid : float = (self.tape_range[1] + self.table_range[0]) / 2
+        self.edge_range : tuple[float, float] = (0, 1)
+        #self.tape_edge_mid : float = (self.table_range[1] + self.edge_range[0]) / 2
 
     def measure(self):
         return (self.left_sensor.reflection(), self.right_sensor.reflection())
@@ -32,39 +37,3 @@ class Vision:
         left_result = self._determine_object(left)
         right_result = self._determine_object(right)
         return (left_result, right_result)
-
-
-    ########################## Calibrations: ##########################
-
-    def calibrate(self):
-        def min_max() -> tuple[float, float]:
-            (min_left, max_left) = min_max_measure(self.left_sensor.reflection)
-            (min_right, max_right) = min_max_measure(self.right_sensor.reflection)
-            return (min(min_left, min_right), max(max_left, max_right))
-
-        print("Please put my eyes over table, and press Enter o.o")
-        wait(5000)
-        self.table_range : tuple[float, float] = min_max()
-
-        print("Please put my eyes over tape, and press Enter o.o")
-        wait(5000)
-        self.tape_range : tuple[float, float] = min_max()
-
-        print("Please put my eyes over an edge, and press Enter o.o")
-        wait(5000)
-        self.edge_range : tuple[float, float] = min_max()
-
-        print("\n", "Results:")
-        print("Table-range:", self.table_range)
-        print("Tape-range:", self.tape_range)
-        print("Edge-range:", self.edge_range, "\n")
-
-        if self.edge_range[1] >= self.tape_range[0]:
-            print(f"ERROR! edge_range and tape_range overlap! edge_range:{self.edge_range} tape_range:{self.tape_range}")
-        if self.tape_range[1] >= self.table_range[0]:
-            print(f"ERROR! tape_range and table_range overlap! tape_range:{self.tape_range} table_range:{self.table_range}")
-
-        print("Ready! Press Enter to continue.")
-        wait(10000)
-
-
