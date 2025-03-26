@@ -21,24 +21,22 @@ class Movement:
         self.speed = _speed
 
 
-    def start_forward(self, err = 0):
-        self.left_motor.run(self.speed)
-        self.right_motor.run(self.speed)
+    def start_forward(self, magnitude = 1):
+        self.left_motor.run(self.speed * magnitude)
+        self.right_motor.run(self.speed * magnitude)
 
     def hold(self):
         self.left_motor.hold()
         self.right_motor.hold()
 
-    def start_turn(self, dir: Direction, turn_rate: int = None):
-        if turn_rate is None:
-            turn_rate = self.turn_rate
+    def start_turn(self, dir: Direction):
 
         if dir == Direction.CLOCKWISE:
-            self.left_motor.run(turn_rate)
-            self.right_motor.run(-turn_rate)
+            self.left_motor.run(self.turn_rate)
+            self.right_motor.run(-self.turn_rate)
         elif dir == Direction.COUNTERCLOCKWISE:
-            self.left_motor.run(-turn_rate)
-            self.right_motor.run(turn_rate)
+            self.left_motor.run(-self.turn_rate)
+            self.right_motor.run(self.turn_rate)
         else:
             print("ERROR: Illegal Direction!")
 
