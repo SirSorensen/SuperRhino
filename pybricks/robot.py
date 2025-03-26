@@ -80,40 +80,20 @@ class Robot:
 
             self.hold()
             self.update_space()
-            return self.spatial_awareness.get_eyes_posses(self.compass.direction())[eye_index]
-
+            result = self.spatial_awareness.get_eyes_posses(self.compass.direction())[eye_index]
+            print(f"slow_and_measure({side}) => result", end="\n\n")
+            self.turn_to(start_angle)
+            wait(500)
+            return result
 
         print("cur_pos =", self.spatial_awareness.cur_position)
         l1 = slow_and_measure("L")
-        print("l1 =", l1)
-        self.turn_to(start_angle)
-        wait(500)
-
         r1 = slow_and_measure("R")
-        print("r1 =", r1)
-        self.turn_to(start_angle)
-        wait(500)
-        print("\n")
-
         self.go_distance(150)
-
-        wait(500)
         print("cur_pos =", self.spatial_awareness.cur_position)
         l2 = slow_and_measure("L")
-        print("l2 =", l2)
-        self.turn_to(start_angle)
-        wait(500)
-
         r2 = slow_and_measure("R")
-        print("r2 =", r2)
-        self.turn_to(start_angle)
-        wait(500)
-        print("\n")
-
-        tape = Road(l1, l2, r1, r2)
-        self.turn_to(tape.mid_angle)
-
-        return tape
+        return Road(l1, l2, r1, r2)
 
 
     ########################## utils ##########################
