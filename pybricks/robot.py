@@ -17,6 +17,9 @@ from senses.compass import Compass
 from physiology.movement import Movement
 
 
+print_method_calls = True
+
+
 class Robot:
     def __init__(self):
         # Initialise PrimeHub
@@ -33,6 +36,8 @@ class Robot:
         self.spatial_awareness: Spatial_Awareness = Spatial_Awareness((45, 50)) # x = front distance from center, y = side distance from center
 
     def sokoban(self, solution_str: str):
+        if print_method_calls:
+            print(f"sokoban(solution_str:{solution_str}: str)")
         self.planner: Planner = Planner(solution_str)
 
         while not self.planner.is_done():
@@ -54,6 +59,8 @@ class Robot:
             self.goto_next_intersection()
 
     def goto_next_intersection(self):
+        if print_method_calls:
+            print("goto_next_intersection()")
         self.tape_mid = self.follow_tape()
         print(f"Got mid_tape! correct_angle:{self.tape_mid.mid_angle} \n -> current_angle:{self.compass.direction()}")
 
@@ -70,6 +77,8 @@ class Robot:
 
 
     def detect_intersection(self):
+        if print_method_calls:
+            print("detect_intersection()")
         if self.do_i_see_tape():
             self.set_tape_start()
             self.tape_counter += 1 # For resetting tape_start
@@ -87,10 +96,14 @@ class Robot:
                 self.tape_start = (None, None) # For resetting tape_start
 
     def do_i_see_tape(self):
+        if print_method_calls:
+            print("do_i_see_tape()")
         left_obj, right_obj = self.vision.what_is_seen()
         return left_obj == VisionObject.TAPE or right_obj == VisionObject.TAPE
 
     def set_tape_start(self):
+        if print_method_calls:
+            print("set_tape_start()")
         left_start, right_start = self.tape_start
         if left_start is None or right_start is None:
             left_obj, right_obj = self.vision.what_is_seen()
@@ -104,6 +117,8 @@ class Robot:
 
 
     def set_tape_end(self):
+        if print_method_calls:
+            print("set_tape_end()")
         left_start, right_start = self.tape_start
         left_end, right_end = (None, None)
         left_obj, right_obj = self.vision.what_is_seen()
@@ -117,6 +132,8 @@ class Robot:
 
 
     def set_intersection_mid(self):
+        if print_method_calls:
+            print("set_intersection_mid()")
         left_start, right_start = self.tape_start
         left_end, right_end = self.tape_end
 
@@ -137,6 +154,8 @@ class Robot:
 
 
     def get_max_tape_dist(self):
+        if print_method_calls:
+            print("get_max_tape_dist()")
         if self.tape_start is None or self.tape_start == (None, None):
             return 0
 
@@ -153,9 +172,13 @@ class Robot:
 
 
     def follow_tape(self):
+        if print_method_calls:
+            print("follow_tape()")
         start_angle = self.compass.direction()
 
         def slow_and_measure(side : str):
+            if print_method_calls:
+                print(f"slow_and_measure({side} : str)")
             if side.upper() == "L":
                 dir = Direction.CLOCKWISE
                 eye_index = 0
@@ -192,6 +215,8 @@ class Robot:
     ########################## utils ##########################
 
     def start_forward(self, correct_angle):
+        if print_method_calls:
+            print(f"start_forward(correct_angle:{correct_angle})")
         if self.compass.angle_needs_correcting(correct_angle, 3):
             self.hold()
             self.turn_to(correct_angle)
@@ -211,6 +236,8 @@ class Robot:
         self.spatial_awareness.update(self.movement.distance(), self.compass.direction())
 
     def turn_to(self, correct_angle):
+        if print_method_calls:
+            print(f"turn_to(correct_angle:{correct_angle})")
         error = self.compass.calc_error(correct_angle)
         error_direction: Direction = Angle_Utils.get_direction(error)
 
@@ -220,6 +247,8 @@ class Robot:
         self.hold()
 
     def go_distance(self, distance):
+        if print_method_calls:
+            print(f"go_distance(distance:{distance})")
         """
         Drive forward a given distance
 
@@ -236,6 +265,8 @@ class Robot:
         self.hold()
 
     def go_to_point(self, point : Point):
+        if print_method_calls:
+            print(f"go_to_point(point:{point} : Point)")
         print(f"Going to point {point}")
         dir_vector = self.spatial_awareness.cur_position.to_vector(point)
         degrees = dir_vector.degrees()
@@ -247,4 +278,6 @@ class Robot:
         wait(500)
 
     def cur_direction(self):
+        if print_method_calls:
+            print("cur_direction()")
         return self.spatial_awareness.get_eyes_posses(self.compass.direction())
