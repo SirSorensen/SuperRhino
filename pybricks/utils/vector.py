@@ -20,7 +20,7 @@ class Vector(object):
         radians = math.radians(angle)
         trans_x = math.cos(radians) * self.X + math.sin(radians) * self.Y
         trans_y = math.sin(radians) * self.X - math.cos(radians) * self.Y
-        return (trans_x, trans_y)
+        return Vector(trans_x, trans_y)
 
     def degrees_to(self, other):
         # angle = cos^-1((v1 dot v2) / (length of v1 * length of v2))
