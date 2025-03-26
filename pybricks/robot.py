@@ -65,6 +65,7 @@ class Robot:
             # PID
             self.start_forward()
             if self.compass.angle_needs_correcting(self.tape_mid.mid_angle):
+                self.hold()
                 self.turn_to(self.tape_mid.mid_angle)
 
 
