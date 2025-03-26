@@ -29,7 +29,7 @@ class Robot:
         self.compass: Compass = Compass(self.prime_hub.imu)
 
         # Initialize & awareness
-        self.spatial_awareness: Spatial_Awareness = Spatial_Awareness((2, 4))  # TODO: Measure dist to eyes
+        self.spatial_awareness: Spatial_Awareness = Spatial_Awareness((45, 50)) # x = front distance from center, y = side distance from center
 
     def sokoban(self, solution_str: str):
         self.planner: Planner = Planner(solution_str)
@@ -53,7 +53,7 @@ class Robot:
 
     def goto_next_intersection(self):
         self.tape_mid = self.follow_tape()
-        correct_angle = self.tape_mid.angle
+        correct_angle = self.tape_mid.mid_angle
         self.tape_counter = 0
         self.tape_start = None
         self.tape_end = None
@@ -86,9 +86,9 @@ class Robot:
             if self.get_max_tape_dist() >= 47:
                 self.tape_end = self.get_vision(VisionObject.TABLE)
                 if self.tape_start[0] is None:
-                    self.tape_end[0] = None
+                    self.tape_end = (None, self.tape_end[1])
                 if self.tape_start[1] is None:
-                    self.tape_end[1] = None
+                    self.tape_end = (self.tape_end[0], None)
                 self.end_point = self.calc_intersection_mid()
 
             tape_counter = max(0, self.tape_counter - 1)
@@ -97,18 +97,18 @@ class Robot:
 
     def get_vision(self, vision_object):
         if self.vision.what_is_seen() == (vision_object, vision_object):
-            return self.spatial_awareness.get_eyes_posses()
+            return self.spatial_awareness.get_eyes_posses(self.compass.direction())
         elif self.vision.what_is_seen()[0] == vision_object:
-            return (self.spatial_awareness.get_eyes_posses()[0], None)
+            return (self.spatial_awareness.get_eyes_posses(self.compass.direction())[0], None)
         else:
-            return (None, self.spatial_awareness.get_eyes_posses()[1])
+            return (None, self.spatial_awareness.get_eyes_posses(self.compass.direction())[1])
 
 
     def get_max_tape_dist(self):
         if self.tape_start == (None, None) or self.tape_start is None:
             return 0
 
-        eye_poses = self.spatial_awareness.get_eyes_posses()
+        eye_poses = self.spatial_awareness.get_eyes_posses(self.compass.direction())
 
         if self.tape_start[0] is not None and self.tape_start[1] is not None:
             return max(self.tape_start[0].dist(eye_poses[0]), self.tape_start[1].dist(eye_poses[1]))
@@ -141,7 +141,7 @@ class Robot:
         else:
             mid = right_mid
 
-        return self.tape_mid.closest_point(mid)
+        return mid
 
 
 
@@ -162,8 +162,8 @@ class Robot:
 
             self.movement.hold()
             self.update_space()
+            return self.spatial_awareness.get_eyes_posses(self.compass.direction())[eye_index]
 
-            return self.spatial_awareness.get_eyes_posses()[eye_index]
 
         l1 = slow_and_measure("L")
         self.turn_to(start_angle)
@@ -177,17 +177,15 @@ class Robot:
         wait(500)
 
         l2 = slow_and_measure("L")
-        l2.Y += 100
         self.turn_to(start_angle)
         wait(500)
 
         r2 = slow_and_measure("R")
-        r2.Y += 100
         self.turn_to(start_angle)
         wait(500)
 
         tape = Road(l1, l2, r1, r2)
-        closest_point = tape.mid_fun.closest_point(self.spatial_awareness.cur_position)
+        closest_point = tape.center
 
         v = self.spatial_awareness.cur_position.to_vector(closest_point)
         a = Trigonometry.calc_angle(v)
@@ -196,8 +194,9 @@ class Robot:
         self.turn_to(a)
         self.go_distance(d)
 
-        self.turn_to(tape.mid_fun.angle)
-        return tape.mid_fun
+        self.turn_to(tape.mid_angle)
+
+        return tape
 
 
     ########################## utils ##########################
@@ -212,11 +211,9 @@ class Robot:
 
     def start_turn(self, dir):
         self.movement.start_turn(dir)
-        self.update_space()
 
     def update_space(self):
         self.spatial_awareness.update(self.movement.distance(), self.compass.direction())
-        self.spatial_awareness.print_status()
 
     def turn_to(self, correct_angle):
         correct_angle += self.compass.heading_threshold / 2
