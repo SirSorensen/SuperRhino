@@ -26,23 +26,6 @@ class Trigonometry:
         diff = Trigonometry.calc_diff(degrees1, degrees2)
         return (max(degrees1, degrees2) - (diff / 2)) % 360
 
-    def calc_angle(vector):
-        # cos(a) = abs(x) / sqrt(x^2+y^2)
-        vx, vy = vector
-        v_length = math.sqrt(math.pow(vx, 2) + math.pow(vy, 2))
-        x_length = abs(vx)
-        abs_radians = math.acos(x_length / v_length)
-        abs_angle = math.degrees(abs_radians)
-
-        if vx < 0 and vy < 0:
-            abs_angle += 180
-        elif vx < 0:
-            abs_angle += 90
-        elif vy < 0:
-            abs_angle += 270
-
-        return Angle_Utils.convert_degrees(abs_angle)
-
     def degrees_from_points(point1: Point, point2: Point):
         vx, vy = point1.to_vector(point2)
 
@@ -80,12 +63,6 @@ class Trigonometry:
         radians = math.acos(dot_product / (v1_length * v2_length))
         angle = math.degrees(radians)
         return Angle_Utils.convert_degrees(angle)
-
-    def calc_terminal_point(distance, degrees): # Terminal point = point of intersection on a unit circle
-        angle = Angle_Utils.convert_degrees(degrees)
-        x = math.cos(angle)
-        y = math.sin(angle)
-        return Point((x, y))
 
     def calc_side_dist(magnitude, degrees_between_vectors): # How far are we off course
         angle = Angle_Utils.convert_degrees(degrees_between_vectors)

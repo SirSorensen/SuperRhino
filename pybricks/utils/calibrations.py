@@ -9,12 +9,6 @@ def measure_many(measurement_func, parameters=None, measure_num=100) -> float:
     return measurements
 
 
-def avg_measure(measurement_func, parameters=None, measure_num=100) -> float:
-    measurements = measure_many(measurement_func, parameters, measure_num)
-    avg_measurement = sum(measurements) / len(measurements)
-    return avg_measurement
-
-
 def min_max_measure(measurement_func, parameters=None, measure_num=100) -> float:
     measurements = measure_many(measurement_func, parameters, measure_num)
     return (min(measurements), max(measurements))

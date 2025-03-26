@@ -36,10 +36,3 @@ class Spatial_Awareness:
         left = self.cur_position.add_vector(trans_left)
         right = self.cur_position.add_vector(trans_right)
         return (left, right)
-
-    def print_status(self):
-        print()
-        print(f"Current position      = {self.cur_position}")
-        print(f"Current direction     = {self.cur_direction}")
-        print(f"Current eye positions = {self.get_eyes_posses()}")
-        print()

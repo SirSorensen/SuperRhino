@@ -55,86 +55,11 @@ class Robot:
 
     def goto_next_intersection(self):
         self.tape_mid = self.follow_tape()
-        correct_angle = self.tape_mid.mid_angle
-        self.tape_counter = 0
-        self.tape_start = None
-        self.tape_end = None
-        self.intersection_mid = None
-        self.end_point = None
-
-        print(f"Got mid_tape! correct_angle:{correct_angle} \n -> current_angle:{self.compass.direction()}")
+        print(f"Got mid_tape! correct_angle:{self.tape_mid.mid_angle} \n -> current_angle:{self.compass.direction()}")
 
         while True:
             # PID
             self.start_forward()
-
-
-
-    def detect_intersection(self):
-        if self.vision.what_is_seen()[0] == VisionObject.TAPE or self.vision.what_is_seen()[1] == VisionObject.TAPE:
-            if self.tape_counter == 0:
-                self.tape_start = self.get_vision(VisionObject.TAPE)
-            self.tape_counter += 1
-        else:
-            if self.get_max_tape_dist() >= 47:
-                self.tape_end = self.get_vision(VisionObject.TABLE)
-                if self.tape_start[0] is None:
-                    self.tape_end = (None, self.tape_end[1])
-                if self.tape_start[1] is None:
-                    self.tape_end = (self.tape_end[0], None)
-                self.end_point = self.calc_intersection_mid()
-
-            tape_counter = max(0, self.tape_counter - 1)
-            if tape_counter == 0:
-                self.tape_start = (None, None)
-
-    def get_vision(self, vision_object):
-        if self.vision.what_is_seen() == (vision_object, vision_object):
-            return self.spatial_awareness.get_eyes_posses(self.compass.direction())
-        elif self.vision.what_is_seen()[0] == vision_object:
-            return (self.spatial_awareness.get_eyes_posses(self.compass.direction())[0], None)
-        else:
-            return (None, self.spatial_awareness.get_eyes_posses(self.compass.direction())[1])
-
-
-    def get_max_tape_dist(self):
-        if self.tape_start == (None, None) or self.tape_start is None:
-            return 0
-
-        eye_poses = self.spatial_awareness.get_eyes_posses(self.compass.direction())
-
-        if self.tape_start[0] is not None and self.tape_start[1] is not None:
-            return max(self.tape_start[0].dist(eye_poses[0]), self.tape_start[1].dist(eye_poses[1]))
-        elif self.tape_start[0] is not None:
-            return self.tape_start[0].dist(eye_poses[0])
-        else:
-            return self.tape_start[1].dist(eye_poses[1])
-
-
-    def calc_intersection_mid(self):
-        left_start, right_start = self.tape_start
-        left_end, right_end = self.tape_end
-        if left_start is not None and left_end is not None:
-            left_mid = left_start.mid_point(left_end)
-        else:
-            left_mid = None
-
-        if right_start is not None and right_end is not None:
-            right_mid = right_start.mid_point(right_end)
-        else:
-            right_mid = None
-
-        if left_mid is None and right_mid is None:
-            raise ValueError("Left mid and right mid is None")
-
-        if left_mid is not None and right_mid is not None:
-            mid = left_mid.mid_point(right_mid)
-        elif left_mid is not None:
-            mid = left_mid
-        else:
-            mid = right_mid
-
-        return mid
 
 
 
@@ -153,7 +78,7 @@ class Robot:
             while self.vision.what_is_seen()[eye_index] != VisionObject.TAPE:
                 self.start_turn(dir)
 
-            self.movement.hold()
+            self.hold()
             self.update_space()
             return self.spatial_awareness.get_eyes_posses(self.compass.direction())[eye_index]
 
@@ -198,7 +123,7 @@ class Robot:
             self.movement.start_forward()
         else:
             err = self.tape_mid.diff(self.spatial_awareness.cur_position)
-            self.movement.pid_forward(err)
+            self.movement.start_forward(err)
         self.update_space()
         wait(50)
 
@@ -233,4 +158,3 @@ class Robot:
             self.start_forward()
             pass
         self.hold()
-        self.update_space()
