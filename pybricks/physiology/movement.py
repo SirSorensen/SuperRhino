@@ -22,17 +22,8 @@ class Movement:
 
 
     def start_forward(self, err = 0):
-        if err != 0:
-            mod = min(abs(err), 200)
-            if err > 0:
-                self.left_motor.run(self.speed)
-                self.right_motor.run(self.speed - mod)
-            else:
-                self.left_motor.run(self.speed - mod)
-                self.right_motor.run(self.speed)
-        else:
-            self.left_motor.run(self.speed)
-            self.right_motor.run(self.speed)
+        self.left_motor.run(self.speed)
+        self.right_motor.run(self.speed)
 
     def hold(self):
         self.left_motor.hold()

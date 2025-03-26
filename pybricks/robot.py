@@ -63,10 +63,7 @@ class Robot:
 
         while True:
             # PID
-            self.start_forward()
-            if self.compass.angle_needs_correcting(self.tape_mid.mid_angle):
-                self.hold()
-                self.turn_to(self.tape_mid.mid_angle)
+            self.start_forward(self.tape_mid.mid_angle)
 
 
 
@@ -108,9 +105,13 @@ class Robot:
 
     ########################## utils ##########################
 
-    def start_forward(self):
-        self.movement.start_forward()
-        self.update_space()
+    def start_forward(self, correct_angle):
+        if self.compass.angle_needs_correcting(correct_angle):
+            self.hold()
+            self.turn_to(correct_angle)
+        else:
+            self.movement.start_forward()
+            self.update_space()
 
     def hold(self):
         self.movement.hold()
@@ -139,8 +140,9 @@ class Robot:
         distance (int): Distance (in mm) that the robot should go forward in
         """
         start_distance = self.movement.distance()
+        correct_angle = self.compass.direction()
         while self.movement.distance() - start_distance < distance:
-            self.start_forward()
+            self.start_forward(correct_angle)
             pass
         self.hold()
 
