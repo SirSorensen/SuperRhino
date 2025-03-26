@@ -17,7 +17,7 @@ class Point(object):
     def sum(self, other):
         if type(other) is not Point:
             raise KeyError("other has to be a Point")
-        return Point(other.X + self.X, other.Y + self.Y)
+        return Point((other.X + self.X, other.Y + self.Y))
 
     def dist(self, other):
         if type(other) is not Point:
@@ -35,4 +35,4 @@ class Point(object):
 
         vx, vy = self.to_vector(other)
 
-        return Point(self.X + (vx/2), self.Y + (vy/2))
+        return Point((self.X + (vx/2), self.Y + (vy/2)))

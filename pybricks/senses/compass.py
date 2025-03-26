@@ -1,11 +1,10 @@
-from pybricks._common import IMU
 from utils.trigonometry import Trigonometry
 from utils.calibrations import avg_measure
 
 
 class Compass:
-    def __init__(self, imu: IMU):
-        self.imu: IMU = imu
+    def __init__(self, imu):
+        self.imu = imu
         # Calibrate IMU
         while not self.imu.ready():
             pass

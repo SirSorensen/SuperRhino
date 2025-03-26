@@ -6,8 +6,8 @@ from pybricks.robotics import DriveBase
 class Movement:
     def __init__(
                  self, left_motor_port: Port, right_motor_port: Port,
-                 wheel_diameter=56, axle_track=160,
-                 _turn_rate=50, _turn_degree=40, _speed=400
+                 wheel_diameter=56, axle_track=85,
+                 _turn_rate=100, _turn_degree=40, _speed=400
                 ):
         # Initialise Motors (wheels)
         self.left_motor: Motor = Motor(left_motor_port, Direction.COUNTERCLOCKWISE)
@@ -34,12 +34,12 @@ class Movement:
 
     def start_turn(self, dir: Direction, turn_rate: int = None):
         if turn_rate is None:
-            turn_rate = self._turn_rate
+            turn_rate = self.turn_rate
 
-        if dir.name == Direction.CLOCKWISE:
+        if dir == Direction.CLOCKWISE:
             self.left_motor.run(turn_rate)
             self.right_motor.run(-turn_rate)
-        elif dir.name == Direction.COUNTERCLOCKWISE:
+        elif dir == Direction.COUNTERCLOCKWISE:
             self.left_motor.run(-turn_rate)
             self.right_motor.run(turn_rate)
         else:

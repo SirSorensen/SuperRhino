@@ -6,7 +6,7 @@ class Linear_Regression:
     def __init__(self, slope, zero_y):
         self.slope = slope
         self.zero_y = zero_y
-        self.angle = Trigonometry.calc_angle(1, self.slope)
+        self.angle = Trigonometry.calc_angle((1, self.slope))
 
 
     def fun(self, x):

@@ -147,10 +147,10 @@ class Robot:
 
         def slow_and_measure(side : str):
             if side.upper() == "L":
-                dir = Direction.COUNTERCLOCKWISE
+                dir = Direction.CLOCKWISE
                 eye_index = 0
             else:
-                dir = Direction.CLOCKWISE
+                dir = Direction.COUNTERCLOCKWISE
                 eye_index = 1
 
             while self.vision.what_is_seen()[eye_index] != VisionObject.TAPE:
@@ -216,7 +216,7 @@ class Robot:
         while self.compass.angle_needs_correcting(correct_angle):
             self.start_turn(error_direction)
 
-        self.movement.hold()
+        self.hold()
 
     def go_distance(self, distance):
         """

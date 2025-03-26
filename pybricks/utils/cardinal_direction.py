@@ -26,6 +26,6 @@ def to_angle(dir: CardinalDirection):
     elif dir == CardinalDirection.W:
         return 180
     elif dir == CardinalDirection.S:
-        return 270
+        return 90
 
     raise KeyError("ERROR : Illegal cardinal direction!")
