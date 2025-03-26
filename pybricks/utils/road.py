@@ -1,6 +1,5 @@
-
 from utils.point import Point
-from utils.regression import Linear_Regression, mid_linear_regression
+from utils.trigonometry import Trigonometry
 
 
 class Road:
@@ -15,9 +14,12 @@ class Road:
             pr2 : Right+front point
         """
 
-        self.left_border_fun = Linear_Regression.from_points(pl1, pl2)
-        self.right_border_fun = Linear_Regression.from_points(pr1, pr2)
-        self.mid_fun = mid_linear_regression(self.left_border_fun, self.right_border_fun)
+        self.left_border_angle = Trigonometry.degrees_from_points(pl1, pl2)
+        print(f"Left tape angle: {self.left_border_angle}")
+        self.right_border_angle = Trigonometry.degrees_from_points(pr1, pr2)
+        print(f"Right tape angle: {self.right_border_angle}")
+        self.mid_angle = Trigonometry.calc_mid(self.left_border_angle, self.right_border_angle)
+        print(f"Mid tape angle: \n{self.mid_angle}", end="\n\n")
 
         mid_l = pl1.mid_point(pl2)
         mid_r = pr1.mid_point(pr2)

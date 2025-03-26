@@ -9,9 +9,9 @@ class Spatial_Awareness:
         self.cur_position: Point = Point(start_position)
 
         eye_x, eye_y = dist_to_eye
-        self.dist_eye_right = Point((abs(eye_x), eye_y))
-        self.dist_eye_left = Point((-abs(eye_x), eye_y))
-        self.eye_angle = Trigonometry.calc_angle(self.dist_eye_right.to_vector(self.cur_position))
+
+        self.right_eye_vector = (eye_x, -eye_y)
+        self.left_eye_vector = (eye_x, eye_y)
 
         self.last_dist = 0
 
@@ -27,12 +27,14 @@ class Spatial_Awareness:
         change_in_dist = dist - self.last_dist
         change_vector = Trigonometry.to_vector(change_in_dist, cur_heading)
         # Update properties
-        self.cur_position.update(change_vector)
+        self.cur_position = self.cur_position.add_vector(change_vector)
         self.last_dist = dist
 
-    def get_eyes_posses(self) -> tuple[Point, Point]:
-        left = self.cur_position.sum(self.dist_eye_left)
-        right = self.cur_position.sum(self.dist_eye_right)
+    def get_eyes_posses(self, cur_heading) -> tuple[Point, Point]:
+        trans_left = Trigonometry.transform_vector(self.left_eye_vector, cur_heading)
+        trans_right = Trigonometry.transform_vector(self.right_eye_vector, cur_heading)
+        left = self.cur_position.add_vector(trans_left)
+        right = self.cur_position.add_vector(trans_right)
         return (left, right)
 
     def print_status(self):

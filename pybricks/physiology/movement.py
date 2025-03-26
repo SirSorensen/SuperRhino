@@ -1,6 +1,7 @@
 from pybricks.parameters import Direction, Port
 from pybricks.pupdevices import Motor
 from pybricks.robotics import DriveBase
+from utils.trigonometry import Angle_Utils
 
 
 class Movement:
@@ -46,7 +47,7 @@ class Movement:
             print("ERROR: Illegal Direction!")
 
     def turn_degrees(self, degrees):
-        movement_degrees = to_movement_degrees(degrees)
+        movement_degrees = Angle_Utils.to_movement_degrees(degrees)
         self.drive_base.turn(movement_degrees)
 
     def distance(self):
@@ -58,9 +59,3 @@ class Movement:
         """
         return self.drive_base.distance()
 
-
-def to_movement_degrees(degrees):
-    value = degrees % 360
-    if value > 180:
-        value -= 360
-    return value
