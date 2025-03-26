@@ -44,12 +44,6 @@ class Trigonometry:
         trans_y = math.sin(radians) * x - math.cos(radians) * y
         return (trans_x, trans_y)
 
-    def get_direction(degrees):
-        if degrees >= 0:
-            return Direction.CLOCKWISE
-        else:
-            return Direction.COUNTERCLOCKWISE
-
     def length_of_vector(vector):
         return math.sqrt(sum([v**2 for v in vector]))
 
@@ -83,3 +77,9 @@ class Angle_Utils:
         if value > 180:
             value -= 360
         return value
+
+    def get_direction(degrees):
+        if degrees >= 0:
+            return Direction.CLOCKWISE
+        else:
+            return Direction.COUNTERCLOCKWISE

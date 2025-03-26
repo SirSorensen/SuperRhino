@@ -8,7 +8,7 @@ from mind.planner import Planner
 
 from utils.cardinal_direction import CardinalDirection
 from utils.road import Road
-from utils.trigonometry import Trigonometry
+from utils.trigonometry import Angle_Utils
 from utils.state import VisionObject
 from senses.vision import Vision
 from senses.compass import Compass
@@ -139,7 +139,7 @@ class Robot:
 
     def turn_to(self, correct_angle):
         correct_angle += self.compass.heading_threshold / 2
-        error_direction: Direction = Trigonometry.get_direction(self.compass.calc_error(correct_angle))
+        error_direction: Direction = Angle_Utils.get_direction(self.compass.calc_error(correct_angle))
 
         while self.compass.angle_needs_correcting(correct_angle):
             self.start_turn(error_direction)
