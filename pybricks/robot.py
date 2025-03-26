@@ -64,6 +64,8 @@ class Robot:
         while True:
             # PID
             self.start_forward()
+            if self.compass.angle_needs_correcting(self.tape_mid.mid_angle):
+                self.turn_to(self.tape_mid.mid_angle)
 
 
 
@@ -85,7 +87,7 @@ class Robot:
             self.hold()
             self.update_space()
             result = self.spatial_awareness.get_eyes_posses(self.compass.direction())[eye_index]
-            print(f"slow_and_measure({side}) => result", end="\n\n")
+            print(f"slow_and_measure({side}) => {result}", end="\n\n")
             self.turn_to(start_angle)
             wait(500)
             return result
@@ -93,23 +95,21 @@ class Robot:
         print("cur_pos =", self.spatial_awareness.cur_position)
         l1 = slow_and_measure("L")
         r1 = slow_and_measure("R")
-        self.go_distance(150)
+        self.go_distance(100)
         print("cur_pos =", self.spatial_awareness.cur_position)
         l2 = slow_and_measure("L")
         r2 = slow_and_measure("R")
-        return Road(l1, l2, r1, r2)
+        self.go_distance(100)
+        l3 = slow_and_measure("L")
+        r3 = slow_and_measure("R")
+        return Road(l1, l2, l3, r1, r2, r3)
 
 
     ########################## utils ##########################
 
     def start_forward(self):
-        if self.tape_mid is None:
-            self.movement.start_forward()
-        else:
-            err = self.tape_mid.diff(self.spatial_awareness.cur_position)
-            self.movement.start_forward(err)
+        self.movement.start_forward()
         self.update_space()
-        wait(50)
 
     def hold(self):
         self.movement.hold()
@@ -144,7 +144,12 @@ class Robot:
         self.hold()
 
     def go_to_point(self, point : Point):
+        print(f"Going to point {point}")
         dir_vector = self.spatial_awareness.cur_position.to_vector(point)
         degrees = dir_vector.degrees()
+        print(f"Turning to {degrees}")
         self.turn_to(degrees)
+        wait(500)
+        print(f"Going {dir_vector.length()}")
         self.go_distance(dir_vector.length())
+        wait(500)
