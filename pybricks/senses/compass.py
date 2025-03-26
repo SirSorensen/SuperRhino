@@ -23,7 +23,7 @@ class Compass:
 
     def angle_needs_correcting(self, correct_angle):
         error = self.calc_error(correct_angle)
-        return self.heading_threshold >= error
+        return self.heading_threshold < error
 
     ########################## Calibrations: ##########################
 
