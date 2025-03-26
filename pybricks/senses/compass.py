@@ -19,7 +19,7 @@ class Compass:
     def calc_error(self, correct_angle) -> float:
         return Trigonometry.calc_diff(self.direction(), correct_angle)
 
-    def angle_needs_correcting(self, correct_angle):
+    def angle_needs_correcting(self, correct_angle, sensitivity = 1):
         error = self.calc_error(correct_angle)
         if abs(error) > abs(self.heading_threshold) and abs(self.heading_threshold) + 1 > abs(error):
             print(f"Oh no! Error too big => abs(error:{error}) > abs(heading_threshold:{self.heading_threshold})")

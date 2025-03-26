@@ -7,7 +7,7 @@ from mind.spatial_awareness import Spatial_Awareness
 from mind.planner import Planner
 
 from utils.point import Point
-from utils.cardinal_direction import CardinalDirection
+from utils.cardinal_direction import CardinalDirection, to_angle
 from utils.road import Road
 from utils.angle_utils import Angle_Utils
 from utils.state import VisionObject
@@ -46,9 +46,9 @@ class Robot:
 
 
             # Turn correct way
-            turn_degrees = self.spatial_awareness.next_angle(next_move)
+            turn_degrees = to_angle(next_move)
             print(f"Gotta turn {turn_degrees} degrees", end="\n\n")
-            self.movement.turn_degrees(turn_degrees)
+            self.turn_to(turn_degrees)
 
             # Go forward
             self.goto_next_intersection()
@@ -168,20 +168,21 @@ class Robot:
 
             self.hold()
             self.update_space()
-            result = self.spatial_awareness.get_eyes_posses(self.compass.direction())[eye_index]
+            result = self.cur_direction()[eye_index]
             print(f"slow_and_measure({side}) => {result}", end="\n\n")
             self.turn_to(start_angle)
             wait(500)
             return result
 
         print("cur_pos =", self.spatial_awareness.cur_position)
+        wait(500)
         l1 = slow_and_measure("L")
         r1 = slow_and_measure("R")
-        self.go_distance(100)
+        self.go_distance(50)
         print("cur_pos =", self.spatial_awareness.cur_position)
         l2 = slow_and_measure("L")
         r2 = slow_and_measure("R")
-        self.go_distance(100)
+        self.go_distance(50)
         l3 = slow_and_measure("L")
         r3 = slow_and_measure("R")
         return Road(l1, l2, l3, r1, r2, r3)
@@ -199,6 +200,7 @@ class Robot:
 
     def hold(self):
         self.movement.hold()
+        wait(500)
         self.update_space()
 
     def start_turn(self, dir):
@@ -208,10 +210,10 @@ class Robot:
         self.spatial_awareness.update(self.movement.distance(), self.compass.direction())
 
     def turn_to(self, correct_angle):
-        correct_angle += self.compass.heading_threshold / 2
-        error_direction: Direction = Angle_Utils.get_direction(self.compass.calc_error(correct_angle))
+        error = self.compass.calc_error(correct_angle)
+        error_direction: Direction = Angle_Utils.get_direction(error)
 
-        while self.compass.angle_needs_correcting(correct_angle):
+        while self.compass.angle_needs_correcting(correct_angle, 0.5):
             self.start_turn(error_direction)
 
         self.hold()
@@ -238,3 +240,6 @@ class Robot:
         print(f"Going {dir_vector.length()}")
         self.go_distance(dir_vector.length())
         wait(500)
+
+    def cur_direction(self):
+        return self.spatial_awareness.get_eyes_posses(self.compass.direction())
