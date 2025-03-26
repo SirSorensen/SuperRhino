@@ -29,9 +29,6 @@ class Robot:
         # Initialize & awareness
         self.spatial_awareness: Spatial_Awareness = Spatial_Awareness((2, 4))  # TODO: Measure dist to eyes
 
-        # Calibrations
-        self.calibrate_compass()
-
     def sokoban(self, solution_str: str):
         self.planner: Planner = Planner(solution_str)
 
