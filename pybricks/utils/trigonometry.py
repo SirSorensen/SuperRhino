@@ -67,6 +67,31 @@ def calc_mid(degrees1: float, degrees2: float):
         else:
             return Direction.COUNTERCLOCKWISE
 
+    def length_of_vector(vector):
+        return math.sqrt(sum([v**2 for v in vector]))
+
+    def degrees_between_vectors(v1, v2):
+        v1x, v1y = v1
+        v2x, v2y = v2
+        # angle = cos^-1((v1 dot v2) / (length of v1 * length of v2))
+        dot_product = v1x * v2x + v1y * v2y
+        v1_length = Trigonometry.length_of_vector(v1)
+        v2_length = Trigonometry.length_of_vector(v2)
+        radians = math.acos(dot_product / (v1_length * v2_length))
+        angle = math.degrees(radians)
+        return Angle_Utils.convert_degrees(angle)
+
+    def calc_terminal_point(distance, degrees): # Terminal point = point of intersection on a unit circle
+        angle = Angle_Utils.convert_degrees(degrees)
+        x = math.cos(angle)
+        y = math.sin(angle)
+        return Point((x, y))
+
+    def calc_side_dist(magnitude, degrees_between_vectors): # How far are we off course
+        angle = Angle_Utils.convert_degrees(degrees_between_vectors)
+        unit_distance = -math.sin(angle)
+        return unit_distance * magnitude
+
 
 
 

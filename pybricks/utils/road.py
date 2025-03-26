@@ -25,6 +25,9 @@ class Road:
         mid_r = pr1.mid_point(pr2)
         self.center = mid_l.mid_point(mid_r)
 
-
-
-
+    def diff(self, cur_position: Point):
+        distance = self.center.dist(cur_position)
+        expected_vector = Trigonometry.to_vector(distance, self.mid_angle)
+        actual_vector = self.center.to_vector(cur_position)
+        error_degrees = Trigonometry.degrees_between_vectors(expected_vector, actual_vector)
+        return Trigonometry.calc_side_dist(distance, error_degrees)

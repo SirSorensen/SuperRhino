@@ -32,6 +32,8 @@ class Robot:
         self.spatial_awareness: Spatial_Awareness = Spatial_Awareness((45, 50)) # x = front distance from center, y = side distance from center
 
     def sokoban(self, solution_str: str):
+        self.tape_mid = None
+
         self.planner: Planner = Planner(solution_str)
 
         while not self.planner.is_done():
@@ -202,8 +204,13 @@ class Robot:
     ########################## utils ##########################
 
     def start_forward(self):
+        if self.tape_mid is None:
         self.movement.start_forward()
+        else:
+            err = self.tape_mid.diff(self.spatial_awareness.cur_position)
+            self.movement.pid_forward(err)
         self.update_space()
+        wait(50)
 
     def hold(self):
         self.movement.hold()
