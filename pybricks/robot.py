@@ -63,19 +63,8 @@ class Robot:
         self.end_point = None
 
         while True:
-            self.movement.start_forward()
-
             # PID
-            if self.compass.angle_needs_correcting(correct_angle):
-                self.hold()
-                self.turn_to(correct_angle)
                 self.start_forward()
-
-            # I see not table!
-            self.detect_intersection()
-            if self.end_point is not None and self.spatial_awareness.cur_position.dist(self.end_point) <= 0.1:
-                self.hold()
-                return
 
 
 
@@ -187,15 +176,6 @@ class Robot:
         wait(500)
 
         tape = Road(l1, l2, r1, r2)
-        closest_point = tape.center
-
-        v = self.spatial_awareness.cur_position.to_vector(closest_point)
-        a = Trigonometry.calc_angle(v)
-        d = self.spatial_awareness.cur_position.dist(closest_point)
-
-        self.turn_to(a)
-        self.go_distance(d)
-
         self.turn_to(tape.mid_angle)
 
         return tape
