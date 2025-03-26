@@ -38,7 +38,7 @@ class Robot:
 
         while not self.planner.is_done():
             next_move = self.planner.next_move()
-            print("\nNext move =", next_move)
+            print("\nNext move =", next_move, end="\n\n")
 
             if next_move == CardinalDirection.CAN:
                 print("CAN!")
@@ -47,7 +47,7 @@ class Robot:
 
             # Turn correct way
             turn_degrees = self.spatial_awareness.next_angle(next_move)
-            print(f"Gotta turn {turn_degrees} degrees")
+            print(f"Gotta turn {turn_degrees} degrees", end="\n\n")
             self.movement.turn_degrees(turn_degrees)
 
             # Go forward
@@ -62,9 +62,11 @@ class Robot:
         self.intersection_mid = None
         self.end_point = None
 
+        print(f"Got mid_tape! correct_angle:{correct_angle} \n -> current_angle:{self.compass.direction()}")
+
         while True:
             # PID
-                self.start_forward()
+            self.start_forward()
 
 
 
@@ -156,24 +158,32 @@ class Robot:
             return self.spatial_awareness.get_eyes_posses(self.compass.direction())[eye_index]
 
 
+        print("cur_pos =", self.spatial_awareness.cur_position)
         l1 = slow_and_measure("L")
+        print("l1 =", l1)
         self.turn_to(start_angle)
         wait(500)
 
         r1 = slow_and_measure("R")
+        print("r1 =", r1)
         self.turn_to(start_angle)
         wait(500)
+        print("\n")
 
         self.go_distance(150)
-        wait(500)
 
+        wait(500)
+        print("cur_pos =", self.spatial_awareness.cur_position)
         l2 = slow_and_measure("L")
+        print("l2 =", l2)
         self.turn_to(start_angle)
         wait(500)
 
         r2 = slow_and_measure("R")
+        print("r2 =", r2)
         self.turn_to(start_angle)
         wait(500)
+        print("\n")
 
         tape = Road(l1, l2, r1, r2)
         self.turn_to(tape.mid_angle)
@@ -185,7 +195,7 @@ class Robot:
 
     def start_forward(self):
         if self.tape_mid is None:
-        self.movement.start_forward()
+            self.movement.start_forward()
         else:
             err = self.tape_mid.diff(self.spatial_awareness.cur_position)
             self.movement.pid_forward(err)
