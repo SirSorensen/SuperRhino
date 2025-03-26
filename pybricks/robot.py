@@ -5,6 +5,7 @@ from pybricks.hubs import PrimeHub
 from mind.spatial_awareness import Spatial_Awareness
 from mind.planner import Planner
 
+from utils.cardinal_direction import CardinalDirection
 from utils.road import Road
 from utils.trigonometry import Trigonometry
 from utils.state import VisionObject
@@ -35,6 +36,11 @@ class Robot:
         while not self.planner.is_done():
             next_move = self.planner.next_move()
             print("\nNext move =", next_move)
+
+            if next_move == CardinalDirection.CAN:
+                print("CAN!")
+                next_move = self.planner.next_move()
+
 
             # Turn correct way
             turn_degrees = self.spatial_awareness.next_angle(next_move)

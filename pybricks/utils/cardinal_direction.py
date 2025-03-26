@@ -5,6 +5,7 @@ class CardinalDirection:
     S: tuple[int, int] = (0, -1)
     W: tuple[int, int] = (-1, 0)
     E: tuple[int, int] = (1, 0)
+    CAN: bool = True
 
     def to_cardinal_direction(s: str):
         if s.upper() == "U" or s.upper() == "N":
@@ -15,6 +16,8 @@ class CardinalDirection:
             return CardinalDirection.W
         if s.upper() == "R" or s.upper() == "E":
             return CardinalDirection.E
+        if s.upper() == "C":
+            return CardinalDirection.CAN
 
         raise KeyError("ERROR : Illegal move string!")
 
