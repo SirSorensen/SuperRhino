@@ -1,4 +1,4 @@
-from pybricks.parameters import Direction
+from utils.angle_utils import Angle_Utils
 from utils.point import Point
 import umath as math
 
@@ -62,24 +62,3 @@ class Trigonometry:
         angle = Angle_Utils.convert_degrees(degrees_between_vectors)
         unit_distance = -math.sin(angle)
         return unit_distance * magnitude
-
-
-
-
-class Angle_Utils:
-    def convert_degrees(degrees):
-        while degrees < 0:
-            degrees += 360
-        return (360 - (degrees)) % 360
-
-    def to_movement_degrees(degrees):
-        value = degrees % 360
-        if value > 180:
-            value -= 360
-        return value
-
-    def get_direction(degrees):
-        if degrees >= 0:
-            return Direction.CLOCKWISE
-        else:
-            return Direction.COUNTERCLOCKWISE

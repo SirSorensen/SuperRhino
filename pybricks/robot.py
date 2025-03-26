@@ -8,7 +8,7 @@ from mind.planner import Planner
 
 from utils.cardinal_direction import CardinalDirection
 from utils.road import Road
-from utils.trigonometry import Angle_Utils
+from utils.angle_utils import Angle_Utils
 from utils.state import VisionObject
 from senses.vision import Vision
 from senses.compass import Compass
