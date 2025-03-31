@@ -1,3 +1,3 @@
+from robot import Robot
 
-
-print("Hello, World!")
+r = Robot()
