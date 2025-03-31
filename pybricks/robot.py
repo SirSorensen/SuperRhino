@@ -1,16 +1,11 @@
-from pybricks.parameters import Port
-from pybricks.hubs import PrimeHub
+from mind.planner import Planner
+from mind.spatial_awareness import Spatial_Awareness
+from physiology.movement import Movement
+from utils.cardinal_direction import CardinalDirection
 from utils.measurements import Measurements
 
-from mind.spatial_awareness import Spatial_Awareness
-from mind.planner import Planner
-
-from utils.cardinal_direction import CardinalDirection
-from senses.vision import Vision
-from senses.compass import Compass
-
-from physiology.movement import Movement
-
+from pybricks.hubs import PrimeHub
+from pybricks.parameters import Port
 
 print_method_calls = True
 
@@ -23,20 +18,13 @@ class Robot:
         # Initialise Motors (wheels)
         self.movement: Movement = Movement(Port.B, Port.A)
 
-        # Initialize & calibrate the sensors
-        self.vision: Vision = Vision(Port.F, Port.E)
-        self.compass: Compass = Compass(self.prime_hub.imu)
-
-        # Initialize & awareness
-        self.spatial_awareness: Spatial_Awareness = Spatial_Awareness((45, 50)) # x = front distance from center, y = side distance from center
-
         self.measurements = Measurements()
 
     ########################## sokoban ##########################
 
     def sokoban(self, solution_str: str):
         self.planner: Planner = Planner(solution_str)
-        self.spatial_awareness.set_start_pos(0, 3)
+        self.spatial_awareness: Spatial_Awareness = Spatial_Awareness(0, 3)
         self.movement.drive_base.reset()
         self.movement.drive_base.use_gyro(True)
 

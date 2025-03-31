@@ -13,19 +13,10 @@ class Queue:
             return self.queue.pop(0)  # Removes the first element (FIFO)
         return None  # Return None if queue is empty
 
-    def peek(self):
-        """Return the first item without removing it."""
-        if not self.is_empty():
-            return self.queue[0]
-        return None
-
     def is_empty(self):
         """Check if the queue is empty."""
         return len(self.queue) == 0
 
-    def size(self):
-        """Return the number of items in the queue."""
-        return len(self.queue)
 
 def list_to_queue(xs : list) -> Queue:
     queue = Queue()

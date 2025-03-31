@@ -1,5 +1,5 @@
-from utils.queue import list_to_queue, Queue
 from utils.cardinal_direction import CardinalDirection
+from utils.queue import Queue, list_to_queue
 
 
 class Planner:
@@ -10,9 +10,6 @@ class Planner:
 
     def next_move(self) -> CardinalDirection | None:
         return self.solution.dequeue()
-
-    def peek(self) -> CardinalDirection | None:
-        return self.solution.peek()
 
     def is_done(self) -> bool:
         return self.solution.is_empty()
