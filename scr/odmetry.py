@@ -64,7 +64,7 @@ def move_robot(left_speed, right_speed, duration):
     left_motor.stop()
     right_motor.stop()
 
-_speed=400
+_speed=180
 # Example movement sequence:
 # move forward for n sec
 move_robot(_speed, _speed, 3)
@@ -73,3 +73,4 @@ move_robot(-_speed, _speed, 3)
 # move forward for k seconds
 move_robot(_speed, _speed, 3)
 print("Final Position:", x, y, degrees(theta))
+print(f"= {x*10} cm, {y*10} cm, {degrees(theta) % 360} degrees")
