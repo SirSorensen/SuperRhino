@@ -1,7 +1,7 @@
 from umath import cos, sin, radians, degrees
 from pybricks.tools import vector, Matrix
 from pybricks.tools import wait
-from pybricks.pupdevices import Motor
+from pybricks.pupdevices import Motor, ColorSensor
 from pybricks.parameters import Direction, Port
 
 
@@ -14,6 +14,13 @@ right_motor: Motor = Motor(Port.A) # The motor that drives the right wheel.
 wheel_radius = 0.028 # Diameter of the wheels (in meters).
 axle_track = 0.085 # Distance between the points where both wheels touch the ground (in meters).
 L = axle_track / 2
+
+
+left_sensor: ColorSensor = ColorSensor(Port.F)
+left_sensor.lights.off()
+right_sensor: ColorSensor = ColorSensor(Port.E)
+right_sensor.lights.off()
+
 
 ### Dynamic variables ###
 x, y = 0.0, 0.0 # Position (in meters)
