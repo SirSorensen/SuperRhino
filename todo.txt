@@ -1,2 +1,0 @@
-- Make nodes inaccessible in path due to cans
-- 
