@@ -1,6 +1,7 @@
 import pygame
 from environment import Environment
 from numpy import cos, pi, sin
+from robot_pose import RobotPose
 from sensor import SingleRayDistanceAndColorSensor
 
 
