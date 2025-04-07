@@ -5,25 +5,25 @@ from sensor import SingleRayDistanceAndColorSensor
 
 
 class DifferentialDriveRobot:
-    def __init__(self, env : Environment, x, y, theta, axel_length=40, wheel_radius=10, max_motor_speed=2*pi, kinematic_timestep=0.01):
+    def __init__(self, env : Environment, x : float, y : float, theta : float, axel_length=40, wheel_radius=10, max_motor_speed=2*pi, kinematic_timestep=0.01):
         self.env : Environment = env
-        self.x = x
-        self.y = y
-        self.theta = theta  # Orientation in radians
+        self.x : float = x
+        self.y : float = y
+        self.theta : float = theta  # Orientation in radians
         self.axel_length = axel_length # in cm
         self.wheel_radius = wheel_radius # in cm
 
-        self.kinematic_timestep = kinematic_timestep
+        self.kinematic_timestep : float = kinematic_timestep
 
-        self.collided = False
+        self.collided : bool = False
 
         self.left_motor_speed  = 0 #rad/s
         self.right_motor_speed = 0 #rad/s
         #self.theta_noise_level = 0.01
 
-        self.sensor = SingleRayDistanceAndColorSensor(100, 0)
+        self.sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(100, 0)
 
-    def move(self, robot_timestep): # run the control algorithm here
+    def move(self, robot_timestep : float): # run the control algorithm here
         # simulate kinematics during one execution cycle of the robot
         self._step_kinematics(robot_timestep)
 
@@ -38,7 +38,7 @@ class DifferentialDriveRobot:
 
 
 
-    def _step_kinematics(self, robot_timestep):
+    def _step_kinematics(self, robot_timestep : float):
         for _ in range(int(robot_timestep / self.kinematic_timestep)): # the kinematic model is updated in every step for robot_timestep/self.kinematic_timestep times
             # odometry is used to calculate where we approximately end up after each step
             pos = self._odometer(self.kinematic_timestep)
@@ -105,10 +105,10 @@ class DifferentialDriveRobot:
 
 
 class RobotPose:
-    def __init__(self, x, y, theta):
-        self.x = x
-        self.y = y
-        self.theta = theta
+    def __init__(self, x : float, y : float, theta : float):
+        self.x : float = x
+        self.y : float = y
+        self.theta  : float= theta
 
     # this is for pretty printing
     def __repr__(self) -> str:
