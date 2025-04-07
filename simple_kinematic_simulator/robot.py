@@ -2,7 +2,7 @@ import pygame
 from environment import Environment
 from numpy import cos, pi, sin
 from robot_pose import RobotPose
-from sensor import SingleRayDistanceAndColorSensor
+from lidar import Lidar
 
 
 class DifferentialDriveRobot:
@@ -22,9 +22,7 @@ class DifferentialDriveRobot:
         self.right_motor_speed = 1 #rad/s
         #self.theta_noise_level = 0.01
 
-        self.mid_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(100, 0)
-        self.left_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(100, -1)
-        self.right_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(100, 1)
+        self.lidar = Lidar(100)
 
 
     def move(self, robot_timestep : float): # run the control algorithm here
@@ -36,10 +34,10 @@ class DifferentialDriveRobot:
 
         # update sensors
         self.sense()
-        (distance, color, intersect_point) = self.mid_sensor.latest_reading
+        (distance, color, intersect_point) = self.lidar.sensors[0].latest_reading
 
         # run the control algorithm and update motor speeds
-        if distance < self.mid_sensor.max_distance_cm:
+        if distance < self.lidar.sensors[0].max_distance_cm:
             self.left_motor_speed  = 4
         else:
             self.left_motor_speed  = 1.2
@@ -61,9 +59,7 @@ class DifferentialDriveRobot:
     def sense(self):
         obstacles = self.env.get_obstacles()
         robot_pose = self.get_robot_pose()
-        self.mid_sensor.generate_beam_and_measure(robot_pose, obstacles)
-        self.left_sensor.generate_beam_and_measure(robot_pose, obstacles)
-        self.right_sensor.generate_beam_and_measure(robot_pose, obstacles)
+        self.lidar.generate_beam_and_measure(robot_pose, obstacles)
 
     # this is in fact what a robot can predict about its own future position
     def _odometer(self, delta_time):
@@ -90,7 +86,7 @@ class DifferentialDriveRobot:
     def get_robot_radius(self):
         return self.axel_length/2
 
-    def draw(self, surface):
+    def draw(self, surface : pygame.Surface):
         pygame.draw.circle(surface, (0,255,0), center=(self.x, self.y), radius=self.axel_length/2, width = 1)
 
         # Calculate the left and right wheel positions
@@ -112,6 +108,4 @@ class DifferentialDriveRobot:
         pygame.draw.line(surface, (255, 0, 0), (self.x, self.y), (heading_x, heading_y), 5)
 
         # Draw sensor beams
-        self.mid_sensor.draw(self.get_robot_pose(),surface)
-        self.left_sensor.draw(self.get_robot_pose(),surface)
-        self.right_sensor.draw(self.get_robot_pose(),surface)
+        self.lidar.draw(self.get_robot_pose(), surface)
