@@ -1,5 +1,5 @@
 import pygame
-from shapely.geometry import LineString, Polygon, Point
+from shapely.geometry import LineString, Point
 
 
 
@@ -42,13 +42,13 @@ class Environment:
 
     def get_obstacles(self):
         return self.obstacle_walls
-    
+
     def check_collision(self, pos, radius):
         # This is not a collision sensor. If you need that, define it as you wish
         for line, color in self.obstacle_walls:
             if line.distance(Point(pos.x, pos.y)) <= radius:
                 return True
-    
+
     def draw(self,screen):
         # Draw the walls
         for wall,color in self.obstacle_walls:

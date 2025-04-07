@@ -1,6 +1,6 @@
 import pygame
-from pygame.locals import QUIT, KEYDOWN
 from environment import Environment
+from pygame.locals import KEYDOWN, QUIT
 from robot import DifferentialDriveRobot
 
 #for potential visualization
@@ -75,5 +75,5 @@ def drawBoom():
 
 if __name__ == "__main__":
     main()
-  
+
 
