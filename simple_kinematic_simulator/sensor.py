@@ -1,5 +1,6 @@
 import pygame
 from numpy import cos, pi, sin
+from robot_pose import RobotPose
 from shapely.geometry import LineString, Point
 
 
@@ -11,7 +12,7 @@ class SingleRayDistanceAndColorSensor:
         # the latest sensory inputs
         self.latest_reading = None
 
-    def generate_beam_and_measure(self, robot_pose, obstacles):
+    def generate_beam_and_measure(self, robot_pose : RobotPose, obstacles):
         x = robot_pose.x
         y = robot_pose.y
 
