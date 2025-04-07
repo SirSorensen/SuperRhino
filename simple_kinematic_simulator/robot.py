@@ -27,7 +27,7 @@ class DifferentialDriveRobot:
 
         self.lidar = Lidar(800)
         self.cur_timestamp = 0
-        self.next_turn_timestamp = self.cur_timestamp + r.randint(0, 10)
+        self.next_turn_timestamp = self.update_random_timestamp()
 
 
     def move(self, robot_timestep : float): # run the control algorithm here
@@ -56,9 +56,13 @@ class DifferentialDriveRobot:
             self.left_motor_speed  = 1.2
 
 
+    def update_random_timestamp(self, max_seconds = 10):
+        return self.cur_timestamp + r.randint(0, max_seconds)
+
+
     def turn_random(self):
         if self.next_turn_timestamp >= self.cur_timestamp:
-            self.next_turn_timestamp = self.cur_timestamp + r.randint(0, 10)
+            self.next_turn_timestamp = self.update_random_timestamp()
             rand_int = r.randint(0, 1)
             if rand_int == 0:
                 self.left_motor_speed  = 1 + r.random()
