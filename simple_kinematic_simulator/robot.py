@@ -27,6 +27,9 @@ class DifferentialDriveRobot:
 
 
     def move(self, robot_timestep : float): # run the control algorithm here
+
+        avoidance_distance = 100
+
         # simulate kinematics during one execution cycle of the robot
         self._step_kinematics(robot_timestep)
 
@@ -38,7 +41,7 @@ class DifferentialDriveRobot:
         (distance, color, intersect_point) = self.lidar.sensors[0].latest_reading
 
         # run the control algorithm and update motor speeds
-        if distance < self.lidar.sensors[0].max_distance_cm:
+        if distance < avoidance_distance:
             self.left_motor_speed  = 4
         else:
             self.left_motor_speed  = 1.2
