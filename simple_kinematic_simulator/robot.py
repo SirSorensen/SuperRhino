@@ -22,7 +22,7 @@ class DifferentialDriveRobot:
         self.right_motor_speed = 1 #rad/s
         #self.theta_noise_level = 0.01
 
-        self.lidar = Lidar(100)
+        self.lidar = Lidar(800)
 
 
     def move(self, robot_timestep : float): # run the control algorithm here
