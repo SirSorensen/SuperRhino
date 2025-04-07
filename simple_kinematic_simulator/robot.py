@@ -1,10 +1,12 @@
+import random
 import pygame
 from environment import Environment
 from lidar import Lidar
 from numpy import cos, pi, sin
 from robot_pose import RobotPose
-from lidar import Lidar
 
+r = random.Random()
+r.seed(3)
 
 class DifferentialDriveRobot:
     def __init__(self, env : Environment, x : float, y : float, theta : float, axel_length=40, wheel_radius=10, max_motor_speed=2*pi, kinematic_timestep=0.01):
@@ -24,9 +26,16 @@ class DifferentialDriveRobot:
         #self.theta_noise_level = 0.01
 
         self.lidar = Lidar(800)
+        self.cur_timestamp = 0
+        self.next_turn_timestamp = self.cur_timestamp + r.randint(0, 10)
 
 
     def move(self, robot_timestep : float): # run the control algorithm here
+        self.cur_timestamp += robot_timestep
+
+        # turn a random angle at random intervals
+        self.turn_random()
+
 
         avoidance_distance = 100
 
@@ -47,6 +56,18 @@ class DifferentialDriveRobot:
             self.left_motor_speed  = 1.2
 
 
+    def turn_random(self):
+        if self.next_turn_timestamp >= self.cur_timestamp:
+            self.next_turn_timestamp = self.cur_timestamp + r.randint(0, 10)
+            rand_int = r.randint(0, 1)
+            if rand_int == 0:
+                self.left_motor_speed  = 1 + r.random()
+                self.right_motor_speed = 1
+                print("Turning left!", self.left_motor_speed, self.right_motor_speed)
+            else:
+                self.left_motor_speed = 1
+                self.right_motor_speed  = 1 + r.random()
+                print("Turning right!", self.left_motor_speed, self.right_motor_speed)
 
 
     def _step_kinematics(self, robot_timestep : float):
