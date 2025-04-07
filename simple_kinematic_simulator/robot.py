@@ -1,11 +1,12 @@
 import pygame
-from numpy import cos, sin, pi
-
+from environment import Environment
+from numpy import cos, pi, sin
 from sensor import SingleRayDistanceAndColorSensor
 
+
 class DifferentialDriveRobot:
-    def __init__(self, env, x, y, theta, axel_length=40, wheel_radius=10, max_motor_speed=2*pi, kinematic_timestep=0.01):
-        self.env = env
+    def __init__(self, env : Environment, x, y, theta, axel_length=40, wheel_radius=10, max_motor_speed=2*pi, kinematic_timestep=0.01):
+        self.env : Environment = env
         self.x = x
         self.y = y
         self.theta = theta  # Orientation in radians
