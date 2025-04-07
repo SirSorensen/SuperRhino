@@ -1,5 +1,6 @@
 import pygame
 from environment import Environment
+from lidar import Lidar
 from numpy import cos, pi, sin
 from robot_pose import RobotPose
 from lidar import Lidar
