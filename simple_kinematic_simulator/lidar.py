@@ -22,6 +22,18 @@ class Lidar:
         for _, sensor in self.sensors.items():
             sensor.generate_beam_and_measure(robot_pose, obstacles)
 
+    def get_smallest_distance(self):
+        cur_min = None
+        min_angle = 0
+        for degree in beam_range:
+            (distance, color, intersect_point) = self.sensors[degree].latest_reading
+            if cur_min is None or distance < cur_min:
+                cur_min = distance
+                min_angle = degree
+
+        return (cur_min, min_angle)
+
+
     def draw(self, robot_pose : RobotPose, surface : pygame.Surface):
         for _, sensor in self.sensors.items():
             sensor.draw(robot_pose, surface)

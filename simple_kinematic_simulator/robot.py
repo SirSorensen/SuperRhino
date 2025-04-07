@@ -29,12 +29,11 @@ class DifferentialDriveRobot:
         self.cur_timestamp = 0
         self.next_turn_timestamp = self.update_random_timestamp()
 
+        self._update_prev_motor_speed()
+
 
     def move(self, robot_timestep : float): # run the control algorithm here
         self.cur_timestamp += robot_timestep
-
-        # turn a random angle at random intervals
-        self.turn_random()
 
 
         avoidance_distance = 100
@@ -47,13 +46,21 @@ class DifferentialDriveRobot:
 
         # update sensors
         self.sense()
-        (distance, color, intersect_point) = self.lidar.sensors[0].latest_reading
+        min_distance, min_angle = self.lidar.get_smallest_distance()
 
         # run the control algorithm and update motor speeds
-        if distance < avoidance_distance:
-            self.left_motor_speed  = 4
+        if min_distance < avoidance_distance:
+            if min_angle > 0 and min_angle < 180:
+                self.left_motor_speed  = 1
+                self.right_motor_speed = 4
+            elif min_angle > 0 and min_angle > 180:
+                self.left_motor_speed  = 4
+                self.right_motor_speed = 1
+            else:
+                self._random_left_or_right(0, 4)
         else:
-            self.left_motor_speed  = 1.2
+            # turn a random angle at random intervals
+            self.turn_random()
 
 
     def update_random_timestamp(self, max_seconds = 10):
@@ -61,18 +68,21 @@ class DifferentialDriveRobot:
 
 
     def turn_random(self):
-        if self.next_turn_timestamp >= self.cur_timestamp:
-            self.next_turn_timestamp = self.update_random_timestamp()
-            rand_int = r.randint(0, 1)
-            if rand_int == 0:
-                self.left_motor_speed  = 1 + r.random()
-                self.right_motor_speed = 1
-                print("Turning left!", self.left_motor_speed, self.right_motor_speed)
-            else:
-                self.left_motor_speed = 1
-                self.right_motor_speed  = 1 + r.random()
-                print("Turning right!", self.left_motor_speed, self.right_motor_speed)
+        self._random_left_or_right(1, 1 + r.random())
+        self._update_prev_motor_speed()
 
+    def _random_left_or_right(self, min_speed, max_speed):
+        rand_int = r.randint(0, 1)
+        if rand_int == 0:
+            self.left_motor_speed  = max_speed
+            self.right_motor_speed = min_speed
+        else:
+            self.left_motor_speed = min_speed
+            self.right_motor_speed  = max_speed
+
+    def _update_prev_motor_speed(self):
+        self.prev_left_motor_speed  = self.left_motor_speed
+        self.prev_right_motor_speed = self.right_motor_speed
 
     def _step_kinematics(self, robot_timestep : float):
         for _ in range(int(robot_timestep / self.kinematic_timestep)): # the kinematic model is updated in every step for robot_timestep/self.kinematic_timestep times
