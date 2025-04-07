@@ -19,11 +19,13 @@ class DifferentialDriveRobot:
         self.floor_plan = [[0 for _ in range(env.width)] for _ in range(env.height)]
         self.collided : bool = False
 
-        self.left_motor_speed  = 3 #rad/s
+        self.left_motor_speed  = 1.2 #rad/s
         self.right_motor_speed = 1 #rad/s
-        self.theta_noise_level = 0.01
-        self.max_sensor_distance = 100
-        self.sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(self.max_sensor_distance, 0)
+        #self.theta_noise_level = 0.01
+
+        self.mid_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(100, 0)
+        self.left_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(100, -1)
+        self.right_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(100, 1)
 
 
     def move(self, robot_timestep : float): # run the control algorithm here
@@ -35,9 +37,14 @@ class DifferentialDriveRobot:
 
         # update sensors
         self.sense()
+        (distance, color, intersect_point) = self.mid_sensor.latest_reading
 
         # run the control algorithm and update motor speeds
-        # ...
+        if distance < self.mid_sensor.max_distance_cm:
+            self.left_motor_speed  = 4
+        else:
+            self.left_motor_speed  = 1.2
+
 
 
 
@@ -57,7 +64,9 @@ class DifferentialDriveRobot:
     def sense(self):
         obstacles = self.env.get_obstacles()
         robot_pose = self.get_robot_pose()
-        self.sensor.generate_beam_and_measure(robot_pose, obstacles)
+        self.mid_sensor.generate_beam_and_measure(robot_pose, obstacles)
+        self.left_sensor.generate_beam_and_measure(robot_pose, obstacles)
+        self.right_sensor.generate_beam_and_measure(robot_pose, obstacles)
         self.update_internal_map()
 
     # this is in fact what a robot can predict about its own future position
@@ -107,7 +116,9 @@ class DifferentialDriveRobot:
         pygame.draw.line(surface, (255, 0, 0), (self.x, self.y), (heading_x, heading_y), 5)
 
         # Draw sensor beams
-        self.sensor.draw(self.get_robot_pose(),surface)
+        self.mid_sensor.draw(self.get_robot_pose(),surface)
+        self.left_sensor.draw(self.get_robot_pose(),surface)
+        self.right_sensor.draw(self.get_robot_pose(),surface)
 
     # update_internal_map
     def update_internal_map(self):
