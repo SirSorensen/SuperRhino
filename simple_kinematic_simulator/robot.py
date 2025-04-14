@@ -23,6 +23,8 @@ class DifferentialDriveRobot:
         #self.theta_noise_level = 0.01
 
         self.mid_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(400, 0)
+        self.left_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(400, -1)
+        self.right_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(400, 1)
 
 
     def move(self, robot_timestep : float): # run the control algorithm here
@@ -63,6 +65,8 @@ class DifferentialDriveRobot:
         obstacles = self.env.get_obstacles()
         robot_pose = self.get_robot_pose()
         self.mid_sensor.generate_beam_and_measure(robot_pose, obstacles)
+        self.left_sensor.generate_beam_and_measure(robot_pose, obstacles)
+        self.right_sensor.generate_beam_and_measure(robot_pose, obstacles)
 
     # this is in fact what a robot can predict about its own future position
     def _odometer(self, delta_time):
@@ -112,3 +116,5 @@ class DifferentialDriveRobot:
 
         # Draw sensor beams
         self.mid_sensor.draw(self.get_robot_pose(),surface)
+        self.left_sensor.draw(self.get_robot_pose(),surface)
+        self.right_sensor.draw(self.get_robot_pose(),surface)
