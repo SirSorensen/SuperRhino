@@ -34,6 +34,24 @@ class Lidar:
         return (cur_min, min_angle)
 
 
+    def where_is_goal(self):
+        color_angle = None
+        closest = None
+        for degree in beam_range:
+            (distance, color, _) = self.sensors[degree].latest_reading
+            if color is not None and color == (255, 255, 0):
+                if degree == 0:
+                    return degree
+                if color_angle is None:
+                    color_angle = degree
+                    closest = distance
+                elif closest > distance:
+                    color_angle = degree
+                    closest = distance
+
+
+        return color_angle
+
     def draw(self, robot_pose : RobotPose, surface : pygame.Surface):
         for _, sensor in self.sensors.items():
             sensor.draw(robot_pose, surface)

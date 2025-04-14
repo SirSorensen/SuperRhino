@@ -47,9 +47,10 @@ class DifferentialDriveRobot:
         # update sensors
         self.sense()
         min_distance, min_angle = self.lidar.get_smallest_distance()
+        goal_degree = self.lidar.where_is_goal() # Which way is the goal (front else closest)
 
         # run the control algorithm and update motor speeds
-        if min_distance < avoidance_distance:
+        if min_distance < avoidance_distance and (goal_degree is None or goal_degree != 0):
             if min_angle > 0 and min_angle < 180:
                 self.left_motor_speed  = 1
                 self.right_motor_speed = 4
@@ -59,16 +60,30 @@ class DifferentialDriveRobot:
             else:
                 self._random_left_or_right(0, 4)
         else:
-            # turn a random angle at random intervals
-            self.turn_random()
+            # turn a random angle at random interval
+            if goal_degree is None:
+                self.turn_random()
+            else:
+                self.turn_to_goal(goal_degree)
+
+
 
 
     def update_random_timestamp(self, max_seconds = 10):
         return self.cur_timestamp + r.randint(0, max_seconds)
 
 
+    def turn_to_goal(self, goal_degree):
+        if goal_degree == 0:
+            self.left_motor_speed  = 2
+            self.right_motor_speed = 2
+        else:
+            self.left_motor_speed  = 2
+            self.right_motor_speed = 0
+        self._update_prev_motor_speed()
+
     def turn_random(self):
-        self._random_left_or_right(1, 1 + r.random())
+        self._random_left_or_right(1, 1)
         self._update_prev_motor_speed()
 
     def _random_left_or_right(self, min_speed, max_speed):
