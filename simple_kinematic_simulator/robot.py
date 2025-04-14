@@ -6,7 +6,7 @@ from sensor import SingleRayDistanceAndColorSensor
 
 
 class DifferentialDriveRobot:
-    def __init__(self, env : Environment, x : float, y : float, theta : float, axel_length=40, wheel_radius=10, max_motor_speed=2*pi, kinematic_timestep=0.01):
+    def __init__(self, env : Environment, x : float, y : float, theta : float, i : float, axel_length=40, wheel_radius=10, motor_speed=1, kinematic_timestep=0.01):
         self.env : Environment = env
         self.x : float = x
         self.y : float = y
@@ -18,13 +18,19 @@ class DifferentialDriveRobot:
 
         self.collided : bool = False
 
-        self.left_motor_speed  = 1 #rad/s
-        self.right_motor_speed = 1 #rad/s
+
+        self.motor_speed = motor_speed
+        self.left_motor_speed  = motor_speed #rad/s
+        self.right_motor_speed = motor_speed #rad/s
         #self.theta_noise_level = 0.01
 
         self.mid_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(400, 0)
         self.left_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(400, -1)
         self.right_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(400, 1)
+
+
+        # For learning
+        self.i = i
 
 
     def move(self, robot_timestep : float): # run the control algorithm here
@@ -43,7 +49,7 @@ class DifferentialDriveRobot:
     def determine_speed(self):
         (distance, color, intersect_point) = self.mid_sensor.latest_reading
 
-        same_speed = max(0, ((distance + self.axel_length) / self.mid_sensor.max_distance_cm) - 0.2)
+        same_speed = max(0, ((distance + self.axel_length) / self.mid_sensor.max_distance_cm) - 0.2) * self.motor_speed
 
         print(f"Left_motor_speed:{same_speed} , Right_motor_speed:{same_speed}")
         return same_speed, same_speed
