@@ -19,13 +19,13 @@ class DifferentialDriveRobot:
         self.floor_plan = [[0 for _ in range(env.width)] for _ in range(env.height)]
         self.collided : bool = False
 
-        self.left_motor_speed  = 1.2 #rad/s
+        self.left_motor_speed  = 1 #rad/s
         self.right_motor_speed = 1 #rad/s
         #self.theta_noise_level = 0.01
 
-        self.mid_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(100, 0)
-        self.left_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(100, -1)
-        self.right_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(100, 1)
+        self.mid_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(400, 0)
+        self.left_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(400, -1)
+        self.right_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(400, 1)
 
 
     def move(self, robot_timestep : float): # run the control algorithm here
@@ -37,14 +37,17 @@ class DifferentialDriveRobot:
 
         # update sensors
         self.sense()
-        (distance, color, intersect_point) = self.mid_sensor.latest_reading
 
         # run the control algorithm and update motor speeds
-        if distance < self.mid_sensor.max_distance_cm:
-            self.left_motor_speed  = 4
-        else:
-            self.left_motor_speed  = 1.2
+        self.left_motor_speed, self.right_motor_speed = self.determine_speed()
 
+    def determine_speed(self):
+        (distance, color, intersect_point) = self.mid_sensor.latest_reading
+
+        same_speed = ((distance + self.axel_length) / self.mid_sensor.max_distance_cm) - 0.2
+
+        print(f"Left_motor_speed:{same_speed} , Right_motor_speed:{same_speed}")
+        return same_speed, same_speed
 
 
 
