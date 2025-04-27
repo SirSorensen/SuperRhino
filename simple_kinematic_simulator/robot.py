@@ -15,9 +15,8 @@ class DifferentialDriveRobot:
         self.wheel_radius = wheel_radius # in cm
         self.kinematic_timestep : float = kinematic_timestep
         # tuples consist of (width, height) and represent squares
-        self.floor_plan = [[0] * env.width] * env.height
-        # print(env.width)
-        # print(env.height)
+        # self.floor_plan = [[0]*env.width for _ in range(env.height)]
+        self.floor_plan = [[0 for _ in range(env.width)] for _ in range(env.height)]
         self.collided : bool = False
 
         self.left_motor_speed  = 3 #rad/s
@@ -117,21 +116,22 @@ class DifferentialDriveRobot:
         y = int(self.y)
         # how much area do we cover?
         msd = self.max_sensor_distance
-        # what area are we covering? For now we pretend to be a square
-        # What quardrant are we in?
+        # Define area that we can potentially see - for now we pretend it is square
         x_lower_bound = max(0, x - msd)
         x_upper_bound = min(self.env.width, x + msd)
         y_lower_bound = max(0, y - msd)
         y_upper_bound = min(self.env.width, y + msd)
         for i in range(x_lower_bound,x_upper_bound):
+            # Perhaps calculate how far the beam is reaching and use that as upper bound for obstacle detection.
             for j in range(y_lower_bound, y_upper_bound):
                 # if there is an object, stop detecting.
                 # Q: Is there a risk of missing an obstacle?
+                # If we or on the other side of an obstacle we have come too far
+                # - There is some logic of for this in the sensor class.
+                if False:
+                    break
                 self.floor_plan[i][j] += 1
         print(self.floor_plan[x][y])
-        # print(self.floor_plan[400][500])
-        # print(sum(self.floor_plan[:,]))
-        # Have we been there before?
-        # /Update if we have not
-        # return if we have completed everything and calculate percentage discovered
-    # calculate percentage discovered
+        # TODO Make intersection function - consider using shapely like in sensor.
+        # TODO: Have we been there before? Update if we have not, return if we have completed everything and calculate percentage discovered
+    # TODO: calculate percentage discovered
