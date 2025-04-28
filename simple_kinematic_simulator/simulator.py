@@ -1,5 +1,6 @@
 from environment import Environment
 from robot import DifferentialDriveRobot
+from sim_state import SimulatorState
 
 
 class Simulator:
@@ -10,6 +11,7 @@ class Simulator:
     
     # simulate one execution cycle of the robot
     def run_tick(self):
-        robot_pose = self.robot.move(self.timestep)
-        print(f"Current position = {robot_pose}")
-
+        self.robot.move(self.timestep)
+    
+    def get_state(self) -> SimulatorState:
+        return SimulatorState(self.robot)

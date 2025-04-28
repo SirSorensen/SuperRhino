@@ -50,10 +50,19 @@ class DifferentialDriveRobot:
     def determine_speed(self):
         (distance, color, intersect_point) = self.mid_sensor.latest_reading
 
-        same_speed = max(0, ((distance + self.axel_length) / self.mid_sensor.max_distance_cm) - 0.2) * self.motor_speed
+        # Move the point used to measure distance to the front of the robot
+        distance = distance + self.get_robot_radius()
 
-        print(f"Left_motor_speed:{same_speed} , Right_motor_speed:{same_speed}")
-        return same_speed, same_speed
+        # Calculate speed
+        dist_frac = (distance) / self.mid_sensor.max_distance_cm
+        speed_factor = dist_frac - self.i
+        speed = speed_factor * self.motor_speed
+
+        # If speed is small enough, just stop
+        if speed < 0.00001:
+            speed = 0
+
+        return speed, speed
 
 
 
@@ -102,6 +111,13 @@ class DifferentialDriveRobot:
 
     def get_robot_radius(self):
         return self.axel_length/2
+
+    def get_mid_distance(self) -> float:
+        (distance, _, _) = self.mid_sensor.latest_reading
+        return distance
+    
+    def get_robot_speed(self) -> float:
+        return (self.left_motor_speed, self.right_motor_speed)
 
     def draw(self, surface):
         pygame.draw.circle(surface, (0,255,0), center=(self.x, self.y), radius=self.axel_length/2, width = 1)
