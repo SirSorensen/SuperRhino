@@ -1,4 +1,5 @@
 from evolution import Evolution
+from Simulator.simulator import Simulator
 
 # Set up environment
 width, height = 1200, 800 # cm
@@ -18,6 +19,12 @@ def main():
     print("\nFinal Round!! FIGHT!")
     results = evolution.run_cycle(width, height, last_best)
     last_best = Evolution.find_best_result(results)
+
+
+    print("\nWinner!")
+    best_sim = Simulator.gen_from_state(last_best)
+    evolution.use_visualization = True
+    evolution.run_single(width, height, best_sim)
 
 
 
