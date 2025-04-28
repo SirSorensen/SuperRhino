@@ -25,9 +25,9 @@ class DifferentialDriveRobot:
         self.right_motor_speed = motor_speed #rad/s
         #self.theta_noise_level = 0.01
 
-        self.mid_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(400, 0)
-        self.left_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(400, -1)
-        self.right_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(400, 1)
+        self.mid_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(self.max_sensor_distance, 0)
+        self.left_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(self.max_sensor_distance, -1)
+        self.right_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(self.max_sensor_distance, 1)
 
 
         # For learning
