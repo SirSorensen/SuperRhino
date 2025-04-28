@@ -5,17 +5,20 @@ from visualizer import Visualizer
 from sim_state import SimulatorState
 
 class Evolution:
-    def __init__(self, width, height, population_size = 5, use_visualization = True):
+    def __init__(self, width, height, population_size = 5, use_visualization = True, seed = 42):
+
+        random.seed(seed)
+
         self.population : list[Simulator] = []
         for _ in range(population_size):
             i = random.uniform(0, 1)
             self.population.append(Simulator(width, height, i=i))
-        
+
         self.use_visualization = use_visualization
         #for potential visualization
         if self.use_visualization:
             self.visualizer = Visualizer(width, height)
-    
+
     def run_cycle(self):
 
         # Initialize Pygame
@@ -51,6 +54,6 @@ class Evolution:
 
         # Quit Pygame
         pygame.quit()
-    
+
     def get_cycle_time(self, start_time):
         return (pygame.time.get_ticks() - start_time) / 1000
