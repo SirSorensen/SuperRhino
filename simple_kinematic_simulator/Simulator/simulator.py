@@ -14,4 +14,7 @@ class Simulator:
         self.robot.move(self.timestep)
 
     def get_state(self) -> SimulatorState:
-        return SimulatorState(self.robot)
+        return SimulatorState(self.robot, self.env, self.timestep)
+
+    def gen_from_state(sim_state: SimulatorState):
+        return Simulator(sim_state.env_width, sim_state.env_height, i=sim_state.robot_i, motor_speed=sim_state.robot_motor_speed, timestep=sim_state.timestep)

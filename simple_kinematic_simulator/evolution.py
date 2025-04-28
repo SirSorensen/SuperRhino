@@ -5,7 +5,7 @@ from Simulator.visualizer import Visualizer
 from Simulator.sim_state import SimulatorState
 
 class Evolution:
-    def __init__(self, width, height, population_size = 5, use_visualization = True, seed = 42):
+    def __init__(self, population_size = 5, use_visualization = True, seed = 42):
         # Init random
         random.seed(seed)
         # Init population
@@ -36,6 +36,16 @@ class Evolution:
         return results
 
 
+    def run_single(self, width, height, sim : Simulator):
+        # Initialize Pygame
+        pygame.init()
+        if self.use_visualization:
+            self.visualizer = Visualizer(width, height)
+
+        self.game_loop(sim)
+
+        # Quit Pygame
+        pygame.quit()
 
 
     def game_loop(self, sim : Simulator):
@@ -48,6 +58,13 @@ class Evolution:
 
             if self.use_visualization:
                 self.visualizer.visualize(sim.env, sim.robot)
+
+            if sim.robot.collided:
+                print("\nAborting! Robot colided with wall!")
+                sim_state : SimulatorState = sim.get_state()
+                sim_state.robot_mid_dist = 99999999
+                print("total execution time:", self.get_cycle_time(start_time), "seconds")  # runtime in seconds
+                return sim_state
 
         print("\ntotal execution time:", self.get_cycle_time(start_time), "seconds")  # runtime in seconds
 
