@@ -9,27 +9,33 @@ class Evolution:
         # Init random
         random.seed(seed)
         # Init population
-        self.population : list[Simulator] = []
-        for _ in range(population_size):
-            i = random.uniform(0, 1)
-            self.population.append(Simulator(width, height, i=i))
+        self.population_size = population_size
         # Configure the use of visualization
         self.use_visualization = use_visualization
+
+
+    def run_cycle(self, width, height, last_best : SimulatorState):
+        # Initialize Pygame
+        pygame.init()
         if self.use_visualization:
             self.visualizer = Visualizer(width, height)
 
+        population : list[Simulator] = []
+        for _ in range(self.population_size):
+            i = Evolution.gen_parameters(last_best)
+            population.append(Simulator(width, height, i=i))
 
-    def run_cycle(self):
-        # Initialize Pygame
-        pygame.init()
         results : list[SimulatorState] = []
 
-        for sim in self.population:
+        for sim in population:
             results.append(self.game_loop(sim))
 
         Evolution.print_final_result(results)
         # Quit Pygame
         pygame.quit()
+        return results
+
+
 
 
     def game_loop(self, sim : Simulator):
@@ -53,6 +59,13 @@ class Evolution:
         return (pygame.time.get_ticks() - start_time) / 1000
 
 
+    def gen_parameters(last_best : SimulatorState):
+        if last_best is None:
+            return random.uniform(0, 1)
+        else:
+            return max(0, last_best.robot_i + random.uniform(-0.1, 0.1))
+
+
     def print_final_result(results : list[SimulatorState]):
         print("\n================\n")
         print("Final results:")
@@ -63,3 +76,10 @@ class Evolution:
             r.print_result()
             i += 1
         print("\n================\n")
+
+
+    def find_best_result(results : list[SimulatorState]):
+        best = min(results, key=lambda r: r.robot_mid_dist)
+        print(f"\nBest found at index {results.index(best)}")
+        best.print_coefficients()
+        return best
