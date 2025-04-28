@@ -1,6 +1,6 @@
 import pygame
 from numpy import cos, pi, sin
-from robot_pose import RobotPose
+from Robot.robot_pose import RobotPose
 from shapely.geometry import LineString, Point
 
 class SingleRayDistanceAndColorSensor:

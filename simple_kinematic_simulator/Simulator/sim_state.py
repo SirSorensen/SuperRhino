@@ -1,6 +1,6 @@
 
-from robot import DifferentialDriveRobot
-from robot_pose import RobotPose
+from Robot.robot import DifferentialDriveRobot
+from Robot.robot_pose import RobotPose
 
 class SimulatorState:
     def __init__(self, robot : DifferentialDriveRobot):
@@ -16,9 +16,9 @@ class SimulatorState:
         print(f"Robot i = {self.robot_i}")
         print(f"Robot final position = {self.robot_position}")
         print(f"Robot final distance to wall = {self.robot_mid_dist}")
-    
+
     def print_coefficients(self):
         print(f"Robot's i = {self.robot_i} ; Motor speed = {self.robot_motor_speed}")
-    
+
     def print_result(self):
         print(f"Distance from mid to wall = {self.robot_mid_dist + self.robot_radius} ; Final speed = {(self.robot_left_speed + self.robot_right_speed) / 2}")

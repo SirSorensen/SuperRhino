@@ -1,8 +1,8 @@
 import pygame
-from environment import Environment
+from Simulator.environment import Environment
 from numpy import cos, pi, sin
-from robot_pose import RobotPose
-from sensor import SingleRayDistanceAndColorSensor
+from Robot.robot_pose import RobotPose
+from Robot.sensor import SingleRayDistanceAndColorSensor
 
 
 class DifferentialDriveRobot:
@@ -115,7 +115,7 @@ class DifferentialDriveRobot:
     def get_mid_distance(self) -> float:
         (distance, _, _) = self.mid_sensor.latest_reading
         return distance
-    
+
     def get_robot_speed(self) -> float:
         return (self.left_motor_speed, self.right_motor_speed)
 

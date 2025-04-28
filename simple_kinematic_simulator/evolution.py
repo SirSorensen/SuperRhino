@@ -1,8 +1,8 @@
 import pygame
-from simulator import Simulator
+from Simulator.simulator import Simulator
 import random
-from visualizer import Visualizer
-from sim_state import SimulatorState
+from Simulator.visualizer import Visualizer
+from Simulator.sim_state import SimulatorState
 
 class Evolution:
     def __init__(self, width, height, population_size = 5, use_visualization = True, seed = 42):
