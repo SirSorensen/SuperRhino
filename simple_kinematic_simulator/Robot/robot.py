@@ -1,12 +1,12 @@
 import pygame
-from environment import Environment
+from Simulator.environment import Environment
 from numpy import cos, pi, sin
-from robot_pose import RobotPose
-from sensor import SingleRayDistanceAndColorSensor
+from Robot.robot_pose import RobotPose
+from Robot.sensor import SingleRayDistanceAndColorSensor
 
 
 class DifferentialDriveRobot:
-    def __init__(self, env : Environment, x : float, y : float, theta : float, axel_length=40, wheel_radius=10, max_motor_speed=2*pi, kinematic_timestep=0.01):
+    def __init__(self, env : Environment, x : float, y : float, theta : float, i : float, axel_length=40, wheel_radius=10, motor_speed=1, kinematic_timestep=0.01):
         self.env : Environment = env
         self.x : float = x
         self.y : float = y
@@ -16,14 +16,23 @@ class DifferentialDriveRobot:
         self.kinematic_timestep : float = kinematic_timestep
         # tuples consist of (width, height) and represent squares
         # self.floor_plan = [[0]*env.width for _ in range(env.height)]
-        self.floor_plan = [[0 for _ in range(env.width)] for _ in range(env.height)]
+        self.floor_plan = [[0 for _ in range(env.height)] for _ in range(env.width)]
         self.collided : bool = False
 
-        self.left_motor_speed  = 3 #rad/s
-        self.right_motor_speed = 1 #rad/s
-        self.theta_noise_level = 0.01
-        self.max_sensor_distance = 100
-        self.sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(self.max_sensor_distance, 0)
+
+        self.motor_speed = motor_speed
+        self.left_motor_speed  = motor_speed #rad/s
+        self.right_motor_speed = motor_speed #rad/s
+        #self.theta_noise_level = 0.01
+        self.max_sensor_distance = 400
+
+        self.mid_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(self.max_sensor_distance, 0)
+        self.left_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(self.max_sensor_distance, -1)
+        self.right_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(self.max_sensor_distance, 1)
+
+
+        # For learning
+        self.i = i
 
 
     def move(self, robot_timestep : float): # run the control algorithm here
@@ -37,7 +46,24 @@ class DifferentialDriveRobot:
         self.sense()
 
         # run the control algorithm and update motor speeds
-        # ...
+        self.left_motor_speed, self.right_motor_speed = self.determine_speed()
+
+    def determine_speed(self):
+        (distance, color, intersect_point) = self.mid_sensor.latest_reading
+
+        # Move the point used to measure distance to the front of the robot
+        distance = distance + self.get_robot_radius()
+
+        # Calculate speed
+        dist_frac = (distance) / self.mid_sensor.max_distance_cm
+        speed_factor = dist_frac - self.i
+        speed = speed_factor * self.motor_speed
+
+        # If speed is small enough, just stop
+        if speed < 0.00001:
+            speed = 0
+
+        return speed, speed
 
 
 
@@ -57,7 +83,9 @@ class DifferentialDriveRobot:
     def sense(self):
         obstacles = self.env.get_obstacles()
         robot_pose = self.get_robot_pose()
-        self.sensor.generate_beam_and_measure(robot_pose, obstacles)
+        self.mid_sensor.generate_beam_and_measure(robot_pose, obstacles)
+        self.left_sensor.generate_beam_and_measure(robot_pose, obstacles)
+        self.right_sensor.generate_beam_and_measure(robot_pose, obstacles)
         self.update_internal_map()
 
     # this is in fact what a robot can predict about its own future position
@@ -85,6 +113,13 @@ class DifferentialDriveRobot:
     def get_robot_radius(self):
         return self.axel_length/2
 
+    def get_mid_distance(self) -> float:
+        (distance, _, _) = self.mid_sensor.latest_reading
+        return distance
+
+    def get_robot_speed(self) -> float:
+        return (self.left_motor_speed, self.right_motor_speed)
+
     def draw(self, surface):
         pygame.draw.circle(surface, (0,255,0), center=(self.x, self.y), radius=self.axel_length/2, width = 1)
 
@@ -107,7 +142,10 @@ class DifferentialDriveRobot:
         pygame.draw.line(surface, (255, 0, 0), (self.x, self.y), (heading_x, heading_y), 5)
 
         # Draw sensor beams
-        self.sensor.draw(self.get_robot_pose(),surface)
+        self.mid_sensor.draw(self.get_robot_pose(),surface)
+        self.left_sensor.draw(self.get_robot_pose(),surface)
+        self.right_sensor.draw(self.get_robot_pose(),surface)
+
 
     # update_internal_map
     def update_internal_map(self):
@@ -128,8 +166,9 @@ class DifferentialDriveRobot:
                 # Q: Is there a risk of missing an obstacle?
                 # If we or on the other side of an obstacle we have come too far
                 # - There is some logic of for this in the sensor class.
-                self.floor_plan[i][j] += 1
-        print(self.floor_plan[x][y])
+                if len(self.floor_plan) < i and len(self.floor_plan[i]) < j:
+                    self.floor_plan[i][j] += 1
+        #print(self.floor_plan[x][y])
         # TODO Make intersection function - consider using shapely like in sensor.
         # TODO: Have we been there before? Update if we have not, return if we have completed everything and calculate percentage discovered
     # TODO: calculate percentage discovered
