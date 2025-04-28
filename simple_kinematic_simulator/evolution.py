@@ -5,7 +5,7 @@ from Simulator.visualizer import Visualizer
 from Simulator.sim_state import SimulatorState
 
 class Evolution:
-    def __init__(self, width, height, population_size = 5, use_visualization = False, seed = 42):
+    def __init__(self, width, height, population_size = 5, use_visualization = True, seed = 42):
         # Init random
         random.seed(seed)
         # Init population
