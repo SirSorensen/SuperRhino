@@ -27,8 +27,8 @@ class DifferentialDriveRobot:
         self.max_sensor_distance = 400
 
         self.mid_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(self.max_sensor_distance, 0)
-        self.left_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(self.max_sensor_distance, -1)
-        self.right_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(self.max_sensor_distance, 1)
+        #self.left_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(self.max_sensor_distance, -1)
+        #self.right_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(self.max_sensor_distance, 1)
 
 
         # For learning
@@ -84,8 +84,8 @@ class DifferentialDriveRobot:
         obstacles = self.env.get_obstacles()
         robot_pose = self.get_robot_pose()
         self.mid_sensor.generate_beam_and_measure(robot_pose, obstacles)
-        self.left_sensor.generate_beam_and_measure(robot_pose, obstacles)
-        self.right_sensor.generate_beam_and_measure(robot_pose, obstacles)
+        #self.left_sensor.generate_beam_and_measure(robot_pose, obstacles)
+        #self.right_sensor.generate_beam_and_measure(robot_pose, obstacles)
         self.update_internal_map()
 
     # this is in fact what a robot can predict about its own future position
@@ -143,8 +143,8 @@ class DifferentialDriveRobot:
 
         # Draw sensor beams
         self.mid_sensor.draw(self.get_robot_pose(),surface)
-        self.left_sensor.draw(self.get_robot_pose(),surface)
-        self.right_sensor.draw(self.get_robot_pose(),surface)
+        #self.left_sensor.draw(self.get_robot_pose(),surface)
+        #self.right_sensor.draw(self.get_robot_pose(),surface)
 
 
     # update_internal_map
