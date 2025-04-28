@@ -25,6 +25,9 @@ class Evolution:
             i = Evolution.gen_parameters(last_best)
             population.append(Simulator(width, height, i=i))
 
+        if last_best is not None:
+            population.append(Simulator.gen_from_state(last_best))
+
         results : list[SimulatorState] = []
 
         for sim in population:
