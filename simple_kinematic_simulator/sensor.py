@@ -3,7 +3,6 @@ from numpy import cos, pi, sin
 from robot_pose import RobotPose
 from shapely.geometry import LineString, Point
 
-
 class SingleRayDistanceAndColorSensor:
     def __init__(self, max_distance_cm, angle_rad):
         self.max_distance_cm = max_distance_cm

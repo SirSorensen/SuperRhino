@@ -13,16 +13,18 @@ class DifferentialDriveRobot:
         self.theta : float = theta  # Orientation in radians
         self.axel_length = axel_length # in cm
         self.wheel_radius = wheel_radius # in cm
-
         self.kinematic_timestep : float = kinematic_timestep
-
+        # tuples consist of (width, height) and represent squares
+        # self.floor_plan = [[0]*env.width for _ in range(env.height)]
+        self.floor_plan = [[0 for _ in range(env.width)] for _ in range(env.height)]
         self.collided : bool = False
 
-        self.left_motor_speed  = 0 #rad/s
-        self.right_motor_speed = 0 #rad/s
-        #self.theta_noise_level = 0.01
+        self.left_motor_speed  = 3 #rad/s
+        self.right_motor_speed = 1 #rad/s
+        self.theta_noise_level = 0.01
+        self.max_sensor_distance = 100
+        self.sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(self.max_sensor_distance, 0)
 
-        self.sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(100, 0)
 
     def move(self, robot_timestep : float): # run the control algorithm here
         # simulate kinematics during one execution cycle of the robot
@@ -46,6 +48,8 @@ class DifferentialDriveRobot:
             self.x = pos.x
             self.y = pos.y
             self.theta = pos.theta
+            # After approximating position we can update our internal map
+
             # Add a small amount of noise to the orientation and/or position
             # noise = random.gauss(0, self.theta_noise_level)
             # self.theta += noise
@@ -54,6 +58,7 @@ class DifferentialDriveRobot:
         obstacles = self.env.get_obstacles()
         robot_pose = self.get_robot_pose()
         self.sensor.generate_beam_and_measure(robot_pose, obstacles)
+        self.update_internal_map()
 
     # this is in fact what a robot can predict about its own future position
     def _odometer(self, delta_time):
@@ -103,3 +108,28 @@ class DifferentialDriveRobot:
 
         # Draw sensor beams
         self.sensor.draw(self.get_robot_pose(),surface)
+
+    # update_internal_map
+    def update_internal_map(self):
+        # Where are we?
+        x = int(self.x)
+        y = int(self.y)
+        # how much area do we cover?
+        msd = self.max_sensor_distance
+        # Define area that we can potentially see - for now we pretend it is square
+        x_lower_bound = max(0, x - msd)
+        x_upper_bound = min(self.env.width, x + msd)
+        y_lower_bound = max(0, y - msd)
+        y_upper_bound = min(self.env.height, y + msd)
+        for i in range(x_lower_bound,x_upper_bound):
+            # Perhaps calculate how far the beam is reaching and use that as upper bound for obstacle detection.
+            for j in range(y_lower_bound, y_upper_bound):
+                # if there is an object, stop detecting.
+                # Q: Is there a risk of missing an obstacle?
+                # If we or on the other side of an obstacle we have come too far
+                # - There is some logic of for this in the sensor class.
+                self.floor_plan[i][j] += 1
+        print(self.floor_plan[x][y])
+        # TODO Make intersection function - consider using shapely like in sensor.
+        # TODO: Have we been there before? Update if we have not, return if we have completed everything and calculate percentage discovered
+    # TODO: calculate percentage discovered
