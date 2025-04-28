@@ -16,7 +16,7 @@ class DifferentialDriveRobot:
         self.kinematic_timestep : float = kinematic_timestep
         # tuples consist of (width, height) and represent squares
         # self.floor_plan = [[0]*env.width for _ in range(env.height)]
-        self.floor_plan = [[0 for _ in range(env.width)] for _ in range(env.height)]
+        self.floor_plan = [[0 for _ in range(env.height)] for _ in range(env.width)]
         self.collided : bool = False
 
 
@@ -24,6 +24,7 @@ class DifferentialDriveRobot:
         self.left_motor_speed  = motor_speed #rad/s
         self.right_motor_speed = motor_speed #rad/s
         #self.theta_noise_level = 0.01
+        self.max_sensor_distance = 400
 
         self.mid_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(self.max_sensor_distance, 0)
         self.left_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(self.max_sensor_distance, -1)
@@ -165,8 +166,9 @@ class DifferentialDriveRobot:
                 # Q: Is there a risk of missing an obstacle?
                 # If we or on the other side of an obstacle we have come too far
                 # - There is some logic of for this in the sensor class.
-                self.floor_plan[i][j] += 1
-        print(self.floor_plan[x][y])
+                if len(self.floor_plan) < i and len(self.floor_plan[i]) < j:
+                    self.floor_plan[i][j] += 1
+        #print(self.floor_plan[x][y])
         # TODO Make intersection function - consider using shapely like in sensor.
         # TODO: Have we been there before? Update if we have not, return if we have completed everything and calculate percentage discovered
     # TODO: calculate percentage discovered
