@@ -1,3 +1,4 @@
+import data_visualisation
 #https://stackoverflow.com/questions/13491676/get-all-pixel-coordinates-between-2-points
 def slope(a, b):
     if a[0] == b[0]:
@@ -32,3 +33,6 @@ def calculate_percentage_discovered(matrix, height, width):
             if value > 0:
                 count += 1
     return count / (height*width)
+
+def save_results(floor_plan):
+    data_visualisation.save_heatmap(floor_plan, "heatmap of floorplan")
