@@ -149,6 +149,8 @@ class DifferentialDriveRobot:
         self.mid_sensor.draw(self.get_robot_pose(),surface)
         self.left_sensor.draw(self.get_robot_pose(),surface)
         self.right_sensor.draw(self.get_robot_pose(),surface)
+        for s in self.sensors:
+            s.draw(self.get_robot_pose(), surface)
 
 
     # update_internal_map
