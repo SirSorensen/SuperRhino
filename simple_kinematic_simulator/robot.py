@@ -15,15 +15,15 @@ class DifferentialDriveRobot:
         self.wheel_radius = wheel_radius # in cm
         self.kinematic_timestep : float = kinematic_timestep
         # tuples consist of (width, height) and represent squares
-        # self.floor_plan = [[0]*env.width for _ in range(env.height)]
-        self.floor_plan = [[0 for _ in range(env.width)] for _ in range(env.height)]
+        self.floor_plan = [[0 for _ in range(env.height)] for _ in range(env.width)]
         self.collided : bool = False
 
-        self.left_motor_speed  = 3 #rad/s
-        self.right_motor_speed = 1 #rad/s
+        self.left_motor_speed  = 0 #rad/s
+        self.right_motor_speed = 0 #rad/s
         self.theta_noise_level = 0.01
         self.max_sensor_distance = 100
         self.sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(self.max_sensor_distance, 0)
+        self.sensors = [SingleRayDistanceAndColorSensor(self.max_sensor_distance, i * 30) for i in range(12)] #This gives 12 sensors spaced 30 degrees apart
 
 
     def move(self, robot_timestep : float): # run the control algorithm here
@@ -58,6 +58,9 @@ class DifferentialDriveRobot:
         obstacles = self.env.get_obstacles()
         robot_pose = self.get_robot_pose()
         self.sensor.generate_beam_and_measure(robot_pose, obstacles)
+        # TODO: Pre-filter obstacles since we use them a lot in following loop
+        for s in self.sensors:
+            s.generate_beam_and_measure(robot_pose, obstacles)
         self.update_internal_map()
 
     # this is in fact what a robot can predict about its own future position
@@ -115,21 +118,49 @@ class DifferentialDriveRobot:
         x = int(self.x)
         y = int(self.y)
         # how much area do we cover?
-        msd = self.max_sensor_distance
+        max_sensor_distance = self.max_sensor_distance
         # Define area that we can potentially see - for now we pretend it is square
-        x_lower_bound = max(0, x - msd)
-        x_upper_bound = min(self.env.width, x + msd)
-        y_lower_bound = max(0, y - msd)
-        y_upper_bound = min(self.env.height, y + msd)
-        for i in range(x_lower_bound,x_upper_bound):
+        x_lower_bound = max(0, x - max_sensor_distance)
+        x_upper_bound = min(self.env.width, x + max_sensor_distance)
+        y_lower_bound = max(0, y - max_sensor_distance)
+        y_upper_bound = min(self.env.height, y + max_sensor_distance)
+        # for i in range(x_lower_bound,x_upper_bound):
             # Perhaps calculate how far the beam is reaching and use that as upper bound for obstacle detection.
-            for j in range(y_lower_bound, y_upper_bound):
+            # for j in range(y_lower_bound, y_upper_bound):
                 # if there is an object, stop detecting.
                 # Q: Is there a risk of missing an obstacle?
                 # If we or on the other side of an obstacle we have come too far
                 # - There is some logic of for this in the sensor class.
-                self.floor_plan[i][j] += 1
-        print(self.floor_plan[x][y])
-        # TODO Make intersection function - consider using shapely like in sensor.
+                # self.floor_plan[i][j] += 1
+        for s in self.sensors:
+            # https://stackoverflow.com/questions/13491676/get-all-pixel-coordinates-between-2-points
+            if s.latest_reading is not None:
+                distance, _, intersect_point = s.latest_reading
+                x = int(intersect_point.x)
+                y = int(intersect_point.y)
+                print(distance)
         # TODO: Have we been there before? Update if we have not, return if we have completed everything and calculate percentage discovered
+
+
+        def calculate_points(p1, p2):
+
+            m = slope(p1, p2)
+            b = intercept(p1, m)
+
+            coordinates = []
+            for x in range(p1[0], p2[0] + 1):
+                y = m * x + b
+                coordinates.append([x, y])
+            return coordinates
+        def slope(a, b):
+            if a[0] == b[0]:
+                return None  # vertical line
+            return (b[1] - a[1]) / (b[0] - a[0])
+
+        def intercept(point, m):
+            if m is None:
+                return point[0]  # vertical line
+            return point[1] - m * point[0]
+
+
     # TODO: calculate percentage discovered
