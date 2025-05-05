@@ -3,10 +3,13 @@ from environment import Environment
 from numpy import cos, pi, sin
 from robot_pose import RobotPose
 from sensor import SingleRayDistanceAndColorSensor
+from controllers import BaselineController
 
 
 class DifferentialDriveRobot:
-    def __init__(self, env : Environment, x : float, y : float, theta : float, i : float, axel_length=40, wheel_radius=10, motor_speed=1, kinematic_timestep=0.01):
+    def __init__(self, env : Environment, x : float, y : float, theta : float, i : float,
+                 axel_length=40, wheel_radius=10, motor_speed=1,
+                 kinematic_timestep=0.01, controller=None):
         self.env : Environment = env
         self.x : float = x
         self.y : float = y
@@ -29,8 +32,19 @@ class DifferentialDriveRobot:
         self.right_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(400, 1)
 
 
-        # For learning
+        # Parameter available for controller (e.g., proportional gain)
         self.i = i
+
+        # initialize controller (default hand-coded baseline)
+        if controller is None:
+            # use baseline P-controller: maintain 30cm from wall, gain from self.i
+            self.controller = BaselineController(
+                base_speed=self.motor_speed,
+                desired_distance=30.0,
+                k_p=self.i
+            )
+        else:
+            self.controller = controller
 
 
     def move(self, robot_timestep : float): # run the control algorithm here
@@ -47,12 +61,17 @@ class DifferentialDriveRobot:
         self.left_motor_speed, self.right_motor_speed = self.determine_speed()
 
     def determine_speed(self):
-        (distance, color, intersect_point) = self.mid_sensor.latest_reading
-
-        same_speed = max(0, ((distance + self.axel_length) / self.mid_sensor.max_distance_cm) - 0.2) * self.motor_speed
-
-        print(f"Left_motor_speed:{same_speed} , Right_motor_speed:{same_speed}")
-        return same_speed, same_speed
+        """
+        Determine motor speeds using the attached controller.
+        """
+        # gather latest sensor readings
+        sensor_readings = {
+            'mid': self.mid_sensor.latest_reading,
+            'left': self.left_sensor.latest_reading,
+            'right': self.right_sensor.latest_reading
+        }
+        # delegate to controller
+        return self.controller.determine_speed(sensor_readings)
 
 
 
