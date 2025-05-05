@@ -27,9 +27,9 @@ class DifferentialDriveRobot:
         self.max_sensor_distance = 400
 
         self.mid_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(self.max_sensor_distance, 0)
-        self.left_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(self.max_sensor_distance, -1)
-        self.right_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(self.max_sensor_distance, 1)
-        self.sensors = [SingleRayDistanceAndColorSensor(self.max_sensor_distance, i * 30) for i in range(5)] #This gives 12 sensors spaced 30 degrees apart
+        # self.left_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(self.max_sensor_distance, -1)
+        # self.right_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(self.max_sensor_distance, 1)
+        self.sensors = [SingleRayDistanceAndColorSensor(self.max_sensor_distance, i* 30) for i in range(1, 6)] #This gives 12 sensors spaced 30 degrees apart
 
 
         # For learning
@@ -88,8 +88,8 @@ class DifferentialDriveRobot:
         for s in self.sensors:
             s.generate_beam_and_measure(robot_pose, obstacles)
         self.mid_sensor.generate_beam_and_measure(robot_pose, obstacles)
-        self.left_sensor.generate_beam_and_measure(robot_pose, obstacles)
-        self.right_sensor.generate_beam_and_measure(robot_pose, obstacles)
+        # self.left_sensor.generate_beam_and_measure(robot_pose, obstacles)
+        # self.right_sensor.generate_beam_and_measure(robot_pose, obstacles)
         self.update_internal_map()
 
     # this is in fact what a robot can predict about its own future position
@@ -147,8 +147,8 @@ class DifferentialDriveRobot:
 
         # Draw sensor beams
         self.mid_sensor.draw(self.get_robot_pose(),surface)
-        self.left_sensor.draw(self.get_robot_pose(),surface)
-        self.right_sensor.draw(self.get_robot_pose(),surface)
+        # self.left_sensor.draw(self.get_robot_pose(),surface)
+        # self.right_sensor.draw(self.get_robot_pose(),surface)
         for s in self.sensors:
             s.draw(self.get_robot_pose(), surface)
 
