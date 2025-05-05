@@ -1,6 +1,7 @@
 import pygame
 from pygame.locals import QUIT, KEYDOWN
 from environment import Environment
+import random
 from robot import DifferentialDriveRobot
 
 #for potential visualization
@@ -13,13 +14,17 @@ PAUSE = False
 pygame.init()
 
 # Set up environment
-width, height = 1200, 800 # cm
+width, height = 1200, 800  # cm
 env = Environment(width, height)
 
 # (simulated) time taken for one cycle of the robot executing its algorithm
-robot_timestep = 0.1 # in seconds (simulated time)
+robot_timestep = 0.1  # in seconds (simulated time)
 
-robot = DifferentialDriveRobot(env,width/2-100,height/2-100,0)
+# Choose a starting position near a wall (not directly aligned), possibly facing away
+start_positions = env.get_starting_positions()
+start_x, start_y, start_theta = random.choice(start_positions)
+print(f"Starting position selected: x={start_x}, y={start_y}, theta={start_theta}")
+robot = DifferentialDriveRobot(env, start_x, start_y, start_theta)
 
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Robot Kinematic Simulator")

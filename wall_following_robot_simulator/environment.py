@@ -9,6 +9,8 @@ class Environment:
         self.height = height
         self.obstacle_walls = []
         self.create_floorplan()
+        # Define starting positions near walls for simulation experiments
+        self.create_starting_positions()
 
 
     def get_dimensions(self):
@@ -38,6 +40,23 @@ class Environment:
             kitchen_wall2,kitchen_wall3,\
                 room_right_wall2,\
                                box_1,box_2,box_3,box_4]
+    
+    def create_starting_positions(self):
+        """Define starting positions near walls for simulation (x, y, theta)."""
+        # Margin from walls
+        margin = 50
+        from math import pi
+        # Predefined positions: near left, top, right, bottom walls, facing away
+        self.starting_positions = [
+            (margin, self.height / 2, 0),               # left wall, facing right
+            (self.width / 2, margin, pi / 2),           # top wall, facing down
+            (self.width - margin, self.height / 2, pi), # right wall, facing left
+            (self.width / 2, self.height - margin, 3 * pi / 2), # bottom wall, facing up
+        ]
+
+    def get_starting_positions(self):
+        """Return the list of predefined starting positions."""
+        return getattr(self, "starting_positions", [])
 
 
     def get_obstacles(self):
