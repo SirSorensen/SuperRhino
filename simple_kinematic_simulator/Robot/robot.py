@@ -161,10 +161,6 @@ class DifferentialDriveRobot:
         # how much area do we cover?
         max_sensor_distance = self.max_sensor_distance
         # Define area that we can potentially see - for now we pretend it is square
-        x_lower_bound = max(0, x - max_sensor_distance)
-        x_upper_bound = min(self.env.width, x + max_sensor_distance)
-        y_lower_bound = max(0, y - max_sensor_distance)
-        y_upper_bound = min(self.env.height, y + max_sensor_distance)
 
         for s in self.sensors:
             # https://stackoverflow.com/questions/13491676/get-all-pixel-coordinates-between-2-points
@@ -172,12 +168,17 @@ class DifferentialDriveRobot:
                 distance, _, intersect_point = s.latest_reading
                 x = int(intersect_point.x)
                 y = int(intersect_point.y)
+                # Ensure that values are correctly bounded:
+                x = max(0, x)
+                x = min(self.env.width-1, x)
+                y = max(0, y)
+                y = min(self.env.height-1,y)
+
                 lidar_max_reading = (x,y)
                 points = utils.calculate_points_2(robot_location, lidar_max_reading)
                 for p in points:
                     x,y = p
                     self.floor_plan[x][y] += 1
-
 
 
         # TODO: Have we been there before? Update if we have not, return if we have completed everything and calculate percentage discovered

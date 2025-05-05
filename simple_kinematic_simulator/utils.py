@@ -20,3 +20,7 @@ def calculate_points_2(p1, p2):
         y = m * x + b
         coordinates.append([int(x), int(y)])
     return coordinates
+
+def is_point_out_of_bounds(point, height, width):
+    x,y = point
+    return (x < 0 and y < 0) and (x >= width and y >= height)
