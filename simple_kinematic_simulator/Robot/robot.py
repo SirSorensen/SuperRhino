@@ -160,14 +160,10 @@ class DifferentialDriveRobot:
         y = int(self.y)
         robot_location = (x,y)
 
-        # how much area do we cover?
-        max_sensor_distance = self.max_sensor_distance
-        # Define area that we can potentially see - for now we pretend it is square
-
         for s in self.sensors:
             # https://stackoverflow.com/questions/13491676/get-all-pixel-coordinates-between-2-points
             if s.latest_reading is not None:
-                distance, _, intersect_point = s.latest_reading
+                _, _, intersect_point = s.latest_reading #distance, color, intersect_point
                 x = int(intersect_point.x)
                 y = int(intersect_point.y)
                 # Ensure that values are correctly bounded:
