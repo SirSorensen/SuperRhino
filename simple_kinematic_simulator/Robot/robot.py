@@ -3,7 +3,7 @@ from Simulator.environment import Environment
 from numpy import cos, pi, sin
 from Robot.robot_pose import RobotPose
 from Robot.sensor import SingleRayDistanceAndColorSensor
-
+import utils
 
 class DifferentialDriveRobot:
     def __init__(self, env : Environment, x : float, y : float, theta : float, i : float, axel_length=40, wheel_radius=10, motor_speed=1, kinematic_timestep=0.01):
@@ -27,8 +27,9 @@ class DifferentialDriveRobot:
         self.max_sensor_distance = 400
 
         self.mid_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(self.max_sensor_distance, 0)
-        self.left_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(self.max_sensor_distance, -1)
-        self.right_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(self.max_sensor_distance, 1)
+        # self.left_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(self.max_sensor_distance, -1)
+        # self.right_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(self.max_sensor_distance, 1)
+        self.sensors = [SingleRayDistanceAndColorSensor(self.max_sensor_distance, i* 30) for i in range(1, 6)] #This gives 12 sensors spaced 30 degrees apart
 
 
         # For learning
@@ -83,9 +84,12 @@ class DifferentialDriveRobot:
     def sense(self):
         obstacles = self.env.get_obstacles()
         robot_pose = self.get_robot_pose()
+        # TODO: Pre-filter obstacles since we use them a lot in following loop
+        for s in self.sensors:
+            s.generate_beam_and_measure(robot_pose, obstacles)
         self.mid_sensor.generate_beam_and_measure(robot_pose, obstacles)
-        self.left_sensor.generate_beam_and_measure(robot_pose, obstacles)
-        self.right_sensor.generate_beam_and_measure(robot_pose, obstacles)
+        # self.left_sensor.generate_beam_and_measure(robot_pose, obstacles)
+        # self.right_sensor.generate_beam_and_measure(robot_pose, obstacles)
         self.update_internal_map()
 
     # this is in fact what a robot can predict about its own future position
@@ -143,8 +147,10 @@ class DifferentialDriveRobot:
 
         # Draw sensor beams
         self.mid_sensor.draw(self.get_robot_pose(),surface)
-        self.left_sensor.draw(self.get_robot_pose(),surface)
-        self.right_sensor.draw(self.get_robot_pose(),surface)
+        # self.left_sensor.draw(self.get_robot_pose(),surface)
+        # self.right_sensor.draw(self.get_robot_pose(),surface)
+        for s in self.sensors:
+            s.draw(self.get_robot_pose(), surface)
 
 
     # update_internal_map
@@ -152,23 +158,22 @@ class DifferentialDriveRobot:
         # Where are we?
         x = int(self.x)
         y = int(self.y)
-        # how much area do we cover?
-        msd = self.max_sensor_distance
-        # Define area that we can potentially see - for now we pretend it is square
-        x_lower_bound = max(0, x - msd)
-        x_upper_bound = min(self.env.width, x + msd)
-        y_lower_bound = max(0, y - msd)
-        y_upper_bound = min(self.env.height, y + msd)
-        for i in range(x_lower_bound,x_upper_bound):
-            # Perhaps calculate how far the beam is reaching and use that as upper bound for obstacle detection.
-            for j in range(y_lower_bound, y_upper_bound):
-                # if there is an object, stop detecting.
-                # Q: Is there a risk of missing an obstacle?
-                # If we or on the other side of an obstacle we have come too far
-                # - There is some logic of for this in the sensor class.
-                if len(self.floor_plan) < i and len(self.floor_plan[i]) < j:
-                    self.floor_plan[i][j] += 1
-        #print(self.floor_plan[x][y])
-        # TODO Make intersection function - consider using shapely like in sensor.
-        # TODO: Have we been there before? Update if we have not, return if we have completed everything and calculate percentage discovered
-    # TODO: calculate percentage discovered
+        robot_location = (x,y)
+
+        for s in self.sensors:
+            # https://stackoverflow.com/questions/13491676/get-all-pixel-coordinates-between-2-points
+            if s.latest_reading is not None:
+                _, _, intersect_point = s.latest_reading #distance, color, intersect_point
+                x = int(intersect_point.x)
+                y = int(intersect_point.y)
+                # Ensure that values are correctly bounded:
+                x = max(0, x)
+                x = min(self.env.width-1, x)
+                y = max(0, y)
+                y = min(self.env.height-1,y)
+
+                lidar_max_reading = (x,y)
+                points = utils.calculate_points_2(robot_location, lidar_max_reading)
+                for p in points:
+                    x,y = p
+                    self.floor_plan[x][y] += 1
