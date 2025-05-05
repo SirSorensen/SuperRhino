@@ -3,7 +3,7 @@ from environment import Environment
 from numpy import cos, pi, sin
 from robot_pose import RobotPose
 from sensor import SingleRayDistanceAndColorSensor
-
+import utils
 
 class DifferentialDriveRobot:
     def __init__(self, env : Environment, x : float, y : float, theta : float, axel_length=40, wheel_radius=10, max_motor_speed=2*pi, kinematic_timestep=0.01):
@@ -18,12 +18,12 @@ class DifferentialDriveRobot:
         self.floor_plan = [[0 for _ in range(env.height)] for _ in range(env.width)]
         self.collided : bool = False
 
-        self.left_motor_speed  = 0 #rad/s
-        self.right_motor_speed = 0 #rad/s
+        self.left_motor_speed  = 1.8 #rad/s
+        self.right_motor_speed = 2 #rad/s
         self.theta_noise_level = 0.01
         self.max_sensor_distance = 100
         self.sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(self.max_sensor_distance, 0)
-        self.sensors = [SingleRayDistanceAndColorSensor(self.max_sensor_distance, i * 30) for i in range(12)] #This gives 12 sensors spaced 30 degrees apart
+        self.sensors = [SingleRayDistanceAndColorSensor(self.max_sensor_distance, i * 30) for i in range(5)] #This gives 12 sensors spaced 30 degrees apart
 
 
     def move(self, robot_timestep : float): # run the control algorithm here
@@ -117,6 +117,8 @@ class DifferentialDriveRobot:
         # Where are we?
         x = int(self.x)
         y = int(self.y)
+        robot_location = (x,y)
+
         # how much area do we cover?
         max_sensor_distance = self.max_sensor_distance
         # Define area that we can potentially see - for now we pretend it is square
@@ -124,43 +126,23 @@ class DifferentialDriveRobot:
         x_upper_bound = min(self.env.width, x + max_sensor_distance)
         y_lower_bound = max(0, y - max_sensor_distance)
         y_upper_bound = min(self.env.height, y + max_sensor_distance)
-        # for i in range(x_lower_bound,x_upper_bound):
-            # Perhaps calculate how far the beam is reaching and use that as upper bound for obstacle detection.
-            # for j in range(y_lower_bound, y_upper_bound):
-                # if there is an object, stop detecting.
-                # Q: Is there a risk of missing an obstacle?
-                # If we or on the other side of an obstacle we have come too far
-                # - There is some logic of for this in the sensor class.
-                # self.floor_plan[i][j] += 1
+
         for s in self.sensors:
             # https://stackoverflow.com/questions/13491676/get-all-pixel-coordinates-between-2-points
             if s.latest_reading is not None:
                 distance, _, intersect_point = s.latest_reading
                 x = int(intersect_point.x)
                 y = int(intersect_point.y)
-                print(distance)
+                lidar_max_reading = (x,y)
+                points = utils.calculate_points_2(robot_location, lidar_max_reading)
+                for p in points:
+                    x,y = p
+                    self.floor_plan[x][y] += 1
+
+
+
         # TODO: Have we been there before? Update if we have not, return if we have completed everything and calculate percentage discovered
 
-
-        def calculate_points(p1, p2):
-
-            m = slope(p1, p2)
-            b = intercept(p1, m)
-
-            coordinates = []
-            for x in range(p1[0], p2[0] + 1):
-                y = m * x + b
-                coordinates.append([x, y])
-            return coordinates
-        def slope(a, b):
-            if a[0] == b[0]:
-                return None  # vertical line
-            return (b[1] - a[1]) / (b[0] - a[0])
-
-        def intercept(point, m):
-            if m is None:
-                return point[0]  # vertical line
-            return point[1] - m * point[0]
 
 
     # TODO: calculate percentage discovered
