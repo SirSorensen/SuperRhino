@@ -181,6 +181,7 @@ class DifferentialDriveRobot:
                 for p in points:
                     x,y = p
                     self.floor_plan[x][y] += 1
+        print(utils.calculate_percentage_discovered(self.floor_plan, self.env.height, self.env.width))
 
 
         # TODO: Have we been there before? Update if we have not, return if we have completed everything and calculate percentage discovered

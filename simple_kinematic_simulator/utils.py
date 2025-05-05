@@ -24,3 +24,11 @@ def calculate_points_2(p1, p2):
 def is_point_out_of_bounds(point, height, width):
     x,y = point
     return (x < 0 and y < 0) and (x >= width and y >= height)
+
+def calculate_percentage_discovered(matrix, height, width):
+    count = 0
+    for row in matrix:
+        for value in row:
+            if value > 0:
+                count += 1
+    return count / (height*width)
