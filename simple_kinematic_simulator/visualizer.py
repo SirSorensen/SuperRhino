@@ -1,4 +1,7 @@
-import pygame
+try:
+    import pygame
+except ImportError:
+    pygame = None
 from environment import Environment
 
 class Visualizer:

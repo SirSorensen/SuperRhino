@@ -7,30 +7,44 @@ from controllers import BaselineController
 
 
 class DifferentialDriveRobot:
-    def __init__(self, env : Environment, x : float, y : float, theta : float, i : float,
-                 axel_length=40, wheel_radius=10, motor_speed=1,
-                 kinematic_timestep=0.01, controller=None):
-        self.env : Environment = env
-        self.x : float = x
-        self.y : float = y
-        self.theta : float = theta  # Orientation in radians
-        self.axel_length = axel_length # in cm
-        self.wheel_radius = wheel_radius # in cm
+    def __init__(
+        self,
+        env: Environment,
+        x: float,
+        y: float,
+        theta: float,
+        i: float,
+        axel_length=40,
+        wheel_radius=10,
+        motor_speed=1,
+        kinematic_timestep=0.01,
+        controller=None,
+    ):
+        self.env: Environment = env
+        self.x: float = x
+        self.y: float = y
+        self.theta: float = theta  # Orientation in radians
+        self.axel_length = axel_length  # in cm
+        self.wheel_radius = wheel_radius  # in cm
 
-        self.kinematic_timestep : float = kinematic_timestep
+        self.kinematic_timestep: float = kinematic_timestep
 
-        self.collided : bool = False
-
+        self.collided: bool = False
 
         self.motor_speed = motor_speed
-        self.left_motor_speed  = motor_speed #rad/s
-        self.right_motor_speed = motor_speed #rad/s
-        #self.theta_noise_level = 0.01
+        self.left_motor_speed = motor_speed  # rad/s
+        self.right_motor_speed = motor_speed  # rad/s
+        # self.theta_noise_level = 0.01
 
-        self.mid_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(400, 0)
-        self.left_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(400, -1)
-        self.right_sensor : SingleRayDistanceAndColorSensor = SingleRayDistanceAndColorSensor(400, 1)
-
+        self.mid_sensor: SingleRayDistanceAndColorSensor = (
+            SingleRayDistanceAndColorSensor(400, 0)
+        )
+        self.left_sensor: SingleRayDistanceAndColorSensor = (
+            SingleRayDistanceAndColorSensor(400, -1)
+        )
+        self.right_sensor: SingleRayDistanceAndColorSensor = (
+            SingleRayDistanceAndColorSensor(400, 1)
+        )
 
         # Parameter available for controller (e.g., proportional gain)
         self.i = i
@@ -39,20 +53,19 @@ class DifferentialDriveRobot:
         if controller is None:
             # use baseline P-controller: maintain 30cm from wall, gain from self.i
             self.controller = BaselineController(
-                base_speed=self.motor_speed,
-                desired_distance=30.0,
-                k_p=self.i
+                base_speed=self.motor_speed, desired_distance=30.0, k_p=self.i
             )
         else:
             self.controller = controller
 
-
-    def move(self, robot_timestep : float): # run the control algorithm here
+    def move(self, robot_timestep: float):  # run the control algorithm here
         # simulate kinematics during one execution cycle of the robot
         self._step_kinematics(robot_timestep)
 
         # check for collision
-        self.collided = self.env.check_collision(self.get_robot_pose(), self.get_robot_radius())
+        self.collided = self.env.check_collision(
+            self.get_robot_pose(), self.get_robot_radius()
+        )
 
         # update sensors
         self.sense()
@@ -66,17 +79,17 @@ class DifferentialDriveRobot:
         """
         # gather latest sensor readings
         sensor_readings = {
-            'mid': self.mid_sensor.latest_reading,
-            'left': self.left_sensor.latest_reading,
-            'right': self.right_sensor.latest_reading
+            "mid": self.mid_sensor.latest_reading,
+            "left": self.left_sensor.latest_reading,
+            "right": self.right_sensor.latest_reading,
         }
         # delegate to controller
         return self.controller.determine_speed(sensor_readings)
 
-
-
-    def _step_kinematics(self, robot_timestep : float):
-        for _ in range(int(robot_timestep / self.kinematic_timestep)): # the kinematic model is updated in every step for robot_timestep/self.kinematic_timestep times
+    def _step_kinematics(self, robot_timestep: float):
+        for _ in range(
+            int(robot_timestep / self.kinematic_timestep)
+        ):  # the kinematic model is updated in every step for robot_timestep/self.kinematic_timestep times
             # odometry is used to calculate where we approximately end up after each step
             pos = self._odometer(self.kinematic_timestep)
             self.x = pos.x
@@ -98,9 +111,15 @@ class DifferentialDriveRobot:
         left_angular_velocity = self.left_motor_speed
         right_angular_velocity = self.right_motor_speed
 
-        v_x = cos(self.theta) * (self.wheel_radius * (left_angular_velocity + right_angular_velocity) / 2)
-        v_y = sin(self.theta) * (self.wheel_radius * (left_angular_velocity + right_angular_velocity) / 2)
-        omega = (self.wheel_radius * (left_angular_velocity - right_angular_velocity)) / self.axel_length
+        v_x = cos(self.theta) * (
+            self.wheel_radius * (left_angular_velocity + right_angular_velocity) / 2
+        )
+        v_y = sin(self.theta) * (
+            self.wheel_radius * (left_angular_velocity + right_angular_velocity) / 2
+        )
+        omega = (
+            self.wheel_radius * (left_angular_velocity - right_angular_velocity)
+        ) / self.axel_length
 
         next_x = self.x + (v_x * delta_time)
         next_y = self.y + (v_y * delta_time)
@@ -111,18 +130,23 @@ class DifferentialDriveRobot:
 
         return RobotPose(next_x, next_y, next_theta)
 
-
     def get_robot_pose(self):
         return RobotPose(self.x, self.y, self.theta)
 
     def get_robot_radius(self):
-        return self.axel_length/2
+        return self.axel_length / 2
 
     def draw(self, surface):
-        pygame.draw.circle(surface, (0,255,0), center=(self.x, self.y), radius=self.axel_length/2, width = 1)
+        pygame.draw.circle(
+            surface,
+            (0, 255, 0),
+            center=(self.x, self.y),
+            radius=self.axel_length / 2,
+            width=1,
+        )
 
         # Calculate the left and right wheel positions
-        half_axl = self.axel_length/2
+        half_axl = self.axel_length / 2
         left_wheel_x = self.x - half_axl * sin(self.theta)
         left_wheel_y = self.y + half_axl * cos(self.theta)
         right_wheel_x = self.x + half_axl * sin(self.theta)
@@ -134,12 +158,20 @@ class DifferentialDriveRobot:
         heading_y = self.y + heading_length * sin(self.theta)
 
         # Draw the axle line
-        pygame.draw.line(surface, (0, 255, 0), (left_wheel_x, left_wheel_y), (right_wheel_x, right_wheel_y), 3)
+        pygame.draw.line(
+            surface,
+            (0, 255, 0),
+            (left_wheel_x, left_wheel_y),
+            (right_wheel_x, right_wheel_y),
+            3,
+        )
 
         # Draw the heading line
-        pygame.draw.line(surface, (255, 0, 0), (self.x, self.y), (heading_x, heading_y), 5)
+        pygame.draw.line(
+            surface, (255, 0, 0), (self.x, self.y), (heading_x, heading_y), 5
+        )
 
         # Draw sensor beams
-        self.mid_sensor.draw(self.get_robot_pose(),surface)
-        self.left_sensor.draw(self.get_robot_pose(),surface)
-        self.right_sensor.draw(self.get_robot_pose(),surface)
+        self.mid_sensor.draw(self.get_robot_pose(), surface)
+        self.left_sensor.draw(self.get_robot_pose(), surface)
+        self.right_sensor.draw(self.get_robot_pose(), surface)

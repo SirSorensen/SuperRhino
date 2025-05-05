@@ -49,9 +49,9 @@ Set up the robot's environment in the simulator:
 
 ### 5. Controller Representation
 
-* [ ] Implement hand-coded baseline controller.
-* [ ] Define parameters to evolve (e.g., distance thresholds, gain values).
-* [ ] (Optional) Define an alternate controller (e.g., simple neural network).
+* [x] Implement hand-coded baseline controller.
+* [x] Define parameters to evolve (e.g., distance thresholds, gain values).
+* [x] (Optional) Define an alternate controller (e.g., simple neural network).
 
 ---
 

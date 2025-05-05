@@ -1,4 +1,7 @@
-import pygame
+try:
+    import pygame
+except ImportError:
+    pygame = None
 from numpy import cos, pi, sin
 from robot_pose import RobotPose
 from shapely.geometry import LineString, Point

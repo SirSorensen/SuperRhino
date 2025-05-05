@@ -1,4 +1,7 @@
-import pygame
+try:
+    import pygame
+except ImportError:
+    pygame = None
 from shapely.geometry import LineString, Point
 
 
