@@ -1,5 +1,6 @@
 import pygame
 from numpy import cos, sin, pi
+import random
 
 from sensor import SingleRayDistanceAndColorSensor
 
@@ -36,36 +37,65 @@ class DifferentialDriveRobot:
         max_dist = 100  # max sensing distance in cm
         self.sensors = [
             SingleRayDistanceAndColorSensor(max_dist, -pi / 4),
-            SingleRayDistanceAndColorSensor(max_dist, 0.0),
+            SingleRayDistanceAndColorSensor(max_dist, 0.0),  # front sensor
             SingleRayDistanceAndColorSensor(max_dist, pi / 4),
         ]
 
     def move(self, robot_timestep):  # run the control algorithm here
         # update sensors at current pose
         self.sense()
-        # simple control: move forward until wall is close, then stop
-        # use front-facing sensor (angle ~0)
-        front_dist = None
-        for s in self.sensors:
-            # sensor.angle is the ray angle relative to heading
-            if abs(s.angle) < 1e-6:
-                # latest_reading: (distance, color, intersect_point)
-                front_dist = (
-                    s.latest_reading[0] if s.latest_reading is not None else None
-                )
-                break
-        # determine stop threshold: robot radius
+
+        # simple control: move randomly until a wall is close, then stop
+        if not hasattr(self, "random_direction"):
+            # Randomly pick a direction on the first call
+            self.random_direction = random.choice(["left", "right", "forward"])
+            # If it's left or right, only turn for a short time then go forward
+            if self.random_direction in ["left", "right"]:
+                self.turn_counter = 20  # Number of timesteps to turn
+
+        # If the robot is moving forward, check the front sensor
+        front_dist = (
+            self.sensors[1].latest_reading[0]
+            if self.sensors[1].latest_reading
+            else float("inf")
+        )
+
+        # Determine stop threshold: robot radius
         thresh = self.get_robot_radius() + 20
-        if front_dist is None or front_dist > thresh:
-            # drive forward at max speed
-            self.left_motor_speed = self.max_motor_speed
-            self.right_motor_speed = self.max_motor_speed
+
+        if front_dist > thresh:
+            if self.random_direction == "forward":
+                # Continue moving forward
+                self.left_motor_speed = self.max_motor_speed
+                self.right_motor_speed = self.max_motor_speed
+            elif self.random_direction == "left":
+                if self.turn_counter > 0:
+                    # Rotate left slightly
+                    self.left_motor_speed = 0.5 * self.max_motor_speed
+                    self.right_motor_speed = self.max_motor_speed
+                    self.turn_counter -= 1
+                else:
+                    # Go forward after turning
+                    self.random_direction = "forward"
+            elif self.random_direction == "right":
+                if self.turn_counter > 0:
+                    # Rotate right slightly
+                    self.left_motor_speed = self.max_motor_speed
+                    self.right_motor_speed = 0.5 * self.max_motor_speed
+                    self.turn_counter -= 1
+                else:
+                    # Go forward after turning
+                    self.random_direction = "forward"
         else:
-            # stop before hitting wall
+            # Stop before hitting the wall
             self.left_motor_speed = 0
             self.right_motor_speed = 0
+            # Clear the random direction so it picks a new one next time
+            del self.random_direction
+
         # simulate kinematics during one execution cycle of the robot
         self._step_kinematics(robot_timestep)
+
         # check for collision (collision should be avoided by control)
         self.collided = self.env.check_collision(
             self.get_robot_pose(), self.get_robot_radius()
