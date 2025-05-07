@@ -48,6 +48,8 @@ class DifferentialDriveRobot:
         self.wall_follow_target = 30.0
         # Proportional gain for wall-following control
         self.wall_follow_kp = 0.05
+        # Safety distance to maintain frontally to avoid collisions (cm)
+        self.front_safety_distance = 30.0
 
     def move(self, robot_timestep):  # run the control algorithm here
         # update sensors at current pose
@@ -60,27 +62,34 @@ class DifferentialDriveRobot:
             d = s.latest_reading[0] if s.latest_reading else float("inf")
             dists.append(d)
 
-        if self.searching_wall:
-            # If any sensor detects wall within detection range, switch to wall-follow
-            if min(dists) <= self.detection_range:
-                self.searching_wall = False
-            else:
-                # Search behavior: move forward and slowly turn to find wall
-                self.left_motor_speed = 0.5 * self.max_motor_speed
-                self.right_motor_speed = self.max_motor_speed
+        # Wall-search and wall-follow control
+        # If still searching and no wall detected, perform search behavior
+        if self.searching_wall and min(dists) > self.detection_range:
+            self.left_motor_speed = 0.5 * self.max_motor_speed
+            self.right_motor_speed = self.max_motor_speed
         else:
-            # Wall-following behavior using left-side sensor (index 2)
-            left_dist = dists[2]
-            error = left_dist - self.wall_follow_target
+            # Switch to wall-follow mode
+            self.searching_wall = False
+            # Base forward speed for wall-follow
             base_speed = 0.5 * self.max_motor_speed
-            adjust = self.wall_follow_kp * error
-            # Compute wheel speeds with proportional control
-            left_speed = base_speed - adjust
-            right_speed = base_speed + adjust
-            # Clip speeds to allowable range
-            max_m = self.max_motor_speed
-            self.left_motor_speed = max(min(left_speed, max_m), -max_m)
-            self.right_motor_speed = max(min(right_speed, max_m), -max_m)
+            # Frontal safety check: use front sensor (index 1)
+            front_dist = dists[1]
+            if front_dist < self.front_safety_distance:
+                # Pivot away from wall to avoid head-on collision
+                self.left_motor_speed = base_speed
+                self.right_motor_speed = -base_speed
+            else:
+                # Lateral control using left-side sensor (index 2)
+                left_dist = dists[2]
+                error = left_dist - self.wall_follow_target
+                adjust = self.wall_follow_kp * error
+                # Compute wheel speeds with proportional control
+                left_speed = base_speed - adjust
+                right_speed = base_speed + adjust
+                # Clip speeds to allowable range
+                max_m = self.max_motor_speed
+                self.left_motor_speed = max(min(left_speed, max_m), -max_m)
+                self.right_motor_speed = max(min(right_speed, max_m), -max_m)
 
         # simulate kinematics during one execution cycle of the robot
         self._step_kinematics(robot_timestep)
