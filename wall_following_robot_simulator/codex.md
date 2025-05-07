@@ -24,15 +24,15 @@ Define metrics to measure the effectiveness of the evolved behavior:
 
 Simulated robot should have the following characteristics:
 
-* [ ] **Drive system:** Differential drive (2 independently driven wheels).
+* [x] **Drive system:** Differential drive (2 independently driven wheels).
 * [ ]**Sensors:**
 
-  * [ ] At least **three proximity sensors**: left, front, and right.
-  * [ ] Approximate **180-degree forward-facing coverage**.
+  * [x] At least **three proximity sensors**: left, front, and right.
+  * [x] Approximate **180-degree forward-facing coverage**.
 * **Motion constraints:**
 
-  * [ ] **Maximum linear speed:** e.g., 10 cm/s. (figure out if true)
-  * [ ] **Limited turning rate** to simulate realistic motion.
+  * [x] **Maximum linear speed:** e.g., 10 cm/s. (figure out if true)
+  * [x] **Limited turning rate** to simulate realistic motion.
 
 ---
 

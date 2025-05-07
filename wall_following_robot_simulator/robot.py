@@ -40,58 +40,47 @@ class DifferentialDriveRobot:
             SingleRayDistanceAndColorSensor(max_dist, 0.0),  # front sensor
             SingleRayDistanceAndColorSensor(max_dist, pi / 4),
         ]
+        # Controller state for wall-search and wall-follow behaviors
+        self.searching_wall = True
+        # Distance within which a wall is considered detected (cm)
+        self.detection_range = 50.0
+        # Target distance to maintain from wall during wall-following (cm)
+        self.wall_follow_target = 30.0
+        # Proportional gain for wall-following control
+        self.wall_follow_kp = 0.05
 
     def move(self, robot_timestep):  # run the control algorithm here
         # update sensors at current pose
         self.sense()
 
-        # simple control: move randomly until a wall is close, then stop
-        if not hasattr(self, "random_direction"):
-            # Randomly pick a direction on the first call
-            self.random_direction = random.choice(["left", "right", "forward"])
-            # If it's left or right, only turn for a short time then go forward
-            if self.random_direction in ["left", "right"]:
-                self.turn_counter = 20  # Number of timesteps to turn
+        # Wall-search and wall-follow control
+        # Read sensor distances (default to inf if no reading)
+        dists = []
+        for s in self.sensors:
+            d = s.latest_reading[0] if s.latest_reading else float("inf")
+            dists.append(d)
 
-        # If the robot is moving forward, check the front sensor
-        front_dist = (
-            self.sensors[1].latest_reading[0]
-            if self.sensors[1].latest_reading
-            else float("inf")
-        )
-
-        # Determine stop threshold: robot radius
-        thresh = self.get_robot_radius() + 20
-
-        if front_dist > thresh:
-            if self.random_direction == "forward":
-                # Continue moving forward
-                self.left_motor_speed = self.max_motor_speed
+        if self.searching_wall:
+            # If any sensor detects wall within detection range, switch to wall-follow
+            if min(dists) <= self.detection_range:
+                self.searching_wall = False
+            else:
+                # Search behavior: move forward and slowly turn to find wall
+                self.left_motor_speed = 0.5 * self.max_motor_speed
                 self.right_motor_speed = self.max_motor_speed
-            elif self.random_direction == "left":
-                if self.turn_counter > 0:
-                    # Rotate left slightly
-                    self.left_motor_speed = 0.5 * self.max_motor_speed
-                    self.right_motor_speed = self.max_motor_speed
-                    self.turn_counter -= 1
-                else:
-                    # Go forward after turning
-                    self.random_direction = "forward"
-            elif self.random_direction == "right":
-                if self.turn_counter > 0:
-                    # Rotate right slightly
-                    self.left_motor_speed = self.max_motor_speed
-                    self.right_motor_speed = 0.5 * self.max_motor_speed
-                    self.turn_counter -= 1
-                else:
-                    # Go forward after turning
-                    self.random_direction = "forward"
         else:
-            # Stop before hitting the wall
-            self.left_motor_speed = 0
-            self.right_motor_speed = 0
-            # Clear the random direction so it picks a new one next time
-            del self.random_direction
+            # Wall-following behavior using left-side sensor (index 2)
+            left_dist = dists[2]
+            error = left_dist - self.wall_follow_target
+            base_speed = 0.5 * self.max_motor_speed
+            adjust = self.wall_follow_kp * error
+            # Compute wheel speeds with proportional control
+            left_speed = base_speed - adjust
+            right_speed = base_speed + adjust
+            # Clip speeds to allowable range
+            max_m = self.max_motor_speed
+            self.left_motor_speed = max(min(left_speed, max_m), -max_m)
+            self.right_motor_speed = max(min(right_speed, max_m), -max_m)
 
         # simulate kinematics during one execution cycle of the robot
         self._step_kinematics(robot_timestep)
