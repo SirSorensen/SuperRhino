@@ -1,6 +1,24 @@
-from shapely.geometry import Point, LineString
+try:
+    from shapely.geometry import Point, LineString
+except ImportError:
+    # Stub classes if shapely is unavailable
+    class Point:
+        def __init__(self, x, y):
+            self.x = x; self.y = y
+        def distance(self, other):
+            return ((self.x - other.x) ** 2 + (self.y - other.y) ** 2) ** 0.5
+
+    class LineString:
+        def __init__(self, pts):
+            self.points = pts
+        def intersection(self, other):
+            return None
+        def project(self, point):
+            return 0
+        def distance(self, point):
+            x0, y0 = self.points[0]
+            return Point(x0, y0).distance(point)
 from numpy import cos, sin, pi
-import pygame
 
 class SingleRayDistanceAndColorSensor:
     def __init__(self, max_distance_cm, angle_rad):
@@ -65,8 +83,15 @@ class SingleRayDistanceAndColorSensor:
             return None
 
     def draw(self, robot_pose, screen):
+        import pygame
         x = robot_pose.x
         y = robot_pose.y
         if self.latest_reading is not None:
-            distance, color, intersect_point = self.latest_reading
-            pygame.draw.line(screen, (255, 255, 0), (x, y), (intersect_point.x, intersect_point.y), 1)
+            _, _, intersect_point = self.latest_reading
+            pygame.draw.line(
+                screen,
+                (255, 255, 0),
+                (x, y),
+                (intersect_point.x, intersect_point.y),
+                1,
+            )

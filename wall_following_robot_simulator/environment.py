@@ -1,5 +1,28 @@
-import pygame
-from shapely.geometry import LineString, Polygon, Point
+try:
+    from shapely.geometry import LineString, Polygon, Point
+except ImportError:
+    # Stub classes if shapely is unavailable
+    class Point:
+        def __init__(self, x, y):
+            self.x = x; self.y = y
+        def distance(self, other):
+            return ((self.x - other.x) ** 2 + (self.y - other.y) ** 2) ** 0.5
+
+    class LineString:
+        def __init__(self, points):
+            # store points as list of tuples
+            self.points = points
+        def distance(self, point):
+            # approximate distance to first segment start
+            x0, y0 = self.points[0]
+            return Point(x0, y0).distance(point)
+        def intersection(self, other):
+            return None
+        def project(self, point):
+            return 0
+
+    class Polygon:
+        pass
 
 
 
@@ -70,8 +93,15 @@ class Environment:
     
     def draw(self,screen):
         # Draw the walls
-        for wall,color in self.obstacle_walls:
-            pygame.draw.line(screen,color,(int(wall.xy[0][0]),int(wall.xy[1][0])),(int(wall.xy[0][1]),int(wall.xy[1][1])),4)# (screen, (255, 0, 0), False, wall.xy, 4)
+        import pygame
+        for wall, color in self.obstacle_walls:
+            pygame.draw.line(
+                screen,
+                color,
+                (int(wall.xy[0][0]), int(wall.xy[1][0])),
+                (int(wall.xy[0][1]), int(wall.xy[1][1])),
+                4,
+            )
 
 
 

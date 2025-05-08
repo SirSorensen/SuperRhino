@@ -1,4 +1,3 @@
-import pygame
 from numpy import cos, sin, pi
 import random
 
@@ -75,21 +74,21 @@ class DifferentialDriveRobot:
             # Frontal safety check: use front sensor (index 1)
             front_dist = dists[1]
             if front_dist < self.front_safety_distance:
-                # Pivot away from wall to avoid head-on collision
+                # Pivot away from wall to avoid head-on collision (pivot in place)
                 self.left_motor_speed = base_speed
                 self.right_motor_speed = -base_speed
             else:
-                # Lateral control using left-side sensor (index 2)
+                # Lateral wall-follow control using left-side sensor (index 2)
                 left_dist = dists[2]
                 error = left_dist - self.wall_follow_target
                 adjust = self.wall_follow_kp * error
                 # Compute wheel speeds with proportional control
                 left_speed = base_speed - adjust
                 right_speed = base_speed + adjust
-                # Clip speeds to allowable range
                 max_m = self.max_motor_speed
-                self.left_motor_speed = max(min(left_speed, max_m), -max_m)
-                self.right_motor_speed = max(min(right_speed, max_m), -max_m)
+                # Ensure forward motion: clip speeds to [0, max_m]
+                self.left_motor_speed = max(min(left_speed, max_m), 0.0)
+                self.right_motor_speed = max(min(right_speed, max_m), 0.0)
 
         # simulate kinematics during one execution cycle of the robot
         self._step_kinematics(robot_timestep)
@@ -150,6 +149,7 @@ class DifferentialDriveRobot:
         return self.axel_length / 2
 
     def draw(self, surface):
+        import pygame
         pygame.draw.circle(
             surface,
             (0, 255, 0),

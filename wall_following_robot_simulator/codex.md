@@ -55,8 +55,8 @@ Set up the robot's environment in the simulator:
 
 ### 5. Controller Representation
 
-* [ ] Implement hand-coded baseline controller.
-* [ ] Define parameters to evolve (e.g., distance thresholds, gain values).
+* [x] Implement hand-coded baseline controller.
+* [x] Define parameters to evolve (e.g., distance thresholds, gain values).
 
 **Controller Logic Structure:**
 
@@ -75,22 +75,22 @@ Set up the robot's environment in the simulator:
 
 ### 6. Evolutionary Setup
 
-* [ ] Define genome structure (e.g., thresholds/gains as float values).
+* [x] Define genome structure (e.g., thresholds/gains as float values).
 
-* [ ] Set evolutionary algorithm parameters:
+* [x] Set evolutionary algorithm parameters:
 
-  * [ ] Population size (e.g., 20–50).
-  * [ ] Number of generations (e.g., 30–100).
-  * [ ] Selection method (e.g., Genetic algorithm).
-  * [ ] Mutation operator (e.g., Gaussian noise).
-  * [ ] Crossover operator (optional).
+  * [x] Population size (e.g., 20–50).
+  * [x] Number of generations (e.g., 30–100).
+  * [x] Selection method (e.g., Genetic algorithm).
+  * [x] Mutation operator (e.g., Gaussian noise).
+  * [x] Crossover operator (optional).
 
-* [ ] Define fitness function:
+* [x] Define fitness function:
 
-  * [ ] Reward staying near wall.
-  * [ ] Penalize collisions.
-  * [ ] Penalize distance variance.
-  * [ ] Penalize excessive time taken to detect and approach the wall (long wall acquisition time).
+  * [x] Reward staying near wall.
+  * [x] Penalize collisions.
+  * [x] Penalize distance variance.
+  * [x] Penalize excessive time taken to detect and approach the wall (long wall acquisition time).
 
 ---
 
