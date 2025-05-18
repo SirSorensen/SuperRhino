@@ -28,8 +28,15 @@ print(f"Starting position selected: x={start_x}, y={start_y}, theta={start_theta
 
 robot = DifferentialDriveRobot(env, start_x, start_y, start_theta)
 best_params, best_fitness = evolve()
-best_detection_range, best_wall_follow_target, best_wall_follow_kp, best_front_safety_distance = best_params
-print(f"Evolved parameters: detection_range={best_detection_range}, wall_follow_target={best_wall_follow_target}, wall_follow_kp={best_wall_follow_kp}, front_safety_distance={best_front_safety_distance}, fitness={best_fitness}")
+(
+    best_detection_range,
+    best_wall_follow_target,
+    best_wall_follow_kp,
+    best_front_safety_distance,
+) = best_params
+print(
+    f"Evolved parameters: detection_range={best_detection_range}, wall_follow_target={best_wall_follow_target}, wall_follow_kp={best_wall_follow_kp}, front_safety_distance={best_front_safety_distance}, fitness={best_fitness}"
+)
 robot.detection_range = best_detection_range
 robot.wall_follow_target = best_wall_follow_target
 robot.wall_follow_kp = best_wall_follow_kp
@@ -41,7 +48,7 @@ pygame.display.set_caption("Robot Kinematic Simulator")
 
 def main():
     global USE_VISUALIZATION, PAUSE
-    start_time = pygame.time.get_ticks()
+    collision_count = 0
     # Game loop
     running = True
     while running:
@@ -61,7 +68,7 @@ def main():
 
         if not PAUSE:
             # simulate one execution cycle of the robot
-            robot_pose = robot.move(robot_timestep)
+            robot.move(robot_timestep)
 
         if USE_VISUALIZATION:
             screen.fill((0, 0, 0))
@@ -72,18 +79,14 @@ def main():
 
             # warn the user if collision happened
             if robot.collided:
-                print("Collision!")
                 # Draw the animation
                 drawBoom()
 
+                collision_count += 1
+                print(f"Collision count: {collision_count}")
+
             pygame.display.flip()
             pygame.display.update()
-
-    print(
-        "total execution time:",
-        (pygame.time.get_ticks() - start_time) / 1000,
-        "seconds",
-    )  # runtime in seconds
 
     # Quit Pygame
     pygame.quit()
