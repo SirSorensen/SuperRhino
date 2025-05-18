@@ -3,6 +3,7 @@ from pygame.locals import QUIT, KEYDOWN
 from environment import Environment
 import random
 from robot import DifferentialDriveRobot
+from evolve import evolve
 
 # for potential visualization
 USE_VISUALIZATION = True
@@ -24,7 +25,15 @@ robot_timestep = 0.1  # in seconds (simulated time)
 start_positions = env.get_starting_positions()
 start_x, start_y, start_theta = random.choice(start_positions)
 print(f"Starting position selected: x={start_x}, y={start_y}, theta={start_theta}")
+
 robot = DifferentialDriveRobot(env, start_x, start_y, start_theta)
+best_params, best_fitness = evolve()
+best_detection_range, best_wall_follow_target, best_wall_follow_kp, best_front_safety_distance = best_params
+print(f"Evolved parameters: detection_range={best_detection_range}, wall_follow_target={best_wall_follow_target}, wall_follow_kp={best_wall_follow_kp}, front_safety_distance={best_front_safety_distance}, fitness={best_fitness}")
+robot.detection_range = best_detection_range
+robot.wall_follow_target = best_wall_follow_target
+robot.wall_follow_kp = best_wall_follow_kp
+robot.front_safety_distance = best_front_safety_distance
 
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Robot Kinematic Simulator")

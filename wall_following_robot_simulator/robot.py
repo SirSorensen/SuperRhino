@@ -32,7 +32,7 @@ class DifferentialDriveRobot:
         self.left_motor_speed = 0
         self.right_motor_speed = 0
         # Initialize multiple distance sensors (rays) to cover 180 degrees
-        # Angles relative to robot heading: -90°, -45°, 0°, +45°, +90°
+        # Angles relative to robot heading: -45°, 0°, +45°
         max_dist = 100  # max sensing distance in cm
         self.sensors = [
             SingleRayDistanceAndColorSensor(max_dist, -pi / 4),
@@ -78,8 +78,8 @@ class DifferentialDriveRobot:
                 self.left_motor_speed = base_speed
                 self.right_motor_speed = -base_speed
             else:
-                # Lateral wall-follow control using left-side sensor (index 2)
-                left_dist = dists[2]
+                # Lateral wall-follow control using left-side sensor (index 0)
+                left_dist = dists[0]
                 error = left_dist - self.wall_follow_target
                 adjust = self.wall_follow_kp * error
                 # Compute wheel speeds with proportional control

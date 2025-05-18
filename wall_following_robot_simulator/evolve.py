@@ -6,6 +6,7 @@ Genome representation:
 
 GA parameters, fitness function, and evolutionary loop.
 """
+
 import random
 import copy
 import statistics
@@ -14,7 +15,7 @@ from robot import DifferentialDriveRobot
 
 # Genetic Algorithm parameters
 POPULATION_SIZE = 30
-GENERATIONS = 50
+GENERATIONS = 5
 TOURNAMENT_SIZE = 3
 ELITE_SIZE = 2
 CROSSOVER_RATE = 0.7
@@ -22,11 +23,12 @@ MUTATION_RATE = 0.2
 
 # Simulation parameters
 SIMULATION_TIME = 30.0  # seconds per trial
-TIME_STEP = 0.1         # simulation timestep in seconds
+TIME_STEP = 0.1  # simulation timestep in seconds
 
 # Environment dimensions (must match main.py defaults)
 ENV_WIDTH = 1200
 ENV_HEIGHT = 800
+
 
 def create_individual():
     """Create a random individual (genome) within predefined parameter bounds."""
@@ -35,6 +37,7 @@ def create_individual():
     wall_follow_kp = random.uniform(0.01, 1.0)
     front_safety_distance = random.uniform(10.0, 200.0)
     return [detection_range, wall_follow_target, wall_follow_kp, front_safety_distance]
+
 
 def simulate(individual, start_pos):
     """
@@ -58,8 +61,11 @@ def simulate(individual, start_pos):
         robot.move(TIME_STEP)
         # update sensors at new pose
         robot.sense()
-        # read distances: sensors[2] is left-side
-        readings = [s.latest_reading[0] if s.latest_reading else float('inf') for s in robot.sensors]
+        # read distances: sensors[0] is left-side
+        readings = [
+            s.latest_reading[0] if s.latest_reading else float("inf")
+            for s in robot.sensors
+        ]
         # record collision
         if robot.collided:
             collision_count += 1
@@ -68,7 +74,7 @@ def simulate(individual, start_pos):
             acquisition_time = t
         # collect left-side distances during wall-following
         if not robot.searching_wall:
-            left_distances.append(readings[2])
+            left_distances.append(readings[0])
         t += TIME_STEP
     # if no wall acquisition, penalize by max time
     if acquisition_time is None:
@@ -82,12 +88,15 @@ def simulate(individual, start_pos):
     else:
         # no follow period -> heavy penalty
         mean_error = SIMULATION_TIME
-        variance = SIMULATION_TIME ** 2
+        variance = SIMULATION_TIME**2
 
     # cost components
-    cost = mean_error + 0.1 * variance + 10.0 * collision_count + 0.01 * acquisition_time
+    cost = (
+        mean_error + 0.1 * variance + 10.0 * collision_count + 0.01 * acquisition_time
+    )
     # higher fitness is better, so return negative cost
     return -cost
+
 
 def evaluate(individual):
     """Evaluate an individual over multiple starting positions."""
@@ -96,6 +105,7 @@ def evaluate(individual):
     # average fitness across all start positions
     fitnesses = [simulate(individual, pos) for pos in starts]
     return sum(fitnesses) / len(fitnesses)
+
 
 def tournament_selection(population, fitnesses):
     """Select individuals via tournament selection."""
@@ -106,6 +116,7 @@ def tournament_selection(population, fitnesses):
         selected.append(copy.deepcopy(winner))
     return selected
 
+
 def crossover(parent1, parent2):
     """Uniform crossover between two parents."""
     child1, child2 = parent1[:], parent2[:]
@@ -113,6 +124,7 @@ def crossover(parent1, parent2):
         if random.random() < 0.5:
             child1[i], child2[i] = child2[i], child1[i]
     return child1, child2
+
 
 def mutate(individual):
     """Gaussian mutation on each gene with a probability of MUTATION_RATE."""
@@ -132,12 +144,13 @@ def mutate(individual):
                 individual[i] = min(max(individual[i], 10.0), 200.0)
     return individual
 
+
 def evolve():
     """Main evolutionary loop."""
     # initialize population
     population = [create_individual() for _ in range(POPULATION_SIZE)]
     best_individual = None
-    best_fitness = float('-inf')
+    best_fitness = float("-inf")
     for gen in range(1, GENERATIONS + 1):
         fitnesses = [evaluate(ind) for ind in population]
         # update best
@@ -148,8 +161,12 @@ def evolve():
         # selection
         mating_pool = tournament_selection(population, fitnesses)
         # create next generation with elites
-        next_population = [copy.deepcopy(population[i]) for i in
-                           sorted(range(len(population)), key=lambda i: fitnesses[i], reverse=True)[:ELITE_SIZE]]
+        next_population = [
+            copy.deepcopy(population[i])
+            for i in sorted(
+                range(len(population)), key=lambda i: fitnesses[i], reverse=True
+            )[:ELITE_SIZE]
+        ]
         # generate offspring
         while len(next_population) < POPULATION_SIZE:
             parent1, parent2 = random.sample(mating_pool, 2)
@@ -165,5 +182,7 @@ def evolve():
     print("Best fitness:", best_fitness)
     return best_individual, best_fitness
 
+
 if __name__ == "__main__":
     evolve()
+
